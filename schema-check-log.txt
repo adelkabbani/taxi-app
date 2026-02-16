@@ -1,0 +1,4 @@
+🔍 CHECKING TABLE COLUMNS
+Error: Error: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
+🔍 CHECKING TABLE COLUMNS
+Error: Error: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string

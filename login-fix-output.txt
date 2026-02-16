@@ -1,0 +1,62 @@
+﻿node : node:internal/module
+s/cjs/loader:1386
+At line:1 char:1
++ node ../fix-login.js 
+2>&1 | Out-File -FilePath 
+../login-fix-output.tx ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo         
+     : NotSpecified: (nod  
+  e:internal/modules/cjs   
+ /loader:1386:String) [    
+], RemoteException
+    + FullyQualifiedErrorI 
+   d : NativeCommandError
+ 
+  throw err;
+  ^
+
+Error: Cannot find module 
+'dotenv'
+Require stack:
+- D:\website@Antigravity\ta
+xi\fix-login.js
+    at 
+Function._resolveFilename (
+node:internal/modules/cjs/l
+oader:1383:15)
+    at defaultResolveImpl (
+node:internal/modules/cjs/l
+oader:1025:19)
+    at 
+resolveForCJSWithHooks (nod
+e:internal/modules/cjs/load
+er:1030:22)
+    at Function._load (node
+:internal/modules/cjs/loade
+r:1192:37)
+    at 
+TracingChannel.traceSync (n
+ode:diagnostics_channel:322
+:14)
+    at wrapModuleLoad (node
+:internal/modules/cjs/loade
+r:237:24)
+    at Module.require (node
+:internal/modules/cjs/loade
+r:1463:12)
+    at require (node:intern
+al/modules/helpers:147:16)
+    at Object.<anonymous> (
+D:\website@Antigravity\taxi
+\fix-login.js:1:1)
+    at Module._compile (nod
+e:internal/modules/cjs/load
+er:1706:14) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ 'D:\\webs
+ite@Antigravity\\taxi\\fix-
+login.js' ]
+}
+
+Node.js v22.20.0

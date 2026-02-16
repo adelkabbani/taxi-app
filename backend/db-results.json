@@ -1,0 +1,112 @@
+{
+  "db": "taxi_dispatch",
+  "users": [
+    {
+      "id": 6,
+      "email": "admin@taxi.com",
+      "role": "admin"
+    },
+    {
+      "id": 13,
+      "email": "hans.driver@taxi.com",
+      "role": "driver"
+    },
+    {
+      "id": 14,
+      "email": "klaus.driver@taxi.com",
+      "role": "driver"
+    },
+    {
+      "id": 15,
+      "email": "sophie.driver@taxi.com",
+      "role": "driver"
+    },
+    {
+      "id": 17,
+      "email": "hans.mueller@taxi.com",
+      "role": "driver"
+    },
+    {
+      "id": 29,
+      "email": "sim_admin@taxi.com",
+      "role": "admin"
+    },
+    {
+      "id": 22,
+      "email": "liam.demo@taxi.com",
+      "role": "driver"
+    },
+    {
+      "id": 25,
+      "email": "emma.demo@taxi.com",
+      "role": "driver"
+    },
+    {
+      "id": 26,
+      "email": "noah.demo@taxi.com",
+      "role": "driver"
+    },
+    {
+      "id": 27,
+      "email": "olivia.demo@taxi.com",
+      "role": "driver"
+    },
+    {
+      "id": 28,
+      "email": "william.demo@taxi.com",
+      "role": "driver"
+    },
+    {
+      "id": 34,
+      "email": "",
+      "role": "driver"
+    }
+  ],
+  "drivers": [
+    {
+      "id": 8,
+      "user_id": 13,
+      "availability": "busy"
+    },
+    {
+      "id": 9,
+      "user_id": 14,
+      "availability": "busy"
+    },
+    {
+      "id": 10,
+      "user_id": 15,
+      "availability": "busy"
+    },
+    {
+      "id": 11,
+      "user_id": 22,
+      "availability": "available"
+    },
+    {
+      "id": 12,
+      "user_id": 25,
+      "availability": "available"
+    },
+    {
+      "id": 13,
+      "user_id": 26,
+      "availability": "available"
+    },
+    {
+      "id": 14,
+      "user_id": 27,
+      "availability": "available"
+    },
+    {
+      "id": 15,
+      "user_id": 28,
+      "availability": "available"
+    },
+    {
+      "id": 16,
+      "user_id": 34,
+      "availability": "offline"
+    }
+  ]
+}

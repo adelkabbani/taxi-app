@@ -1,0 +1,3 @@
+Admin Tenant: 3
+Visible Bookings: 8
+Examples: TX-1766726127273-B1 (booking.com), TX-1766726127273-W1 (welcome), TX-1766726127273-W2 (welcome)

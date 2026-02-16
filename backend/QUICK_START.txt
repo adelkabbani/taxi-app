@@ -1,0 +1,71 @@
+═══════════════════════════════════════════════════════════════
+    FLEET COMMAND - QUICK START (Copy & Paste Commands)
+═══════════════════════════════════════════════════════════════
+
+📌 SAVE THIS FILE - You'll need it every time!
+Location: D:\website@Antigravity\taxi\backend\QUICK_START.txt
+
+═══════════════════════════════════════════════════════════════
+   STEP 1: START BACKEND (Terminal 1)
+═══════════════════════════════════════════════════════════════
+
+cd D:\website@Antigravity\taxi\backend
+npm run dev
+
+✅ Backend will run on: http://localhost:3000
+
+═══════════════════════════════════════════════════════════════
+   STEP 2: START FRONTEND (Terminal 2)
+═══════════════════════════════════════════════════════════════
+
+cd D:\website@Antigravity\taxi\admin-web
+npm run dev
+
+✅ Admin Dashboard: http://localhost:5173
+
+═══════════════════════════════════════════════════════════════
+   STEP 3: VERIFY EVERYTHING WORKS
+═══════════════════════════════════════════════════════════════
+
+# Check backend health
+http://localhost:3000/api/health
+
+# Verify migration
+cd D:\website@Antigravity\taxi\backend
+node verify-migration.js
+
+═══════════════════════════════════════════════════════════════
+   TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════
+
+❌ Database Error?
+   → Check PostgreSQL is running
+   → Check backend\.env has correct DB_PASSWORD
+
+❌ Port 3000 in use?
+   netstat -ano | findstr :3000
+   taskkill /PID <PID> /F
+
+❌ Redis Error?
+   → Start Redis server
+
+═══════════════════════════════════════════════════════════════
+   ONE-TIME SETUP (If database is empty)
+═══════════════════════════════════════════════════════════════
+
+# Create database
+psql -U postgres
+CREATE DATABASE taxi_dispatch;
+\q
+
+# Run schema
+cd D:\website@Antigravity\taxi\backend
+psql -U postgres -d taxi_dispatch -f ..\database\schema.sql
+psql -U postgres -d taxi_dispatch -f ..\database\state-machine.sql
+
+# Run migration (adds new tables)
+node apply-migration-001.js
+
+═══════════════════════════════════════════════════════════════
+
+📖 Full Guide: D:\website@Antigravity\taxi\HOW_TO_RUN_LOCALLY.md

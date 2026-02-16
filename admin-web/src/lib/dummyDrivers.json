@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "firstName": "Hans",
+        "lastName": "Müller",
+        "status": "available",
+        "lat": 52.3667,
+        "lng": 13.5033,
+        "vehicle": "Mercedes E-Class",
+        "plate": "B-TX 1234"
+    },
+    {
+        "id": 2,
+        "firstName": "Klaus",
+        "lastName": "Weber",
+        "status": "busy",
+        "lat": 52.5200,
+        "lng": 13.4050,
+        "vehicle": "Toyota Prius",
+        "plate": "B-TX 5678"
+    }
+]

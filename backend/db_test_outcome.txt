@@ -1,0 +1,4 @@
+DB TEST START
+Connected: Sat Jan 10 2026 00:18:05 GMT+0100 (Central European Standard Time)
+Testing with Driver ID: 8
+✅ Inserted test schedule

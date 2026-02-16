@@ -1,0 +1,28 @@
+SERVER INIT REACHED
+TENANTS ROUTE FILE LOADED
+2026-02-08 22:38:11 [[32minfo[39m]: [32mSocket.io handlers initialized[39m
+2026-02-08 22:38:11 [[32minfo[39m]: [32mNew database connection established[39m
+2026-02-08 22:38:11 [[32minfo[39m]: [32m✓ Database connected[39m
+2026-02-08 22:38:11 [[32minfo[39m]: [32m✓ Redis connected[39m
+2026-02-08 22:38:11 [[32minfo[39m]: [32m✓ Server running on port 3002[39m
+2026-02-08 22:38:11 [[32minfo[39m]: [32m✓ Environment: development[39m
+2026-02-08 22:38:11 [[32minfo[39m]: [32m✓ API Base URL: http://localhost:3002[39m
+2026-02-08 22:38:11 [[32minfo[39m]: [32mStarting Auto-Assignment Scheduler (60s tick)[39m
+2026-02-08 22:49:41 [[32minfo[39m]: [32mIncoming request[39m
+2026-02-08 22:49:41 [[32minfo[39m]: [32mIncoming request[39m
+2026-02-08 22:49:41 [[32minfo[39m]: [32mIncoming request[39m
+2026-02-08 22:49:41 [[32minfo[39m]: [32mNew database connection established[39m
+2026-02-08 22:49:41 [[32minfo[39m]: [32mNew database connection established[39m
+2026-02-08 22:49:41 [[32minfo[39m]: [32mRequest completed[39m
+2026-02-08 22:49:41 [[32minfo[39m]: [32mRequest completed[39m
+2026-02-08 22:49:41 [[32minfo[39m]: [32mRequest completed[39m
+2026-02-08 22:49:41 [[32minfo[39m]: [32mIncoming request[39m
+2026-02-08 22:49:41 [[32minfo[39m]: [32mIncoming request[39m
+2026-02-08 22:49:41 [[32minfo[39m]: [32mIncoming request[39m
+2026-02-08 22:49:41 [[32minfo[39m]: [32mRequest completed[39m
+2026-02-08 22:49:41 [[32minfo[39m]: [32mRequest completed[39m
+2026-02-08 22:49:41 [[32minfo[39m]: [32mRequest completed[39m
+2026-02-08 22:50:11 [[32minfo[39m]: [32mIncoming request[39m
+2026-02-08 22:50:11 [[32minfo[39m]: [32mIncoming request[39m
+2026-02-08 22:50:11 [[32minfo[39m]: [32mRequest completed[39m
+2026-02-08 22:50:11 [[32minfo[39m]: [32mRequest completed[39m

@@ -1,0 +1,62 @@
+﻿SERVER INIT REACHED
+node : D:\website\taxi\back
+end\node_modules\express\li
+b\router\route.js:216
+At line:1 char:1
++ node backend/server.js > 
+backend-log.txt 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo         
+     : NotSpecified: (D:\  
+  website\taxi...er\rout   
+ e.js:216:String) [], R    
+emoteException
+    + FullyQualifiedErrorI 
+   d : NativeCommandError
+ 
+        throw new 
+Error(msg);
+        ^
+
+Error: Route.get() 
+requires a callback 
+function but got a [object 
+Object]
+    at Route.<computed> 
+[as get] (D:\website\taxi\b
+ackend\node_modules\express
+\lib\router\route.js:216:15
+)
+    at proto.<computed> 
+[as get] (D:\website\taxi\b
+ackend\node_modules\express
+\lib\router\index.js:521:19
+)
+    at Object.<anonymous> (
+D:\website\taxi\backend\rou
+tes\stats.js:11:8)
+    at Module._compile (nod
+e:internal/modules/cjs/load
+er:1706:14)
+    at Object..js (node:int
+ernal/modules/cjs/loader:18
+39:10)
+    at Module.load (node:in
+ternal/modules/cjs/loader:1
+441:32)
+    at Function._load (node
+:internal/modules/cjs/loade
+r:1263:12)
+    at 
+TracingChannel.traceSync (n
+ode:diagnostics_channel:322
+:14)
+    at wrapModuleLoad (node
+:internal/modules/cjs/loade
+r:237:24)
+    at Module.require (node
+:internal/modules/cjs/loade
+r:1463:12)
+
+Node.js v22.20.0

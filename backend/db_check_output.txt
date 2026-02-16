@@ -1,0 +1,14 @@
+Tables: ["users","vehicles","vehicle_capabilities","driver_capabilities","driver_metrics","driver_shifts","driver_breaks","partners","partner_settlements","booking_requirements","booking_timeline","event_logs","proof_assets","external_bookings","webhook_logs","fraud_flags","location_updates","blacklist","admin_audit_logs","invoices","flight_tracking","notifications","drivers","partner_pricing_rules","driver_suspensions","bookings","assignment_attempts","assignment_round_robin","tenants","driver_schedules"]
+Table users count: 16
+Columns in users: ["id","tenant_id","role","email","phone","password_hash","first_name","last_name","status","created_at","updated_at","plain_password"]
+Table drivers count: 13
+Columns in drivers: ["id","user_id","vehicle_id","license_number","license_expiry","availability","current_lat","current_lng","location_updated_at","shift_started_at","created_at","updated_at","priority_level","driver_type","status"]
+Table vehicles count: 14
+Columns in vehicles: ["id","tenant_id","license_plate","make","model","year","color","vehicle_type","status","created_at","updated_at"]
+Table vehicle_capabilities count: 0
+Columns in vehicle_capabilities: ["id","vehicle_id","luggage_capacity","passenger_capacity","has_child_seat","is_accessible","has_airport_permit","created_at"]
+Table driver_capabilities count: 0
+Columns in driver_capabilities: ["id","driver_id","languages","has_airport_permit","preferred_vehicle_types","created_at"]
+Table driver_metrics count: 4
+Columns in driver_metrics: ["id","driver_id","acceptance_rate","total_bookings","accepted_bookings","rejected_bookings","cancelled_bookings","late_arrivals","no_shows","last_calculated_at","created_at"]
+Hans Mueller details: [{"user_id":13,"email":"hans.driver@taxi.com","tenant_id":1,"driver_id":8}]

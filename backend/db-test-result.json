@@ -1,0 +1,6 @@
+{
+  "success": false,
+  "code": "3D000",
+  "message": "database \"taxi_dispatch\" does not exist",
+  "advice": "Database \"taxi_dispatch\" does not exist. Please run setup."
+}

@@ -1,0 +1,80 @@
+[
+  {
+    "id": 13,
+    "email": "hans.driver@taxi.com",
+    "role": "driver",
+    "tenant_id": 3
+  },
+  {
+    "id": 14,
+    "email": "klaus.driver@taxi.com",
+    "role": "driver",
+    "tenant_id": 3
+  },
+  {
+    "id": 15,
+    "email": "sophie.driver@taxi.com",
+    "role": "driver",
+    "tenant_id": 3
+  },
+  {
+    "id": 17,
+    "email": "hans.mueller@taxi.com",
+    "role": "driver",
+    "tenant_id": 1
+  },
+  {
+    "id": 29,
+    "email": "sim_admin@taxi.com",
+    "role": "admin",
+    "tenant_id": 1
+  },
+  {
+    "id": 22,
+    "email": "liam.demo@taxi.com",
+    "role": "driver",
+    "tenant_id": 3
+  },
+  {
+    "id": 25,
+    "email": "emma.demo@taxi.com",
+    "role": "driver",
+    "tenant_id": 3
+  },
+  {
+    "id": 26,
+    "email": "noah.demo@taxi.com",
+    "role": "driver",
+    "tenant_id": 3
+  },
+  {
+    "id": 27,
+    "email": "olivia.demo@taxi.com",
+    "role": "driver",
+    "tenant_id": 3
+  },
+  {
+    "id": 28,
+    "email": "william.demo@taxi.com",
+    "role": "driver",
+    "tenant_id": 3
+  },
+  {
+    "id": 34,
+    "email": "",
+    "role": "driver",
+    "tenant_id": 3
+  },
+  {
+    "id": 6,
+    "email": "admin@taxi.com",
+    "role": "admin",
+    "tenant_id": 3
+  },
+  {
+    "id": 35,
+    "email": "driver_auto@taxi.com",
+    "role": "driver",
+    "tenant_id": 1
+  }
+]

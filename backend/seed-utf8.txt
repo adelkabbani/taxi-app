@@ -1,0 +1,84 @@
+﻿node : D:\website\ta
+xi\backend\node_modu
+les\pg-pool\index.js
+:45
+At line:1 char:1
++ node 
+scripts/seed.js > 
+seed.log 2>&1
++ ~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
+    + CategoryInfo  
+            : NotS  
+  pecified: (D:\w   
+ ebsite\taxi...o    
+ol\index.js:45:    
+String) [], Rem    
+oteException
+    + FullyQualifie 
+   dErrorId : Nati  
+  veCommandError
+ 
+    Error.captureSta
+ckTrace(err)
+          ^
+
+AggregateError 
+[ECONNREFUSED]: 
+    at D:\website\ta
+xi\backend\node_modu
+les\pg-pool\index.js
+:45:11
+    at process.proce
+ssTicksAndRejections
+ (node:internal/proc
+ess/task_queues:105:
+5)
+    at async seed (D
+:\website\taxi\backe
+nd\scripts\seed.js:1
+8:20) {
+  code: 
+'ECONNREFUSED',
+  [errors]: [
+    Error: connect 
+ECONNREFUSED 
+::1:5432
+        at createCon
+nectionError 
+(node:net:1678:14)
+        at afterConn
+ectMultiple 
+(node:net:1708:16) {
+      errno: -4078,
+      code: 
+'ECONNREFUSED',
+      syscall: 
+'connect',
+      address: 
+'::1',
+      port: 5432
+    },
+    Error: connect 
+ECONNREFUSED 
+127.0.0.1:5432
+        at createCon
+nectionError 
+(node:net:1678:14)
+        at afterConn
+ectMultiple 
+(node:net:1708:16) {
+      errno: -4078,
+      code: 
+'ECONNREFUSED',
+      syscall: 
+'connect',
+      address: 
+'127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+
+Node.js v22.20.0
+

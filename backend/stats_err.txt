@@ -1,0 +1,8 @@
+column "tenant_id" does not exist
+error: column "tenant_id" does not exist
+    at D:\website\taxi\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Object.query (D:\website\taxi\backend\config\database.js:31:24)
+    at async Promise.all (index 0)
+    at async Object.getDashboardStats (D:\website\taxi\backend\services\statsService.js:42:50)
+    at async runTest (D:\website\taxi\backend\capture-stats.js:13:23)

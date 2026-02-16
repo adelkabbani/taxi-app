@@ -1,0 +1,62 @@
+{
+  "db": "taxi_dispatch",
+  "users": [
+    {
+      "id": 1,
+      "email": "admin@taxi.com",
+      "role": "admin"
+    },
+    {
+      "id": 6,
+      "email": "admin@taxi.com",
+      "role": "admin"
+    },
+    {
+      "id": 7,
+      "email": "hans.driver@taxi.com",
+      "role": "driver"
+    },
+    {
+      "id": 8,
+      "email": "klaus.driver@taxi.com",
+      "role": "driver"
+    },
+    {
+      "id": 9,
+      "email": "sophie.driver@taxi.com",
+      "role": "driver"
+    },
+    {
+      "id": 10,
+      "email": "mehmet.driver@taxi.com",
+      "role": "driver"
+    },
+    {
+      "id": 11,
+      "email": "anna.driver@taxi.com",
+      "role": "driver"
+    }
+  ],
+  "drivers": [
+    {
+      "id": 3,
+      "user_id": 7
+    },
+    {
+      "id": 4,
+      "user_id": 8
+    },
+    {
+      "id": 5,
+      "user_id": 9
+    },
+    {
+      "id": 6,
+      "user_id": 10
+    },
+    {
+      "id": 7,
+      "user_id": 11
+    }
+  ]
+}

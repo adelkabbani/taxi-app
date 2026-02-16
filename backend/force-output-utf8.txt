@@ -1,0 +1,34 @@
+﻿­ƒª¥ FORCE-STARTING ASSIGNMENT RUN...
+2026-01-09 19:21:35 [[32minfo[39m]: [32mNew database connection established[39m
+   Found 4 pending bookings.
+   ­ƒöä Processing TX-1767935335813-B7U36...
+2026-01-09 19:21:35 [[31merror[39m]: [31mDatabase query error:[39m
+2026-01-09 19:21:35 [[31merror[39m]: [31mError finding available drivers[39m
+2026-01-09 19:21:35 [[32minfo[39m]: [32mNew database connection established[39m
+2026-01-09 19:21:35 [[31merror[39m]: [31mDatabase query error:[39m
+2026-01-09 19:21:35 [[31merror[39m]: [31mAuto-assignment failed[39m
+      ÔØî ERROR: column "assignment_failed_reason" of relation "bookings" does not exist
+   ­ƒöä Processing TX-1767935469120-OH6D7...
+2026-01-09 19:21:35 [[32minfo[39m]: [32mNew database connection established[39m
+2026-01-09 19:21:35 [[31merror[39m]: [31mDatabase query error:[39m
+2026-01-09 19:21:35 [[31merror[39m]: [31mError finding available drivers[39m
+2026-01-09 19:21:35 [[32minfo[39m]: [32mNew database connection established[39m
+2026-01-09 19:21:35 [[31merror[39m]: [31mDatabase query error:[39m
+2026-01-09 19:21:35 [[31merror[39m]: [31mAuto-assignment failed[39m
+      ÔØî ERROR: column "assignment_failed_reason" of relation "bookings" does not exist
+   ­ƒöä Processing TX-1767935935637-X3T9P...
+2026-01-09 19:21:35 [[32minfo[39m]: [32mNew database connection established[39m
+2026-01-09 19:21:35 [[31merror[39m]: [31mDatabase query error:[39m
+2026-01-09 19:21:35 [[31merror[39m]: [31mError finding available drivers[39m
+2026-01-09 19:21:35 [[32minfo[39m]: [32mNew database connection established[39m
+2026-01-09 19:21:35 [[31merror[39m]: [31mDatabase query error:[39m
+2026-01-09 19:21:35 [[31merror[39m]: [31mAuto-assignment failed[39m
+      ÔØî ERROR: column "assignment_failed_reason" of relation "bookings" does not exist
+   ­ƒöä Processing TX-1767399164488-S46CV...
+2026-01-09 19:21:35 [[32minfo[39m]: [32mNew database connection established[39m
+2026-01-09 19:21:35 [[31merror[39m]: [31mDatabase query error:[39m
+2026-01-09 19:21:35 [[31merror[39m]: [31mError finding available drivers[39m
+2026-01-09 19:21:36 [[32minfo[39m]: [32mNew database connection established[39m
+2026-01-09 19:21:36 [[31merror[39m]: [31mDatabase query error:[39m
+2026-01-09 19:21:36 [[31merror[39m]: [31mAuto-assignment failed[39m
+      ÔØî ERROR: column "assignment_failed_reason" of relation "bookings" does not exist

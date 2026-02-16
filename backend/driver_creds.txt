@@ -1,0 +1,20 @@
+Driver: Klaus Weber (Berlin Taxi Co)
+Username: klaus.driver@taxi.com
+Password: 123456
+---
+Driver: Hans Mueller (Default Taxi Company)
+Username: hans.driver@taxi.com
+Password: 123456
+---
+Driver: Auto Driver (Default Taxi Company)
+Username: driver_auto@taxi.com
+Password: 123456
+---
+Driver: Michael Brown (Default Taxi Company)
+Username: michael.brown@default.com
+Password: 123456
+---
+Driver: Sarah Davis (Default Taxi Company)
+Username: sarah.davis@default.com
+Password: 123456
+---

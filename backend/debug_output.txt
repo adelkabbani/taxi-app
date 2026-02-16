@@ -1,0 +1,11 @@
+Starting debug script...
+Testing getAnalyticsStats with tenantId=null range=daily
+Running Summary Query...
+ERROR CAUGHT: invalid input value for enum booking_status: "no_show"
+Stack: error: invalid input value for enum booking_status: "no_show"
+    at D:\website@Antigravity\taxi\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getAnalyticsStats (D:\website@Antigravity\taxi\backend\debug_stats_v2.js:72:28)
+Done.
+Starting debug script...
+Enum Values: "{pending,assigned,accepted,arrived,waiting_started,started,completed,cancelled,no_show_requested,no_show_confirmed,auto_released}"

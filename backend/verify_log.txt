@@ -1,0 +1,83 @@
+1. Logging in...
+✓ Login successful. Token obtained.
+✓ Test file created.
+3. Uploading document for Driver ID 1...
+❌ Verification Failed!
+Status: 500
+Data: {
+  "success": false,
+  "message": "Invalid file type. Allowed: PDF, JPG, PNG, DOC, DOCX",
+  "requestId": "58e1e8c6-7c39-4515-a979-75bcf66c4184",
+  "stack": "Error: Invalid file type. Allowed: PDF, JPG, PNG, DOC, DOCX\n    at DocumentService.uploadDocument (d:\\website@Antigravity\\taxi\\backend\\services\\documentService.js:46:19)\n    at d:\\website@Antigravity\\taxi\\backend\\routes\\documents.js:56:48\n    at d:\\website@Antigravity\\taxi\\backend\\middleware\\errorHandler.js:51:21\n    at Layer.handle [as handle_request] (d:\\website@Antigravity\\taxi\\backend\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at next (d:\\website@Antigravity\\taxi\\backend\\node_modules\\express\\lib\\router\\route.js:149:13)\n    at middleware (d:\\website@Antigravity\\taxi\\backend\\node_modules\\express-validator\\lib\\middlewares\\check.js:16:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"
+}
+1. Logging in...
+✓ Login successful. Token obtained.
+✓ Test file created.
+3. Uploading document for Driver ID 1...
+❌ Verification Failed!
+Status: 500
+Data: {
+  "success": false,
+  "message": "The \"path\" argument must be of type string. Received undefined",
+  "requestId": "ceb141d3-dba2-4751-a1c9-2ba6ed12ebec",
+  "stack": "TypeError [ERR_INVALID_ARG_TYPE]: The \"path\" argument must be of type string. Received undefined\n    at Object.extname (node:path:1002:5)\n    at DocumentService.uploadDocument (d:\\website@Antigravity\\taxi\\backend\\services\\documentService.js:50:30)\n    at d:\\website@Antigravity\\taxi\\backend\\routes\\documents.js:56:48\n    at d:\\website@Antigravity\\taxi\\backend\\middleware\\errorHandler.js:51:21\n    at Layer.handle [as handle_request] (d:\\website@Antigravity\\taxi\\backend\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at next (d:\\website@Antigravity\\taxi\\backend\\node_modules\\express\\lib\\router\\route.js:149:13)\n    at middleware (d:\\website@Antigravity\\taxi\\backend\\node_modules\\express-validator\\lib\\middlewares\\check.js:16:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"
+}
+1. Logging in...
+✓ Login successful. Token obtained.
+✓ Test file created.
+3. Uploading document for Driver ID 1...
+❌ Verification Failed!
+Status: 500
+Data: {
+  "success": false,
+  "message": "The \"path\" argument must be of type string. Received undefined",
+  "requestId": "3edca322-661d-4496-8000-b9556ec556af",
+  "stack": "TypeError [ERR_INVALID_ARG_TYPE]: The \"path\" argument must be of type string. Received undefined\n    at Object.extname (node:path:1002:5)\n    at DocumentService.uploadDocument (d:\\website@Antigravity\\taxi\\backend\\services\\documentService.js:50:30)\n    at d:\\website@Antigravity\\taxi\\backend\\routes\\documents.js:56:48\n    at d:\\website@Antigravity\\taxi\\backend\\middleware\\errorHandler.js:51:21\n    at Layer.handle [as handle_request] (d:\\website@Antigravity\\taxi\\backend\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at next (d:\\website@Antigravity\\taxi\\backend\\node_modules\\express\\lib\\router\\route.js:149:13)\n    at middleware (d:\\website@Antigravity\\taxi\\backend\\node_modules\\express-validator\\lib\\middlewares\\check.js:16:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"
+}
+1. Logging in...
+✓ Login successful. Token obtained.
+✓ Test file created.
+3. Uploading document for Driver ID 1...
+❌ Verification Failed!
+Status: 500
+Data: {
+  "success": false,
+  "message": "The \"path\" argument must be of type string. Received undefined",
+  "requestId": "f2962356-62f9-4154-b4fe-d44d4535bda2",
+  "stack": "TypeError [ERR_INVALID_ARG_TYPE]: The \"path\" argument must be of type string. Received undefined\n    at Object.extname (node:path:1002:5)\n    at DocumentService.uploadDocument (d:\\website@Antigravity\\taxi\\backend\\services\\documentService.js:50:30)\n    at d:\\website@Antigravity\\taxi\\backend\\routes\\documents.js:56:48\n    at d:\\website@Antigravity\\taxi\\backend\\middleware\\errorHandler.js:51:21\n    at Layer.handle [as handle_request] (d:\\website@Antigravity\\taxi\\backend\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at next (d:\\website@Antigravity\\taxi\\backend\\node_modules\\express\\lib\\router\\route.js:149:13)\n    at middleware (d:\\website@Antigravity\\taxi\\backend\\node_modules\\express-validator\\lib\\middlewares\\check.js:16:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"
+}
+1. Logging in...
+✓ Login successful. Token obtained.
+✓ Test file created.
+3. Uploading document for Driver ID 1...
+❌ Verification Failed!
+Status: 500
+Data: {
+  "success": false,
+  "message": "The \"path\" argument must be of type string. Received undefined",
+  "requestId": "03e7e142-2b20-4f8a-ab29-88c29d02e442",
+  "stack": "TypeError [ERR_INVALID_ARG_TYPE]: The \"path\" argument must be of type string. Received undefined\n    at Object.extname (node:path:1002:5)\n    at DocumentService.uploadDocument (d:\\website@Antigravity\\taxi\\backend\\services\\documentService.js:50:30)\n    at d:\\website@Antigravity\\taxi\\backend\\routes\\documents.js:56:48\n    at d:\\website@Antigravity\\taxi\\backend\\middleware\\errorHandler.js:51:21\n    at Layer.handle [as handle_request] (d:\\website@Antigravity\\taxi\\backend\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at next (d:\\website@Antigravity\\taxi\\backend\\node_modules\\express\\lib\\router\\route.js:149:13)\n    at middleware (d:\\website@Antigravity\\taxi\\backend\\node_modules\\express-validator\\lib\\middlewares\\check.js:16:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"
+}
+1. Logging in...
+❌ Verification Failed!
+Error: Error
+1. Logging in...
+❌ Verification Failed!
+Error: Error
+1. Logging in...
+✓ Login successful. Token obtained.
+✓ Test file created.
+3. Uploading document for Driver ID 1...
+❌ Verification Failed!
+Status: 500
+Data: {
+  "success": false,
+  "message": "insert or update on table \"driver_documents\" violates foreign key constraint \"driver_documents_driver_id_fkey\"",
+  "requestId": "09a05fe4-c583-4f0e-b85b-ebdb1241722e",
+  "stack": "error: insert or update on table \"driver_documents\" violates foreign key constraint \"driver_documents_driver_id_fkey\"\n    at D:\\website@Antigravity\\taxi\\backend\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async Object.query (D:\\website@Antigravity\\taxi\\backend\\config\\database.js:31:24)\n    at async DocumentService.uploadDocument (D:\\website@Antigravity\\taxi\\backend\\services\\documentService.js:89:24)\n    at async D:\\website@Antigravity\\taxi\\backend\\routes\\documents.js:56:26"
+}
+1. Logging in...
+✓ Login successful. Token obtained.
+2a. Creating a new driver...
+❌ Verification Failed!
+Error: Cannot read properties of undefined (reading 'id')

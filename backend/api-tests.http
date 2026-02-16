@@ -1,0 +1,177 @@
+# API Testing Collection
+# Import this into Postman or use with VS Code REST Client
+
+### Variables
+@baseUrl = http://localhost:3000/api
+@token = YOUR_JWT_TOKEN_HERE
+
+### Health Check
+GET {{baseUrl}}/health
+
+### Readiness Check
+GET {{baseUrl}}/health/ready
+
+### Metrics
+GET {{baseUrl}}/health/metrics
+
+### ============================================
+### AUTHENTICATION
+### ============================================
+
+### Register User
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "admin@taxi.com",
+  "phone": "+491234567890",
+  "password": "admin123",
+  "firstName": "Admin",
+  "lastName": "User",
+  "role": "admin"
+}
+
+### Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@taxi.com",
+  "password": "admin123"
+}
+
+### ============================================
+### BOOKINGS
+### ============================================
+
+### Create Booking
+POST {{baseUrl}}/bookings
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "passengerPhone": "+491234567890",
+  "passengerName": "John Doe",
+  "pickupAddress": "Berlin Brandenburg Airport, Terminal 1",
+  "pickupLat": 52.3667,
+  "pickupLng": 13.5033,
+  "dropoffAddress": "Alexanderplatz, Berlin",
+  "dropoffLat": 52.5200,
+  "dropoffLng": 13.4050,
+  "scheduledPickupTime": "2025-01-15T14:00:00Z",
+  "fareEstimate": 45.00,
+  "paymentMethod": "cash",
+  "requirements": {
+    "vehicleType": "sedan",
+    "minLuggageCapacity": 2,
+    "needsChildSeat": false,
+    "requiresAirportPermit": true
+  }
+}
+
+### Get All Bookings
+GET {{baseUrl}}/bookings?status=pending&page=1&limit=20
+Authorization: Bearer {{token}}
+
+### Get Booking by ID
+GET {{baseUrl}}/bookings/1
+Authorization: Bearer {{token}}
+
+### Assign Driver
+PATCH {{baseUrl}}/bookings/1/assign
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "driverId": 1
+}
+
+### Driver Accepts Booking
+PATCH {{baseUrl}}/bookings/1/accept
+Authorization: Bearer {{token}}
+
+### Driver Marks Arrived (with Geo-check)
+PATCH {{baseUrl}}/bookings/1/arrive
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "lat": 52.3667,
+  "lng": 13.5033,
+  "accuracy": 12.5
+}
+
+### Start Trip
+PATCH {{baseUrl}}/bookings/1/start
+Authorization: Bearer {{token}}
+
+### Complete Trip
+PATCH {{baseUrl}}/bookings/1/complete
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "fareFinal": 48.50,
+  "driverNotes": "Passenger had extra luggage"
+}
+
+### Request No-Show
+POST {{baseUrl}}/bookings/1/no-show-request
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "evidenceIds": [1, 2],
+  "notes": "Waited 15 minutes, passenger not at pickup point"
+}
+
+### Confirm No-Show (Admin)
+PATCH {{baseUrl}}/bookings/1/no-show-confirm
+Authorization: Bearer {{token}}
+
+### Get Booking Timeline
+GET {{baseUrl}}/bookings/1/timeline
+Authorization: Bearer {{token}}
+
+### Get Booking Evidence
+GET {{baseUrl}}/bookings/1/evidence
+Authorization: Bearer {{token}}
+
+### Admin Override Status
+PATCH {{baseUrl}}/bookings/1/override
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "newStatus": "completed",
+  "reason": "GPS failure prevented normal flow completion"
+}
+
+### ============================================
+### EVIDENCE UPLOAD
+### ============================================
+
+### Upload Evidence (multipart/form-data)
+# Note: Use Postman or similar tool for actual file upload
+POST {{baseUrl}}/evidence
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data
+
+# Form fields:
+# photo: [file]
+# bookingId: 1
+# assetType: pickup_photo
+# capturedAt: 2025-01-15T14:23:45Z
+# gpsLat: 52.3667
+# gpsLng: 13.5033
+# gpsAccuracy: 12.5
+# pickupLabel: "Burger King, Terminal 1 Arrivals, Berlin Airport"
+# deviceId: "iPhone-12-ABC123"
+
+### Get Evidence by ID
+GET {{baseUrl}}/evidence/1
+Authorization: Bearer {{token}}
+
+### Get Evidence for Booking
+GET {{baseUrl}}/evidence/booking/1
+Authorization: Bearer {{token}}

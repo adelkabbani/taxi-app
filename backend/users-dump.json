@@ -1,0 +1,30 @@
+[
+  {
+    "id": 6,
+    "email": "admin@taxi.com",
+    "phone": "+491111111111",
+    "role": "admin",
+    "status": "active"
+  },
+  {
+    "id": 13,
+    "email": "hans.driver@taxi.com",
+    "phone": "+49253101",
+    "role": "driver",
+    "status": "active"
+  },
+  {
+    "id": 14,
+    "email": "klaus.driver@taxi.com",
+    "phone": "+497350890",
+    "role": "driver",
+    "status": "active"
+  },
+  {
+    "id": 15,
+    "email": "sophie.driver@taxi.com",
+    "phone": "+493601547",
+    "role": "driver",
+    "status": "active"
+  }
+]

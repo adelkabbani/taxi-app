@@ -1,0 +1,73 @@
+﻿2026-01-10 19:30:18 [[32minfo[39m]: [32mNew database connection established[39m
+Booking: TX-1767935469120-OH6D7 (ID: 13)
+- Tenant: 3
+- Pickup: Sat Jan 10 2026 19:43:00 GMT+0100 (Central European Standard Time)
+- Required Vehicle Type: sedan
+- Searching for: Day 6, Time 19:43:00
+- Potential drivers in same tenant (3): 9
+  > Driver 8 (Hans): Status=active, UserStatus=active, Vehicle=sedan
+    ­ƒôà Sched: 00:00:00 - 23:59:59, Active: true
+  > Driver 9 (Klaus): Status=active, UserStatus=active, Vehicle=sedan
+    ­ƒôà Sched: 00:00:00 - 23:59:59, Active: true
+  > Driver 10 (Sophie): Status=active, UserStatus=active, Vehicle=sedan
+    ­ƒôà Sched: 00:00:00 - 23:59:59, Active: true
+  > Driver 11 (Liam): Status=active, UserStatus=active, Vehicle=sedan
+    ­ƒôà Sched: 00:00:00 - 23:59:59, Active: true
+  > Driver 12 (Emma): Status=active, UserStatus=active, Vehicle=van
+    ­ƒôà Sched: 00:00:00 - 23:59:59, Active: true
+  > Driver 13 (Noah): Status=active, UserStatus=active, Vehicle=luxury
+    ­ƒôà Sched: 00:00:00 - 23:59:59, Active: true
+  > Driver 14 (Olivia): Status=active, UserStatus=active, Vehicle=sedan
+    ­ƒôà Sched: 00:00:00 - 23:59:59, Active: true
+  > Driver 15 (William): Status=active, UserStatus=active, Vehicle=sedan
+    ­ƒôà Sched: 00:00:00 - 23:59:59, Active: true
+  > Driver 16 (): Status=active, UserStatus=active, Vehicle=sedan
+    ­ƒôà Sched: 00:00:00 - 23:59:59, Active: true
+
+--- DRY RUN ASSIGNMENT ---
+DEBUG: Socket emissions bypassed
+Result: {
+  "id": 13,
+  "tenant_id": 3,
+  "booking_reference": "TX-1767935469120-OH6D7",
+  "passenger_id": null,
+  "driver_id": 9,
+  "vehicle_id": null,
+  "partner_id": null,
+  "status": "assigned",
+  "created_by_user_id": 6,
+  "assigned_at": null,
+  "accepted_at": null,
+  "arrived_at": null,
+  "waiting_started_at": null,
+  "started_at": null,
+  "completed_at": null,
+  "cancelled_at": null,
+  "pickup_address": "j.kjh,j,mh",
+  "pickup_lat": "52.5200000",
+  "pickup_lng": "13.4050000",
+  "dropoff_address": " bv vb vb ",
+  "dropoff_lat": null,
+  "dropoff_lng": null,
+  "scheduled_pickup_time": "2026-01-10T18:43:00.000Z",
+  "estimated_duration_minutes": null,
+  "fare_estimate": null,
+  "fare_final": null,
+  "waiting_fee": "0.00",
+  "no_show_fee": "0.00",
+  "payment_method": "cash",
+  "invoice_status": "not_required",
+  "passenger_notes": null,
+  "driver_notes": null,
+  "admin_notes": null,
+  "created_at": "2026-01-09T05:11:09.120Z",
+  "updated_at": "2026-01-09T05:11:09.120Z",
+  "passenger_name": "nrxntxyj",
+  "passenger_phone": "01000542424342",
+  "source": "manual",
+  "external_reference": null,
+  "assignment_method": "auto",
+  "auto_assignment_attempts": 1,
+  "assignment_failed_reason": "No available drivers found",
+  "last_assignment_attempt": "2026-01-10T18:30:18.598Z"
+}

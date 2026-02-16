@@ -1,0 +1,38 @@
+[
+  {
+    "column_name": "id",
+    "data_type": "integer"
+  },
+  {
+    "column_name": "driver_id",
+    "data_type": "integer"
+  },
+  {
+    "column_name": "start_time",
+    "data_type": "time without time zone"
+  },
+  {
+    "column_name": "end_time",
+    "data_type": "time without time zone"
+  },
+  {
+    "column_name": "created_at",
+    "data_type": "timestamp without time zone"
+  },
+  {
+    "column_name": "updated_at",
+    "data_type": "timestamp without time zone"
+  },
+  {
+    "column_name": "schedule_date",
+    "data_type": "date"
+  },
+  {
+    "column_name": "shift_type",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "is_holiday",
+    "data_type": "boolean"
+  }
+]

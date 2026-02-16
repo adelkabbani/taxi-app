@@ -1,0 +1,439 @@
+TABLES:
+[
+  {
+    "table_name": "tenants"
+  },
+  {
+    "table_name": "users"
+  },
+  {
+    "table_name": "vehicles"
+  },
+  {
+    "table_name": "vehicle_capabilities"
+  },
+  {
+    "table_name": "drivers"
+  },
+  {
+    "table_name": "driver_capabilities"
+  },
+  {
+    "table_name": "driver_metrics"
+  },
+  {
+    "table_name": "driver_shifts"
+  },
+  {
+    "table_name": "driver_breaks"
+  },
+  {
+    "table_name": "partners"
+  },
+  {
+    "table_name": "partner_settlements"
+  },
+  {
+    "table_name": "booking_requirements"
+  },
+  {
+    "table_name": "booking_timeline"
+  },
+  {
+    "table_name": "event_logs"
+  },
+  {
+    "table_name": "proof_assets"
+  },
+  {
+    "table_name": "external_bookings"
+  },
+  {
+    "table_name": "webhook_logs"
+  },
+  {
+    "table_name": "fraud_flags"
+  },
+  {
+    "table_name": "location_updates"
+  },
+  {
+    "table_name": "blacklist"
+  },
+  {
+    "table_name": "admin_audit_logs"
+  },
+  {
+    "table_name": "invoices"
+  },
+  {
+    "table_name": "flight_tracking"
+  },
+  {
+    "table_name": "notifications"
+  },
+  {
+    "table_name": "partner_pricing_rules"
+  },
+  {
+    "table_name": "driver_suspensions"
+  },
+  {
+    "table_name": "bookings"
+  },
+  {
+    "table_name": "assignment_attempts"
+  },
+  {
+    "table_name": "assignment_round_robin"
+  }
+]
+
+COLUMNS FOR bookings:
+[
+  {
+    "column_name": "id",
+    "data_type": "integer"
+  },
+  {
+    "column_name": "tenant_id",
+    "data_type": "integer"
+  },
+  {
+    "column_name": "booking_reference",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "passenger_id",
+    "data_type": "integer"
+  },
+  {
+    "column_name": "driver_id",
+    "data_type": "integer"
+  },
+  {
+    "column_name": "vehicle_id",
+    "data_type": "integer"
+  },
+  {
+    "column_name": "partner_id",
+    "data_type": "integer"
+  },
+  {
+    "column_name": "status",
+    "data_type": "USER-DEFINED"
+  },
+  {
+    "column_name": "created_by_user_id",
+    "data_type": "integer"
+  },
+  {
+    "column_name": "assigned_at",
+    "data_type": "timestamp without time zone"
+  },
+  {
+    "column_name": "accepted_at",
+    "data_type": "timestamp without time zone"
+  },
+  {
+    "column_name": "arrived_at",
+    "data_type": "timestamp without time zone"
+  },
+  {
+    "column_name": "waiting_started_at",
+    "data_type": "timestamp without time zone"
+  },
+  {
+    "column_name": "started_at",
+    "data_type": "timestamp without time zone"
+  },
+  {
+    "column_name": "completed_at",
+    "data_type": "timestamp without time zone"
+  },
+  {
+    "column_name": "cancelled_at",
+    "data_type": "timestamp without time zone"
+  },
+  {
+    "column_name": "pickup_address",
+    "data_type": "text"
+  },
+  {
+    "column_name": "pickup_lat",
+    "data_type": "numeric"
+  },
+  {
+    "column_name": "pickup_lng",
+    "data_type": "numeric"
+  },
+  {
+    "column_name": "dropoff_address",
+    "data_type": "text"
+  },
+  {
+    "column_name": "dropoff_lat",
+    "data_type": "numeric"
+  },
+  {
+    "column_name": "dropoff_lng",
+    "data_type": "numeric"
+  },
+  {
+    "column_name": "scheduled_pickup_time",
+    "data_type": "timestamp without time zone"
+  },
+  {
+    "column_name": "estimated_duration_minutes",
+    "data_type": "integer"
+  },
+  {
+    "column_name": "fare_estimate",
+    "data_type": "numeric"
+  },
+  {
+    "column_name": "fare_final",
+    "data_type": "numeric"
+  },
+  {
+    "column_name": "waiting_fee",
+    "data_type": "numeric"
+  },
+  {
+    "column_name": "no_show_fee",
+    "data_type": "numeric"
+  },
+  {
+    "column_name": "payment_method",
+    "data_type": "USER-DEFINED"
+  },
+  {
+    "column_name": "invoice_status",
+    "data_type": "USER-DEFINED"
+  },
+  {
+    "column_name": "passenger_notes",
+    "data_type": "text"
+  },
+  {
+    "column_name": "driver_notes",
+    "data_type": "text"
+  },
+  {
+    "column_name": "admin_notes",
+    "data_type": "text"
+  },
+  {
+    "column_name": "created_at",
+    "data_type": "timestamp without time zone"
+  },
+  {
+    "column_name": "updated_at",
+    "data_type": "timestamp without time zone"
+  },
+  {
+    "column_name": "passenger_name",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "passenger_phone",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "source",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "external_reference",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "assignment_method",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "auto_assignment_attempts",
+    "data_type": "integer"
+  }
+]
+
+COLUMNS FOR booking_requirements:
+[
+  {
+    "column_name": "id",
+    "data_type": "integer"
+  },
+  {
+    "column_name": "booking_id",
+    "data_type": "integer"
+  },
+  {
+    "column_name": "vehicle_type",
+    "data_type": "USER-DEFINED"
+  },
+  {
+    "column_name": "min_luggage_capacity",
+    "data_type": "integer"
+  },
+  {
+    "column_name": "needs_child_seat",
+    "data_type": "boolean"
+  },
+  {
+    "column_name": "needs_accessibility",
+    "data_type": "boolean"
+  },
+  {
+    "column_name": "preferred_language",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "requires_airport_permit",
+    "data_type": "boolean"
+  },
+  {
+    "column_name": "created_at",
+    "data_type": "timestamp without time zone"
+  }
+]
+
+COLUMNS FOR drivers:
+[
+  {
+    "column_name": "id",
+    "data_type": "integer"
+  },
+  {
+    "column_name": "user_id",
+    "data_type": "integer"
+  },
+  {
+    "column_name": "vehicle_id",
+    "data_type": "integer"
+  },
+  {
+    "column_name": "license_number",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "license_expiry",
+    "data_type": "date"
+  },
+  {
+    "column_name": "availability",
+    "data_type": "USER-DEFINED"
+  },
+  {
+    "column_name": "current_lat",
+    "data_type": "numeric"
+  },
+  {
+    "column_name": "current_lng",
+    "data_type": "numeric"
+  },
+  {
+    "column_name": "location_updated_at",
+    "data_type": "timestamp without time zone"
+  },
+  {
+    "column_name": "shift_started_at",
+    "data_type": "timestamp without time zone"
+  },
+  {
+    "column_name": "created_at",
+    "data_type": "timestamp without time zone"
+  },
+  {
+    "column_name": "updated_at",
+    "data_type": "timestamp without time zone"
+  }
+]
+
+COLUMNS FOR vehicles:
+[
+  {
+    "column_name": "id",
+    "data_type": "integer"
+  },
+  {
+    "column_name": "tenant_id",
+    "data_type": "integer"
+  },
+  {
+    "column_name": "license_plate",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "make",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "model",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "year",
+    "data_type": "integer"
+  },
+  {
+    "column_name": "color",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "vehicle_type",
+    "data_type": "USER-DEFINED"
+  },
+  {
+    "column_name": "status",
+    "data_type": "USER-DEFINED"
+  },
+  {
+    "column_name": "created_at",
+    "data_type": "timestamp without time zone"
+  },
+  {
+    "column_name": "updated_at",
+    "data_type": "timestamp without time zone"
+  }
+]
+
+COLUMNS FOR assignment_attempts:
+[
+  {
+    "column_name": "id",
+    "data_type": "integer"
+  },
+  {
+    "column_name": "booking_id",
+    "data_type": "integer"
+  },
+  {
+    "column_name": "driver_id",
+    "data_type": "integer"
+  },
+  {
+    "column_name": "assignment_method",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "status",
+    "data_type": "character varying"
+  },
+  {
+    "column_name": "rejection_reason",
+    "data_type": "text"
+  },
+  {
+    "column_name": "attempted_at",
+    "data_type": "timestamp without time zone"
+  },
+  {
+    "column_name": "responded_at",
+    "data_type": "timestamp without time zone"
+  },
+  {
+    "column_name": "is_current_assignment",
+    "data_type": "boolean"
+  }
+]
+

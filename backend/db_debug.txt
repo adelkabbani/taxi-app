@@ -1,0 +1,71 @@
+--- SYSTEM STATUS ---
+Tenants: [{"id":1,"name":"Default Taxi Company"},{"id":3,"name":"Berlin Taxi Co"}]
+Admin Users: [{"id":6,"tenant_id":3,"email":"admin@taxi.com"},{"id":29,"tenant_id":1,"email":"sim_admin@taxi.com"}]
+
+--- ALL DRIVERS IN DB ---
+[
+  {
+    "id": 8,
+    "first_name": "Hans",
+    "last_name": "Mueller",
+    "tenant_id": 3,
+    "availability": "busy",
+    "location_updated_at": "2025-12-21T02:28:23.072Z"
+  },
+  {
+    "id": 9,
+    "first_name": "Klaus",
+    "last_name": "Weber",
+    "tenant_id": 3,
+    "availability": "busy",
+    "location_updated_at": "2025-12-21T02:28:23.074Z"
+  },
+  {
+    "id": 10,
+    "first_name": "Sophie",
+    "last_name": "Schmidt",
+    "tenant_id": 3,
+    "availability": "busy",
+    "location_updated_at": "2025-12-21T02:28:23.075Z"
+  },
+  {
+    "id": 11,
+    "first_name": "Liam",
+    "last_name": "O'Connor (Test)",
+    "tenant_id": 3,
+    "availability": "available",
+    "location_updated_at": "2026-01-03T01:14:36.234Z"
+  },
+  {
+    "id": 12,
+    "first_name": "Emma",
+    "last_name": "Wilson (Test)",
+    "tenant_id": 3,
+    "availability": "available",
+    "location_updated_at": null
+  },
+  {
+    "id": 13,
+    "first_name": "Noah",
+    "last_name": "Patel (Test)",
+    "tenant_id": 3,
+    "availability": "available",
+    "location_updated_at": null
+  },
+  {
+    "id": 14,
+    "first_name": "Olivia",
+    "last_name": "Schmidt (Test)",
+    "tenant_id": 3,
+    "availability": "available",
+    "location_updated_at": null
+  },
+  {
+    "id": 15,
+    "first_name": "William",
+    "last_name": "Dubois (Test)",
+    "tenant_id": 3,
+    "availability": "available",
+    "location_updated_at": null
+  }
+]

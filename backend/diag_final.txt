@@ -1,0 +1,72 @@
+--- DEEP DIAGNOSIS START ---
+Booking: TX-1767935335813-B7U36 (ID: 12)
+- Tenant: 3
+- Pickup: Fri Jan 09 2026 04:38:00 GMT+0100 (Central European Standard Time)
+- Required Vehicle Type: sedan
+- Searching for: Day 5, Time 04:38:00
+- Potential drivers in same tenant (3): 9
+  > Driver 8 (Hans): Status=active, UserStatus=active, Vehicle=sedan
+    📅 Sched: 00:00:00 - 23:59:59, Active: true
+  > Driver 9 (Klaus): Status=active, UserStatus=active, Vehicle=sedan
+    📅 Sched: 00:00:00 - 23:59:59, Active: true
+  > Driver 10 (Sophie): Status=active, UserStatus=active, Vehicle=sedan
+    📅 Sched: 00:00:00 - 23:59:59, Active: true
+  > Driver 11 (Liam): Status=active, UserStatus=active, Vehicle=sedan
+    📅 Sched: 00:00:00 - 23:59:59, Active: true
+  > Driver 12 (Emma): Status=active, UserStatus=active, Vehicle=van
+    📅 Sched: 00:00:00 - 23:59:59, Active: true
+  > Driver 13 (Noah): Status=active, UserStatus=active, Vehicle=luxury
+    📅 Sched: 00:00:00 - 23:59:59, Active: true
+  > Driver 14 (Olivia): Status=active, UserStatus=active, Vehicle=sedan
+    📅 Sched: 00:00:00 - 23:59:59, Active: true
+  > Driver 15 (William): Status=active, UserStatus=active, Vehicle=sedan
+    📅 Sched: 00:00:00 - 23:59:59, Active: true
+  > Driver 16 (): Status=active, UserStatus=active, Vehicle=sedan
+    📅 Sched: 00:00:00 - 23:59:59, Active: true
+
+--- DRY RUN ASSIGNMENT ---
+Result: {
+  "id": 12,
+  "tenant_id": 3,
+  "booking_reference": "TX-1767935335813-B7U36",
+  "passenger_id": null,
+  "driver_id": 10,
+  "vehicle_id": null,
+  "partner_id": null,
+  "status": "assigned",
+  "created_by_user_id": 6,
+  "assigned_at": null,
+  "accepted_at": null,
+  "arrived_at": null,
+  "waiting_started_at": null,
+  "started_at": null,
+  "completed_at": null,
+  "cancelled_at": null,
+  "pickup_address": "tjfjftjtf",
+  "pickup_lat": "52.5200000",
+  "pickup_lng": "13.4050000",
+  "dropoff_address": "jdfjdjdrhdj",
+  "dropoff_lat": null,
+  "dropoff_lng": null,
+  "scheduled_pickup_time": "2026-01-09T03:38:00.000Z",
+  "estimated_duration_minutes": null,
+  "fare_estimate": null,
+  "fare_final": null,
+  "waiting_fee": "0.00",
+  "no_show_fee": "0.00",
+  "payment_method": "cash",
+  "invoice_status": "not_required",
+  "passenger_notes": null,
+  "driver_notes": null,
+  "admin_notes": null,
+  "created_at": "2026-01-09T05:08:55.811Z",
+  "updated_at": "2026-01-09T05:08:55.811Z",
+  "passenger_name": "dgsg",
+  "passenger_phone": "1427272782785278",
+  "source": "manual",
+  "external_reference": null,
+  "assignment_method": "auto",
+  "auto_assignment_attempts": 1,
+  "assignment_failed_reason": null,
+  "last_assignment_attempt": "2026-01-10T18:31:26.221Z"
+}

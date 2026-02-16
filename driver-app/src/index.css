@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Premium Dark Theme Tokens - Matching Fleet Command */
+  --bg-deep: #020617;
+  /* Slate 950 */
+  --bg-card: #0f172a;
+  /* Slate 900 */
+  --bg-glass: rgba(15, 23, 42, 0.7);
+
+  --primary: #0ea5e9;
+  /* Sky 500 */
+  --primary-glow: rgba(14, 165, 233, 0.5);
+
+  --accent: #6366f1;
+  /* Indigo 500 */
+  --success: #10b981;
+  /* Emerald 500 */
+  --warning: #f59e0b;
+  /* Amber 500 */
+  --danger: #f43f5e;
+  /* Rose 500 */
+
+  --text-main: #f8fafc;
+  /* Slate 50 */
+  --text-muted: #94a3b8;
+  /* Slate 400 */
+
+  --font-main: 'Inter', sans-serif;
+  --font-heading: 'Outfit', sans-serif;
+}
+
+body {
+  background: #0f172a;
+  /* Dark background for desktop presentation */
+  color: var(--text-main);
+  overscroll-behavior-y: none;
+  font-family: var(--font-main);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+  max-width: 430px;
+  /* iPhone Pro Max width */
+  height: 100vh;
+  max-height: 932px;
+  /* iPhone Pro Max height */
+  margin: 0 auto;
+  background: var(--bg-deep);
+  position: relative;
+  overflow: hidden;
+
+  /* Phone Frame Effect */
+  box-shadow:
+    0 0 0 12px #1e293b,
+    /* Bezel */
+    0 0 60px rgba(14, 165, 233, 0.15);
+  /* Glow */
+  border-radius: 40px;
+}
+
+/* Glassmorphism Utilities */
+.glass-panel {
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.8) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-header {
+  background: rgba(2, 6, 23, 0.8);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+/* Scrollbar hiding */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

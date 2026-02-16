@@ -1,0 +1,13 @@
+--- USERS ---
+{"id":1,"email":"admin@taxi.com","tenant_id":1}
+{"id":6,"email":"admin@taxi.com","tenant_id":3}
+{"id":13,"email":"hans.driver@taxi.com","tenant_id":3}
+{"id":14,"email":"klaus.driver@taxi.com","tenant_id":3}
+{"id":15,"email":"sophie.driver@taxi.com","tenant_id":3}
+--- TENANTS ---
+{"id":1,"name":"Default Taxi Company","slug":"default"}
+{"id":3,"name":"Berlin Taxi Co","slug":"berlin-taxi"}
+--- DRIVERS ---
+{"id":8,"email":"hans.driver@taxi.com","tenant_id":3}
+{"id":9,"email":"klaus.driver@taxi.com","tenant_id":3}
+{"id":10,"email":"sophie.driver@taxi.com","tenant_id":3}

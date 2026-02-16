@@ -1,0 +1,28 @@
+﻿2026-01-10 00:28:07 [[32minfo[39m]: [32mNew database connection established[39m
+Booking: TX-1767935469120-OH6D7 (ID: 13)
+- Tenant: 3
+- Pickup: Sat Jan 10 2026 19:43:00 GMT+0100 (Central European Standard Time)
+- Required Vehicle Type: sedan
+- Searching for: Day 6, Time 19:43:00
+- Potential drivers in same tenant (3): 9
+  > Driver 8 (Hans): Status=active, UserStatus=active, Vehicle=sedan
+    ­ƒôà Sched: 00:00:00 - 23:59:59, Active: true
+  > Driver 9 (Klaus): Status=active, UserStatus=active, Vehicle=sedan
+    ­ƒôà Sched: 00:00:00 - 23:59:59, Active: true
+  > Driver 10 (Sophie): Status=active, UserStatus=active, Vehicle=sedan
+    ­ƒôà Sched: 00:00:00 - 23:59:59, Active: true
+  > Driver 11 (Liam): Status=active, UserStatus=active, Vehicle=sedan
+    ­ƒôà Sched: 00:00:00 - 23:59:59, Active: true
+  > Driver 12 (Emma): Status=active, UserStatus=active, Vehicle=van
+    ­ƒôà Sched: 00:00:00 - 23:59:59, Active: true
+  > Driver 13 (Noah): Status=active, UserStatus=active, Vehicle=luxury
+    ­ƒôà Sched: 00:00:00 - 23:59:59, Active: true
+  > Driver 14 (Olivia): Status=active, UserStatus=active, Vehicle=sedan
+    ­ƒôà Sched: 00:00:00 - 23:59:59, Active: true
+  > Driver 15 (William): Status=active, UserStatus=active, Vehicle=sedan
+    ­ƒôà Sched: 00:00:00 - 23:59:59, Active: true
+  > Driver 16 (): Status=active, UserStatus=active, Vehicle=sedan
+    ­ƒôà Sched: 00:00:00 - 23:59:59, Active: true
+
+--- DRY RUN ASSIGNMENT ---
+2026-01-10 00:28:08 [[32minfo[39m]: [32mNew database connection established[39m
