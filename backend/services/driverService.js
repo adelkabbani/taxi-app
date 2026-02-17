@@ -95,7 +95,7 @@ const getAllDrivers = async (filters, tenantId) => {
 const getDriverById = async (driverId, tenantId) => {
     let query = `SELECT 
       d.*,
-      u.first_name, u.last_name, u.email, u.phone, u.plain_password,
+      u.first_name, u.last_name, u.email, u.phone,
       v.license_plate, v.vehicle_type, v.make, v.model,
       vc.luggage_capacity, vc.passenger_capacity, vc.has_child_seat, vc.has_airport_permit,
       dc.languages,
@@ -391,10 +391,10 @@ const createDriver = async (driverData, tenantId) => {
             // 1. Create User
             const passwordHash = await bcrypt.hash(password, 10);
             const userResult = await client.query(
-                `INSERT INTO users (tenant_id, role, email, phone, password_hash, plain_password, first_name, last_name)
-                 VALUES ($1, 'driver', $2, $3, $4, $5, $6, $7)
+                `INSERT INTO users (tenant_id, role, email, phone, password_hash, first_name, last_name)
+                 VALUES ($1, 'driver', $2, $3, $4, $5, $6)
                  RETURNING id`,
-                [tenantId, email, phone, passwordHash, password, firstName, lastName]
+                [tenantId, email, phone, passwordHash, firstName, lastName]
             );
             const userId = userResult.rows[0].id;
 
@@ -515,8 +515,8 @@ const updateDriverPassword = async (driverId, newPassword) => {
 
     // 3. Update users table with hash AND plain text
     await db.query(
-        'UPDATE users SET password_hash = $1, plain_password = $2 WHERE id = $3',
-        [passwordHash, newPassword, driver.rows[0].user_id]
+        'UPDATE users SET password_hash = $1 WHERE id = $2',
+        [passwordHash, driver.rows[0].user_id]
     );
 
     logger.info('Driver password updated via admin override', { driverId });
@@ -536,5 +536,45 @@ module.exports = {
     endBreak,
     suspendDriver,
     unsuspendDriver,
-    updateDriverPassword
+    updateDriverPassword,
+    softDeleteDriver: async (driverId, deletedBy) => {
+        return await db.transaction(async (client) => {
+            // 1. Soft delete driver
+            const driverResult = await client.query(
+                `UPDATE drivers 
+                 SET is_active = false, 
+                     availability = 'offline',
+                     updated_at = NOW()
+                 WHERE id = $1 
+                 RETURNING user_id`,
+                [driverId]
+            );
+
+            if (driverResult.rows.length === 0) {
+                throw new AppError('Driver not found', 404);
+            }
+
+            const userId = driverResult.rows[0].user_id;
+
+            // 2. Soft delete user (prevent login)
+            await client.query(
+                `UPDATE users 
+                 SET is_active = false, 
+                     status = 'inactive',
+                     deleted_at = NOW(),
+                     email = CONCAT(email, '_deleted_', EXTRACT(EPOCH FROM NOW())) -- unique constraint workaround
+                 WHERE id = $1`,
+                [userId]
+            );
+
+            // 3. Deactivate active suspensions
+            await client.query(
+                'UPDATE driver_suspensions SET is_active = false WHERE driver_id = $1',
+                [driverId]
+            );
+
+            logger.info('Driver soft deleted', { driverId, deletedBy });
+            return { success: true };
+        });
+    }
 };

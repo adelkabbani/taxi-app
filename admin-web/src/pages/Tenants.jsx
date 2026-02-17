@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Building2, User, Mail, Phone, Lock, Globe, ExternalLink } from 'lucide-react';
+import { Plus, Building2, User, Globe, ExternalLink, Activity, Shield, Phone, Mail, Lock } from 'lucide-react';
 import api from '../lib/api';
 import { toast } from 'react-hot-toast';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Tenants() {
     const [tenants, setTenants] = useState([]);
@@ -32,11 +33,11 @@ export default function Tenants() {
     };
 
     const handlePriorityChange = async (tenantId, newPriority, e) => {
-        e.stopPropagation(); // Prevent card click event
+        e.stopPropagation();
         try {
             await api.patch(`/tenants/${tenantId}/priority`, { priority: newPriority });
             toast.success(`Priority updated to ${newPriority}`);
-            fetchTenants(); // Refresh to show new priority
+            fetchTenants();
         } catch (error) {
             toast.error('Failed to update priority');
         }
@@ -63,66 +64,92 @@ export default function Tenants() {
     };
 
     return (
-        <div className="space-y-8">
-            <div className="flex justify-between items-center">
+        <div className="space-y-8 animate-fade-in">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Fleet Management</h1>
-                    <p className="text-slate-500 mt-1 text-sm">Manage partner companies and their fleet managers.</p>
+                    <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
+                        Fleet Management
+                    </h1>
+                    <p className="text-slate-400 mt-2 text-sm max-w-2xl">
+                        Manage partner companies, configure fleet priorities, and oversee multi-tenant operations.
+                    </p>
                 </div>
                 <button
                     onClick={() => setIsModalOpen(true)}
-                    className="flex items-center gap-2 px-6 py-3 bg-sky-500 hover:bg-sky-600 text-white rounded-2xl font-bold shadow-lg shadow-sky-500/20 transition-all hover:scale-105 active:scale-95"
+                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-black rounded-xl font-bold shadow-lg shadow-amber-500/20 transition-all hover:scale-105 active:scale-95"
                 >
                     <Plus className="w-5 h-5" />
-                    Add Partner Agency
+                    <span>Add Partner Agency</span>
                 </button>
             </div>
 
+            {/* Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {loading ? (
-                    [1, 2, 3].map(i => <div key={i} className="h-64 rounded-3xl bg-white dark:bg-slate-800 animate-pulse border border-slate-100 dark:border-slate-800" />)
+                    [1, 2, 3].map(i => (
+                        <div key={i} className="h-80 rounded-2xl bg-slate-900/50 animate-pulse border border-white/5" />
+                    ))
                 ) : tenants.length === 0 ? (
-                    <div className="col-span-full py-20 text-center">
-                        <Building2 className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-                        <h3 className="text-lg font-bold text-slate-400">No partner companies yet</h3>
+                    <div className="col-span-full py-20 text-center glass-panel rounded-2xl border border-dashed border-slate-800">
+                        <Building2 className="w-16 h-16 text-slate-700 mx-auto mb-4" />
+                        <h3 className="text-lg font-bold text-slate-500">No partner companies yet</h3>
+                        <p className="text-slate-600 text-sm mt-1">Add a new agency to get started</p>
                     </div>
                 ) : (
-                    tenants.map((tenant) => (
+                    tenants.map((tenant, index) => (
                         <div
                             key={tenant.id}
                             onClick={() => navigate(`/tenants/${tenant.id}`)}
-                            className="group cursor-pointer relative bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                            className="group cursor-pointer relative bg-[#0f1115]/80 backdrop-blur-md rounded-2xl p-6 border border-white/5 shadow-lg hover:shadow-2xl hover:border-amber-500/30 transition-all duration-300 hover:-translate-y-1 animate-power-up"
+                            style={{ animationDelay: `${index * 50}ms` }}
                         >
+                            {/* Card Header */}
                             <div className="flex items-center gap-4 mb-6">
-                                <div className="h-14 w-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-2xl font-black text-sky-500 group-hover:bg-sky-500 group-hover:text-white transition-colors">
+                                <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-amber-500/10 to-orange-500/10 border border-amber-500/20 flex items-center justify-center text-2xl font-black text-amber-500 group-hover:bg-amber-500 group-hover:text-black transition-all duration-300 shadow-[0_0_15px_rgba(245,158,11,0.1)]">
                                     {tenant.name[0]}
                                 </div>
                                 <div className="overflow-hidden">
-                                    <h3 className="text-lg font-bold text-slate-900 dark:text-white truncate">{tenant.name}</h3>
-                                    <span className="text-xs font-medium text-slate-400 uppercase tracking-tighter">Slug: {tenant.slug}</span>
+                                    <h3 className="text-lg font-bold text-white truncate group-hover:text-amber-400 transition-colors">{tenant.name}</h3>
+                                    <span className="text-xs font-medium text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                                        <Globe className="w-3 h-3" />
+                                        {tenant.slug}
+                                    </span>
                                 </div>
                             </div>
 
-                            <div className="space-y-3 mb-6">
-                                <div className="flex items-center gap-2 text-sm text-slate-500">
-                                    <Globe className="w-4 h-4" />
-                                    <span>Timezone: {tenant.timezone}</span>
+                            {/* Stats/Info */}
+                            <div className="space-y-3 mb-6 p-4 rounded-xl bg-slate-900/50 border border-white/5">
+                                <div className="flex items-center justify-between text-sm">
+                                    <div className="flex items-center gap-2 text-slate-400">
+                                        <Activity className="w-4 h-4 text-emerald-500" />
+                                        <span>Status</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <div className={`h-2 w-2 rounded-full ${tenant.is_active ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]'}`} />
+                                        <span className={`text-xs font-bold ${tenant.is_active ? 'text-emerald-400' : 'text-rose-400'}`}>
+                                            {tenant.is_active ? 'ACTIVE' : 'SUSPENDED'}
+                                        </span>
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <div className={`h-2 w-2 rounded-full ${tenant.is_active ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300'}`} />
-                                    <span className="text-xs font-bold text-slate-600 dark:text-slate-400">{tenant.is_active ? 'ACTIVE ACCOUNT' : 'SUSPENDED'}</span>
+                                <div className="flex items-center justify-between text-sm">
+                                    <div className="flex items-center gap-2 text-slate-400">
+                                        <Shield className="w-4 h-4 text-blue-500" />
+                                        <span>Timezone</span>
+                                    </div>
+                                    <span className="text-xs font-medium text-white bg-slate-800 px-2 py-0.5 rounded border border-white/5">{tenant.timezone}</span>
                                 </div>
                             </div>
 
                             {/* Priority Selection */}
-                            <div className="mb-6 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
+                            <div className="mb-6">
                                 <div className="flex items-center justify-between mb-3">
-                                    <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Priority Level</span>
-                                    <span className={`text-xs font-bold px-2 py-1 rounded-lg ${tenant.priority === 1 ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
-                                            tenant.priority === 2 ? 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400' :
-                                                tenant.priority === 3 ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' :
-                                                    tenant.priority === 4 ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' :
-                                                        'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Dispatch Priority</span>
+                                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${tenant.priority === 1 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.2)]' :
+                                            tenant.priority === 2 ? 'bg-sky-500/10 text-sky-400 border-sky-500/20' :
+                                                tenant.priority === 3 ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
+                                                    tenant.priority === 4 ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' :
+                                                        'bg-rose-500/10 text-rose-400 border-rose-500/20'
                                         }`}>
                                         {tenant.priority === 1 ? 'Highest' :
                                             tenant.priority === 2 ? 'High' :
@@ -130,28 +157,27 @@ export default function Tenants() {
                                                     tenant.priority === 4 ? 'Low' : 'Lowest'}
                                     </span>
                                 </div>
-                                <div className="flex gap-2">
+                                <div className="flex gap-1.5 bg-slate-900/50 p-1.5 rounded-xl border border-white/5">
                                     {[1, 2, 3, 4, 5].map((priority) => (
                                         <button
                                             key={priority}
                                             onClick={(e) => handlePriorityChange(tenant.id, priority, e)}
-                                            className={`flex-1 py-2 rounded-xl text-sm font-bold transition-all ${tenant.priority === priority
-                                                    ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/30 scale-105'
-                                                    : 'bg-white dark:bg-slate-700 text-slate-400 hover:text-sky-500 hover:bg-sky-50 dark:hover:bg-slate-600'
+                                            className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all relative overflow-hidden ${tenant.priority === priority
+                                                    ? 'text-white shadow-lg bg-gradient-to-b from-amber-500 to-orange-600 border border-orange-400/50'
+                                                    : 'text-slate-500 hover:text-white hover:bg-white/5'
                                                 }`}
                                         >
                                             {priority}
                                         </button>
                                     ))}
                                 </div>
-                                <p className="text-[10px] text-slate-400 mt-2 text-center">1 = Highest Priority, 5 = Lowest</p>
                             </div>
 
-                            <div className="pt-6 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center">
-                                <span className="text-[10px] font-black text-slate-300 tracking-[0.2em] uppercase">Partner Details</span>
-                                <button className="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-sky-500 hover:bg-sky-50 transition-all">
-                                    <ExternalLink className="w-5 h-5" />
-                                </button>
+                            <div className="flex justify-between items-center text-[10px] font-bold text-slate-500 pt-4 border-t border-white/5 group-hover:border-white/10 transition-colors">
+                                <span className="uppercase tracking-widest">View Details</span>
+                                <div className="flex items-center gap-2 group-hover:translate-x-1 transition-transform duration-300 text-amber-500">
+                                    <ExternalLink className="w-4 h-4" />
+                                </div>
                             </div>
                         </div>
                     ))
@@ -159,86 +185,151 @@ export default function Tenants() {
             </div>
 
             {/* Create Company Modal */}
-            {isModalOpen && (
-                <div className="fixed inset-0 z-[100] overflow-y-auto">
-                    <div className="flex min-h-full items-center justify-center p-4">
-                        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setIsModalOpen(false)} />
-
-                        <div className="relative w-full max-w-2xl transform overflow-hidden rounded-[2.5rem] bg-white dark:bg-slate-900 shadow-2xl transition-all border border-slate-200 dark:border-slate-800 p-8">
-                            <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2">Onboard New Agency</h2>
-                            <p className="text-slate-500 mb-8 text-sm">This will create a new company environment and a fleet manager account.</p>
-
-                            <form onSubmit={handleSubmit} className="space-y-6">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="col-span-1">
-                                        <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-1 mb-1 block">Company Name</label>
-                                        <input
-                                            type="text" required
-                                            placeholder="Berlin Wings"
-                                            value={formData.name}
-                                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                            className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border-none focus:ring-2 focus:ring-sky-500"
-                                        />
-                                    </div>
-                                    <div className="col-span-1">
-                                        <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-1 mb-1 block">Slug (Unique Name)</label>
-                                        <input
-                                            type="text" required
-                                            placeholder="berlin-wings"
-                                            value={formData.slug}
-                                            onChange={(e) => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/ /g, '-') })}
-                                            className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border-none focus:ring-2 focus:ring-sky-500"
-                                        />
-                                    </div>
+            <AnimatePresence>
+                {isModalOpen && (
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50"
+                            onClick={() => setIsModalOpen(false)}
+                        />
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                            <motion.div
+                                initial={{ scale: 0.95, opacity: 0, y: 20 }}
+                                animate={{ scale: 1, opacity: 1, y: 0 }}
+                                exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                                className="bg-[#0f1115] w-full max-w-2xl rounded-2xl shadow-2xl border border-amber-500/20 overflow-hidden"
+                                onClick={e => e.stopPropagation()}
+                            >
+                                <div className="px-8 py-6 border-b border-white/5 bg-gradient-to-r from-amber-500/10 to-transparent">
+                                    <h2 className="text-xl font-bold text-white flex items-center gap-3">
+                                        <div className="p-1.5 rounded-lg bg-amber-500/20 text-amber-500">
+                                            <Building2 className="w-5 h-5" />
+                                        </div>
+                                        Onboard New Agency
+                                    </h2>
+                                    <p className="text-slate-400 text-sm mt-1 ml-11">Create a new company environment and fleet manager account</p>
                                 </div>
 
-                                <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-3xl space-y-4">
-                                    <span className="text-xs font-black text-sky-500 uppercase tracking-widest">Initial Fleet Manager</span>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <input
-                                            type="text" placeholder="First Name" required
-                                            value={formData.adminFirstName}
-                                            onChange={(e) => setFormData({ ...formData, adminFirstName: e.target.value })}
-                                            className="px-4 py-3 rounded-2xl bg-white dark:bg-slate-900 border-none"
-                                        />
-                                        <input
-                                            type="text" placeholder="Last Name" required
-                                            value={formData.adminLastName}
-                                            onChange={(e) => setFormData({ ...formData, adminLastName: e.target.value })}
-                                            className="px-4 py-3 rounded-2xl bg-white dark:bg-slate-900 border-none"
-                                        />
-                                        <input
-                                            type="email" placeholder="Email" required
-                                            value={formData.adminEmail}
-                                            onChange={(e) => setFormData({ ...formData, adminEmail: e.target.value })}
-                                            className="px-4 py-3 rounded-2xl bg-white dark:bg-slate-900 border-none col-span-2"
-                                        />
-                                        <input
-                                            type="text" placeholder="Phone" required
-                                            value={formData.adminPhone}
-                                            onChange={(e) => setFormData({ ...formData, adminPhone: e.target.value })}
-                                            className="px-4 py-3 rounded-2xl bg-white dark:bg-slate-900 border-none"
-                                        />
-                                        <input
-                                            type="password" placeholder="Temporary Password" required
-                                            value={formData.adminPassword}
-                                            onChange={(e) => setFormData({ ...formData, adminPassword: e.target.value })}
-                                            className="px-4 py-3 rounded-2xl bg-white dark:bg-slate-900 border-none"
-                                        />
-                                    </div>
-                                </div>
+                                <form onSubmit={handleSubmit}>
+                                    <div className="p-8 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
 
-                                <button
-                                    type="submit"
-                                    className="w-full py-4 bg-sky-500 hover:bg-sky-600 text-white font-black rounded-2xl shadow-xl shadow-sky-500/20 transition-all"
-                                >
-                                    Activate Partner Environment
-                                </button>
-                            </form>
+                                        <div className="glass-panel p-6 rounded-xl border border-white/5 bg-white/5">
+                                            <h4 className="text-sm font-semibold text-amber-400 mb-4 flex items-center gap-2 uppercase tracking-wider">
+                                                <Building2 className="w-4 h-4" />
+                                                Company Information
+                                            </h4>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="space-y-1.5">
+                                                    <label className="text-xs text-slate-400 font-medium ml-1">Company Name</label>
+                                                    <input
+                                                        type="text" required
+                                                        placeholder="Berlin Wings"
+                                                        value={formData.name}
+                                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                                        className="w-full bg-slate-900/50 border border-slate-700 rounded-lg py-2.5 px-3 text-white focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all placeholder:text-slate-600"
+                                                    />
+                                                </div>
+                                                <div className="space-y-1.5">
+                                                    <label className="text-xs text-slate-400 font-medium ml-1">Slug (URL)</label>
+                                                    <input
+                                                        type="text" required
+                                                        placeholder="berlin-wings"
+                                                        value={formData.slug}
+                                                        onChange={(e) => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/ /g, '-') })}
+                                                        className="w-full bg-slate-900/50 border border-slate-700 rounded-lg py-2.5 px-3 text-white focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all placeholder:text-slate-600"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="glass-panel p-6 rounded-xl border border-white/5 bg-white/5">
+                                            <h4 className="text-sm font-semibold text-amber-400 mb-4 flex items-center gap-2 uppercase tracking-wider">
+                                                <User className="w-4 h-4" />
+                                                Fleet Manager Admin
+                                            </h4>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="space-y-1.5">
+                                                    <label className="text-xs text-slate-400 font-medium ml-1">First Name</label>
+                                                    <input
+                                                        type="text" required
+                                                        value={formData.adminFirstName}
+                                                        onChange={(e) => setFormData({ ...formData, adminFirstName: e.target.value })}
+                                                        className="w-full bg-slate-900/50 border border-slate-700 rounded-lg py-2.5 px-3 text-white focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all"
+                                                    />
+                                                </div>
+                                                <div className="space-y-1.5">
+                                                    <label className="text-xs text-slate-400 font-medium ml-1">Last Name</label>
+                                                    <input
+                                                        type="text" required
+                                                        value={formData.adminLastName}
+                                                        onChange={(e) => setFormData({ ...formData, adminLastName: e.target.value })}
+                                                        className="w-full bg-slate-900/50 border border-slate-700 rounded-lg py-2.5 px-3 text-white focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all"
+                                                    />
+                                                </div>
+                                                <div className="col-span-2 space-y-1.5">
+                                                    <label className="text-xs text-slate-400 font-medium ml-1">Email Address</label>
+                                                    <div className="relative">
+                                                        <Mail className="absolute left-3 top-2.5 h-4 w-4 text-slate-500" />
+                                                        <input
+                                                            type="email" required
+                                                            value={formData.adminEmail}
+                                                            onChange={(e) => setFormData({ ...formData, adminEmail: e.target.value })}
+                                                            className="w-full bg-slate-900/50 border border-slate-700 rounded-lg py-2.5 pl-10 pr-3 text-white focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="space-y-1.5">
+                                                    <label className="text-xs text-slate-400 font-medium ml-1">Phone</label>
+                                                    <div className="relative">
+                                                        <Phone className="absolute left-3 top-2.5 h-4 w-4 text-slate-500" />
+                                                        <input
+                                                            type="text" required
+                                                            value={formData.adminPhone}
+                                                            onChange={(e) => setFormData({ ...formData, adminPhone: e.target.value })}
+                                                            className="w-full bg-slate-900/50 border border-slate-700 rounded-lg py-2.5 pl-10 pr-3 text-white focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="space-y-1.5">
+                                                    <label className="text-xs text-slate-400 font-medium ml-1">Temporary Password</label>
+                                                    <div className="relative">
+                                                        <Lock className="absolute left-3 top-2.5 h-4 w-4 text-slate-500" />
+                                                        <input
+                                                            type="password" required
+                                                            value={formData.adminPassword}
+                                                            onChange={(e) => setFormData({ ...formData, adminPassword: e.target.value })}
+                                                            className="w-full bg-slate-900/50 border border-slate-700 rounded-lg py-2.5 pl-10 pr-3 text-white focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="px-8 py-5 bg-slate-900/80 border-t border-white/5 flex justify-end gap-3 backdrop-blur-md">
+                                        <button
+                                            type="button"
+                                            onClick={() => setIsModalOpen(false)}
+                                            className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            className="px-6 py-2 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-black font-bold rounded-lg text-sm shadow-lg shadow-amber-500/20 transition-all transform hover:-translate-y-0.5"
+                                        >
+                                            Activate Partner Environment
+                                        </button>
+                                    </div>
+                                </form>
+                            </motion.div>
                         </div>
-                    </div>
-                </div>
-            )}
+                    </>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

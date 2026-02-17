@@ -1,53 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import {
     X, MapPin, Clock, User, Phone, Car, FileText, DollarSign, Navigation,
-    CheckCircle, XCircle, AlertTriangle, Play, Flag, UserCheck, Eye
+    CheckCircle, XCircle, AlertTriangle, Play, Flag, UserCheck, Eye, CreditCard
 } from 'lucide-react';
 import api from '../lib/api';
 import { toast } from 'react-hot-toast';
 import StatusBadge from './StatusBadge';
 import SourceBadge from './SourceBadge';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Timeline event icons
 const timelineIcons = {
-    booking_created: { icon: FileText, color: 'bg-blue-500' },
-    driver_assigned: { icon: UserCheck, color: 'bg-indigo-500' },
-    booking_accepted: { icon: CheckCircle, color: 'bg-emerald-500' },
-    driver_arrived: { icon: MapPin, color: 'bg-purple-500' },
-    waiting_started: { icon: Clock, color: 'bg-orange-500' },
-    trip_started: { icon: Play, color: 'bg-sky-500' },
-    trip_completed: { icon: Flag, color: 'bg-emerald-600' },
-    booking_cancelled: { icon: XCircle, color: 'bg-red-500' },
-    no_show_requested: { icon: AlertTriangle, color: 'bg-amber-500' },
-    no_show_confirmed: { icon: AlertTriangle, color: 'bg-red-600' },
-    admin_override: { icon: Eye, color: 'bg-slate-500' }
+    booking_created: { icon: FileText, color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
+    driver_assigned: { icon: UserCheck, color: 'text-indigo-400', bg: 'bg-indigo-500/10', border: 'border-indigo-500/20' },
+    booking_accepted: { icon: CheckCircle, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
+    driver_arrived: { icon: MapPin, color: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20' },
+    waiting_started: { icon: Clock, color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20' },
+    trip_started: { icon: Play, color: 'text-sky-400', bg: 'bg-sky-500/10', border: 'border-sky-500/20' },
+    trip_completed: { icon: Flag, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
+    booking_cancelled: { icon: XCircle, color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/20' },
+    no_show_requested: { icon: AlertTriangle, color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20' },
+    no_show_confirmed: { icon: AlertTriangle, color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/20' },
+    admin_override: { icon: Eye, color: 'text-slate-400', bg: 'bg-slate-500/10', border: 'border-slate-500/20' }
 };
 
 const statusActions = {
     pending: [
-        { action: 'cancelled', label: 'Cancel Booking', color: 'bg-red-500 hover:bg-red-600', requiresReason: true }
+        { action: 'cancelled', label: 'Cancel Booking', color: 'bg-rose-500/10 text-rose-400 border-rose-500/20 hover:bg-rose-500/20', requiresReason: true }
     ],
     assigned: [
-        { action: 'pending', label: 'Unassign Driver', color: 'bg-slate-500 hover:bg-slate-600' },
-        { action: 'cancelled', label: 'Cancel Booking', color: 'bg-red-500 hover:bg-red-600', requiresReason: true }
+        { action: 'pending', label: 'Unassign Driver', color: 'bg-slate-500/10 text-slate-300 border-slate-500/20 hover:bg-slate-500/20' },
+        { action: 'cancelled', label: 'Cancel Booking', color: 'bg-rose-500/10 text-rose-400 border-rose-500/20 hover:bg-rose-500/20', requiresReason: true }
     ],
     accepted: [
-        { action: 'cancelled', label: 'Cancel Booking', color: 'bg-red-500 hover:bg-red-600', requiresReason: true }
+        { action: 'cancelled', label: 'Cancel Booking', color: 'bg-rose-500/10 text-rose-400 border-rose-500/20 hover:bg-rose-500/20', requiresReason: true }
     ],
     arrived: [
-        { action: 'started', label: 'Start Trip (Override)', color: 'bg-sky-500 hover:bg-sky-600' },
-        { action: 'cancelled', label: 'Cancel Booking', color: 'bg-red-500 hover:bg-red-600', requiresReason: true }
+        { action: 'started', label: 'Start Trip (Override)', color: 'bg-sky-500/10 text-sky-400 border-sky-500/20 hover:bg-sky-500/20' },
+        { action: 'cancelled', label: 'Cancel Booking', color: 'bg-rose-500/10 text-rose-400 border-rose-500/20 hover:bg-rose-500/20', requiresReason: true }
     ],
     waiting_started: [
-        { action: 'started', label: 'Start Trip (Override)', color: 'bg-sky-500 hover:bg-sky-600' },
-        { action: 'no_show_confirmed', label: 'Confirm No-Show', color: 'bg-amber-500 hover:bg-amber-600' }
+        { action: 'started', label: 'Start Trip (Override)', color: 'bg-sky-500/10 text-sky-400 border-sky-500/20 hover:bg-sky-500/20' },
+        { action: 'no_show_confirmed', label: 'Confirm No-Show', color: 'bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-500/20' }
     ],
     started: [
-        { action: 'completed', label: 'Complete Trip (Override)', color: 'bg-emerald-500 hover:bg-emerald-600' }
+        { action: 'completed', label: 'Complete Trip (Override)', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20' }
     ],
     no_show_requested: [
-        { action: 'no_show_confirmed', label: 'Confirm No-Show', color: 'bg-red-500 hover:bg-red-600' },
-        { action: 'cancelled', label: 'Reject & Cancel', color: 'bg-slate-500 hover:bg-slate-600' }
+        { action: 'no_show_confirmed', label: 'Confirm No-Show', color: 'bg-rose-500/10 text-rose-400 border-rose-500/20 hover:bg-rose-500/20' },
+        { action: 'cancelled', label: 'Reject & Cancel', color: 'bg-slate-500/10 text-slate-300 border-slate-500/20 hover:bg-slate-500/20' }
     ]
 };
 
@@ -143,392 +144,415 @@ const BookingDetailsModal = ({ bookingId, isOpen, onClose, onUpdate }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
-            <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
-                <div className="fixed inset-0 transition-opacity" aria-hidden="true" onClick={onClose}>
-                    <div className="absolute inset-0 bg-slate-900 opacity-75"></div>
-                </div>
+        <AnimatePresence>
+            <div className="fixed inset-0 z-50 overflow-y-auto">
+                <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 transition-opacity backdrop-blur-sm"
+                        onClick={onClose}
+                    >
+                        <div className="absolute inset-0 bg-obsidian-950/80"></div>
+                    </motion.div>
 
-                <div className="inline-block align-bottom bg-white dark:bg-dark-card rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full border border-slate-200 dark:border-slate-800">
-                    {loading ? (
-                        <div className="flex justify-center items-center py-20">
-                            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-sky-500"></div>
-                        </div>
-                    ) : booking ? (
-                        <>
-                            {/* Header */}
-                            <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-gradient-to-r from-slate-800 to-slate-900">
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <div className="flex items-center gap-3">
-                                            <h3 className="text-lg font-bold text-white">
-                                                #{booking.booking_reference}
-                                            </h3>
-                                            <StatusBadge status={booking.status} />
-                                        </div>
-                                        <div className="flex items-center gap-2 mt-2">
-                                            <SourceBadge source={booking.source} partnerName={booking.partner_name} />
-                                            <span className="text-slate-400 text-sm">
-                                                Created {formatDate(booking.created_at)}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <button onClick={onClose} className="text-slate-400 hover:text-white">
-                                        <X className="h-6 w-6" />
-                                    </button>
-                                </div>
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                        className="inline-block align-bottom glass-panel rounded-2xl text-left overflow-hidden shadow-2xl shadow-obsidian-950/50 transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full border border-white/10"
+                    >
+                        {loading ? (
+                            <div className="flex justify-center items-center py-20">
+                                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gold-500"></div>
                             </div>
-
-                            {/* Tabs */}
-                            <div className="border-b border-slate-200 dark:border-slate-700">
-                                <div className="flex">
-                                    <button
-                                        onClick={() => setActiveTab('details')}
-                                        className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'details'
-                                            ? 'border-sky-500 text-sky-600 dark:text-sky-400'
-                                            : 'border-transparent text-slate-500 hover:text-slate-700'
-                                            }`}
-                                    >
-                                        Details
-                                    </button>
-                                    <button
-                                        onClick={() => setActiveTab('timeline')}
-                                        className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'timeline'
-                                            ? 'border-sky-500 text-sky-600 dark:text-sky-400'
-                                            : 'border-transparent text-slate-500 hover:text-slate-700'
-                                            }`}
-                                    >
-                                        Timeline ({timeline.length})
-                                    </button>
-                                    <button
-                                        onClick={() => setActiveTab('actions')}
-                                        className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'actions'
-                                            ? 'border-sky-500 text-sky-600 dark:text-sky-400'
-                                            : 'border-transparent text-slate-500 hover:text-slate-700'
-                                            }`}
-                                    >
-                                        Actions
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Content */}
-                            <div className="px-6 py-4 max-h-[calc(100vh-300px)] overflow-y-auto">
-                                {activeTab === 'details' && (
-                                    <div className="space-y-6">
-                                        {/* Passenger Info */}
+                        ) : booking ? (
+                            <>
+                                {/* Header */}
+                                <div className="px-6 py-5 border-b border-white/10 bg-gradient-to-r from-obsidian-900 to-obsidian-800">
+                                    <div className="flex justify-between items-start">
                                         <div>
-                                            <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
-                                                <User className="w-4 h-4 text-sky-500" />
-                                                Passenger
-                                            </h4>
-                                            <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg">
-                                                <p className="font-bold text-slate-900 dark:text-white">
-                                                    {booking.passenger_name || 'Unknown'}
-                                                </p>
-                                                <p className="text-sm text-slate-500 flex items-center gap-2 mt-1">
-                                                    <Phone className="w-3 h-3" />
-                                                    {booking.passenger_phone || '-'}
-                                                </p>
+                                            <div className="flex items-center gap-3">
+                                                <h3 className="text-xl font-black text-white tracking-tight flex items-center gap-2">
+                                                    <span className="text-gold-500">#</span>{booking.booking_reference}
+                                                </h3>
+                                                <StatusBadge status={booking.status} />
+                                            </div>
+                                            <div className="flex items-center gap-2 mt-2">
+                                                <SourceBadge source={booking.source} partnerName={booking.partner_name} />
+                                                <span className="text-slate-400 text-xs font-medium">
+                                                    Created {formatDate(booking.created_at)}
+                                                </span>
                                             </div>
                                         </div>
-
-
-                                        {/* Service Details */}
-                                        <div>
-                                            <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
-                                                <Car className="w-4 h-4 text-sky-500" />
-                                                Service Details
-                                            </h4>
-                                            <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg flex flex-wrap gap-8">
-                                                <div>
-                                                    <p className="text-xs text-slate-500 uppercase">Service Level</p>
-                                                    <p className="font-bold text-slate-900 dark:text-white capitalize">
-                                                        {booking.service_type?.replace(/_/g, ' ') || 'Standard'}
-                                                    </p>
-                                                </div>
-                                                {booking.flight_number && (
-                                                    <div>
-                                                        <p className="text-xs text-slate-500 uppercase">Flight Number</p>
-                                                        <p className="font-bold text-slate-900 dark:text-white">
-                                                            {booking.flight_number}
-                                                        </p>
-                                                    </div>
-                                                )}
-                                                {booking.group_id && (
-                                                    <div>
-                                                        <p className="text-xs text-slate-500 uppercase">Group ID</p>
-                                                        <p className="font-mono text-slate-900 dark:text-white text-sm">
-                                                            {booking.group_id}
-                                                        </p>
-                                                    </div>
-                                                )}
-                                                {booking.passenger_count > 1 && (
-                                                    <div>
-                                                        <p className="text-xs text-slate-500 uppercase">Passengers</p>
-                                                        <p className="font-bold text-slate-900 dark:text-white">
-                                                            {booking.passenger_count}
-                                                        </p>
-                                                    </div>
-                                                )}
-                                                {booking.luggage_count > 0 && (
-                                                    <div>
-                                                        <p className="text-xs text-slate-500 uppercase">Luggage</p>
-                                                        <p className="font-bold text-slate-900 dark:text-white">
-                                                            {booking.luggage_count}
-                                                        </p>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-
-                                        {/* Locations */}
-                                        <div>
-                                            <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
-                                                <MapPin className="w-4 h-4 text-emerald-500" />
-                                                Route
-                                            </h4>
-                                            <div className="space-y-3">
-                                                <div className="bg-emerald-50 dark:bg-emerald-900/20 p-4 rounded-lg border-l-4 border-emerald-500">
-                                                    <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium uppercase">Pickup</p>
-                                                    <p className="text-slate-900 dark:text-white mt-1">{booking.pickup_address}</p>
-                                                    <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">
-                                                        <Clock className="w-3 h-3" />
-                                                        {formatDate(booking.scheduled_pickup_time) || 'ASAP'}
-                                                    </p>
-                                                </div>
-                                                {booking.dropoff_address && (
-                                                    <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg border-l-4 border-red-500">
-                                                        <p className="text-xs text-red-600 dark:text-red-400 font-medium uppercase">Dropoff</p>
-                                                        <p className="text-slate-900 dark:text-white mt-1">{booking.dropoff_address}</p>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-
-                                        {/* Driver Info */}
-                                        {booking.driver_name && (
-                                            <div>
-                                                <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
-                                                    <Car className="w-4 h-4 text-indigo-500" />
-                                                    Assigned Driver
-                                                </h4>
-                                                <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg flex justify-between items-center">
-                                                    <div>
-                                                        <p className="font-bold text-slate-900 dark:text-white">{booking.driver_name}</p>
-                                                        <p className="text-sm text-slate-500">{booking.driver_phone}</p>
-                                                    </div>
-                                                    <div className="text-right">
-                                                        <p className="font-bold text-slate-900 dark:text-white">{booking.license_plate}</p>
-                                                        <p className="text-xs text-slate-500 uppercase">{booking.vehicle_type}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {/* Pricing */}
-                                        <div>
-                                            <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
-                                                <DollarSign className="w-4 h-4 text-emerald-500" />
-                                                Pricing
-                                            </h4>
-                                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                                <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg text-center">
-                                                    <p className="text-xs text-slate-500 uppercase">Estimate</p>
-                                                    <p className="font-bold text-slate-900 dark:text-white">{formatCurrency(booking.fare_estimate)}</p>
-                                                </div>
-                                                <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg text-center">
-                                                    <p className="text-xs text-slate-500 uppercase">Final</p>
-                                                    <p className="font-bold text-emerald-600">{formatCurrency(booking.fare_final)}</p>
-                                                </div>
-                                                <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg text-center">
-                                                    <p className="text-xs text-slate-500 uppercase">Waiting</p>
-                                                    <p className="font-bold text-amber-600">{formatCurrency(booking.waiting_fee)}</p>
-                                                </div>
-                                                <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg text-center">
-                                                    <p className="text-xs text-slate-500 uppercase">Payment</p>
-                                                    <p className="font-bold text-slate-900 dark:text-white capitalize">{booking.payment_method?.replace('_', ' ') || '-'}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* Notes */}
-                                        {(booking.passenger_notes || booking.driver_notes || booking.admin_notes) && (
-                                            <div>
-                                                <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
-                                                    <FileText className="w-4 h-4 text-slate-500" />
-                                                    Notes
-                                                </h4>
-                                                <div className="space-y-2">
-                                                    {booking.passenger_notes && (
-                                                        <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg text-sm">
-                                                            <p className="text-xs text-blue-600 font-medium mb-1">Passenger</p>
-                                                            <p className="text-slate-700 dark:text-slate-300">{booking.passenger_notes}</p>
-                                                        </div>
-                                                    )}
-                                                    {booking.driver_notes && (
-                                                        <div className="bg-indigo-50 dark:bg-indigo-900/20 p-3 rounded-lg text-sm">
-                                                            <p className="text-xs text-indigo-600 font-medium mb-1">Driver</p>
-                                                            <p className="text-slate-700 dark:text-slate-300">{booking.driver_notes}</p>
-                                                        </div>
-                                                    )}
-                                                    {booking.admin_notes && (
-                                                        <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-lg text-sm">
-                                                            <p className="text-xs text-slate-600 font-medium mb-1">Admin</p>
-                                                            <p className="text-slate-700 dark:text-slate-300">{booking.admin_notes}</p>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        )}
+                                        <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg">
+                                            <X className="h-6 w-6" />
+                                        </button>
                                     </div>
-                                )}
+                                </div>
 
-                                {activeTab === 'timeline' && (
-                                    <div className="relative">
-                                        {timeline.length === 0 ? (
-                                            <div className="text-center py-12 text-slate-500">
-                                                <Clock className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                                                <p>No timeline events yet</p>
+                                {/* Tabs */}
+                                <div className="border-b border-white/10 bg-obsidian-900/50">
+                                    <div className="flex px-4">
+                                        {['details', 'timeline', 'actions'].map((tab) => (
+                                            <button
+                                                key={tab}
+                                                onClick={() => setActiveTab(tab)}
+                                                className={`px-6 py-4 text-sm font-bold border-b-2 transition-all capitalize ${activeTab === tab
+                                                    ? 'border-gold-500 text-gold-400'
+                                                    : 'border-transparent text-slate-500 hover:text-slate-300'
+                                                    }`}
+                                            >
+                                                {tab} {tab === 'timeline' && `(${timeline.length})`}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Content */}
+                                <div className="px-6 py-6 max-h-[calc(100vh-300px)] overflow-y-auto custom-scrollbar">
+                                    {activeTab === 'details' && (
+                                        <div className="space-y-6">
+                                            {/* Passenger Info */}
+                                            <div>
+                                                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                                                    <User className="w-4 h-4 text-gold-500" />
+                                                    Passenger
+                                                </h4>
+                                                <div className="bg-white/5 border border-white/5 p-4 rounded-xl flex items-center justify-between">
+                                                    <div>
+                                                        <p className="font-bold text-lg text-white">
+                                                            {booking.passenger_name || 'Unknown'}
+                                                        </p>
+                                                        <p className="text-sm text-slate-400 flex items-center gap-2 mt-1">
+                                                            <Phone className="w-3 h-3" />
+                                                            {booking.passenger_phone || '-'}
+                                                        </p>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        ) : (
-                                            <div className="space-y-0">
-                                                {timeline.map((event, index) => {
-                                                    const eventConfig = timelineIcons[event.event_type] || { icon: FileText, color: 'bg-slate-400' };
-                                                    const IconComponent = eventConfig.icon;
-                                                    const isLast = index === timeline.length - 1;
 
-                                                    return (
-                                                        <div key={event.id} className="flex gap-4">
-                                                            <div className="relative flex flex-col items-center">
-                                                                <div className={`w-8 h-8 rounded-full ${eventConfig.color} flex items-center justify-center z-10`}>
-                                                                    <IconComponent className="w-4 h-4 text-white" />
+                                            {/* Service Details */}
+                                            <div>
+                                                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                                                    <Car className="w-4 h-4 text-sky-500" />
+                                                    Service Details
+                                                </h4>
+                                                <div className="bg-white/5 border border-white/5 p-4 rounded-xl flex flex-wrap gap-8">
+                                                    <div>
+                                                        <p className="text-[10px] text-slate-500 uppercase font-bold">Service Level</p>
+                                                        <p className="font-bold text-white capitalize text-sm mt-0.5">
+                                                            {booking.service_type?.replace(/_/g, ' ') || 'Standard'}
+                                                        </p>
+                                                    </div>
+                                                    {booking.flight_number && (
+                                                        <div>
+                                                            <p className="text-[10px] text-slate-500 uppercase font-bold">Flight Number</p>
+                                                            <p className="font-bold text-white text-sm mt-0.5">
+                                                                {booking.flight_number}
+                                                            </p>
+                                                        </div>
+                                                    )}
+                                                    {booking.group_id && (
+                                                        <div>
+                                                            <p className="text-[10px] text-slate-500 uppercase font-bold">Group ID</p>
+                                                            <p className="font-mono text-gold-400 text-sm mt-0.5">
+                                                                {booking.group_id}
+                                                            </p>
+                                                        </div>
+                                                    )}
+                                                    {booking.passenger_count > 1 && (
+                                                        <div>
+                                                            <p className="text-[10px] text-slate-500 uppercase font-bold">Pax</p>
+                                                            <p className="font-bold text-white text-sm mt-0.5">
+                                                                {booking.passenger_count}
+                                                            </p>
+                                                        </div>
+                                                    )}
+                                                    {booking.luggage_count > 0 && (
+                                                        <div>
+                                                            <p className="text-[10px] text-slate-500 uppercase font-bold">Luggage</p>
+                                                            <p className="font-bold text-white text-sm mt-0.5">
+                                                                {booking.luggage_count}
+                                                            </p>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {/* Locations */}
+                                            <div>
+                                                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                                                    <MapPin className="w-4 h-4 text-emerald-500" />
+                                                    Route
+                                                </h4>
+                                                <div className="space-y-3">
+                                                    <div className="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-xl">
+                                                        <div className="flex items-start gap-3">
+                                                            <div className="w-2 h-2 rounded-full bg-emerald-500 mt-2 shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
+                                                            <div>
+                                                                <p className="text-xs text-emerald-400 font-bold uppercase tracking-wider mb-1">Pickup</p>
+                                                                <p className="text-white font-medium">{booking.pickup_address}</p>
+                                                                <p className="text-xs text-slate-400 mt-1 flex items-center gap-1 font-mono">
+                                                                    <Clock className="w-3 h-3" />
+                                                                    {formatDate(booking.scheduled_pickup_time) || 'ASAP'}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {booking.dropoff_address && (
+                                                        <div className="bg-rose-500/10 border border-rose-500/20 p-4 rounded-xl">
+                                                            <div className="flex items-start gap-3">
+                                                                <div className="w-2 h-2 rounded-full bg-rose-500 mt-2 shadow-[0_0_10px_rgba(244,63,94,0.5)]"></div>
+                                                                <div>
+                                                                    <p className="text-xs text-rose-400 font-bold uppercase tracking-wider mb-1">Dropoff</p>
+                                                                    <p className="text-white font-medium">{booking.dropoff_address}</p>
                                                                 </div>
-                                                                {!isLast && (
-                                                                    <div className="w-0.5 bg-slate-200 dark:bg-slate-700 flex-1 min-h-[40px]"></div>
-                                                                )}
-                                                            </div>
-                                                            <div className={`flex-1 ${!isLast ? 'pb-6' : ''}`}>
-                                                                <p className="font-medium text-slate-900 dark:text-white capitalize">
-                                                                    {event.event_type.replace(/_/g, ' ')}
-                                                                </p>
-                                                                <p className="text-xs text-slate-500 mt-0.5">
-                                                                    {formatDate(event.created_at)}
-                                                                    {event.actor_type && (
-                                                                        <span className="ml-2 text-slate-400">
-                                                                            by {event.actor_type}
-                                                                        </span>
-                                                                    )}
-                                                                </p>
-                                                                {event.details && typeof event.details === 'object' && Object.keys(event.details).length > 0 && (
-                                                                    <div className="mt-2 text-xs bg-slate-50 dark:bg-slate-800 p-2 rounded font-mono text-slate-600 dark:text-slate-400">
-                                                                        {JSON.stringify(event.details, null, 2)}
-                                                                    </div>
-                                                                )}
                                                             </div>
                                                         </div>
-                                                    );
-                                                })}
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-
-                                {activeTab === 'actions' && (
-                                    <div className="space-y-6">
-                                        {/* Status Override Actions */}
-                                        <div>
-                                            <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-3">
-                                                Status Actions
-                                            </h4>
-                                            {statusActions[booking.status] ? (
-                                                <div className="flex flex-wrap gap-2">
-                                                    {statusActions[booking.status].map(action => (
-                                                        <button
-                                                            key={action.action}
-                                                            onClick={() => handleStatusChange(action.action, action.requiresReason)}
-                                                            disabled={actionLoading}
-                                                            className={`px-4 py-2 ${action.color} text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50`}
-                                                        >
-                                                            {action.label}
-                                                        </button>
-                                                    ))}
+                                                    )}
                                                 </div>
-                                            ) : (
-                                                <p className="text-sm text-slate-500">No actions available for this status</p>
+                                            </div>
+
+                                            {/* Driver Info */}
+                                            {booking.driver_name && (
+                                                <div>
+                                                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                                                        <Car className="w-4 h-4 text-indigo-400" />
+                                                        Assigned Driver
+                                                    </h4>
+                                                    <div className="bg-white/5 border border-white/5 p-4 rounded-xl flex justify-between items-center">
+                                                        <div>
+                                                            <p className="font-bold text-white text-lg">{booking.driver_name}</p>
+                                                            <p className="text-sm text-slate-400 flex items-center gap-2 mt-1">
+                                                                <Phone className="w-3 h-3" />
+                                                                {booking.driver_phone}
+                                                            </p>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <p className="font-mono text-gold-400 font-bold text-lg">{booking.license_plate}</p>
+                                                            <p className="text-xs text-slate-500 uppercase font-bold mt-1">{booking.vehicle_type}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Pricing */}
+                                            <div>
+                                                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                                                    <DollarSign className="w-4 h-4 text-emerald-500" />
+                                                    Pricing
+                                                </h4>
+                                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                                    <div className="bg-white/5 border border-white/5 p-3 rounded-xl text-center">
+                                                        <p className="text-[10px] text-slate-500 uppercase font-bold mb-1">Estimate</p>
+                                                        <p className="font-mono font-bold text-slate-300">{formatCurrency(booking.fare_estimate)}</p>
+                                                    </div>
+                                                    <div className="bg-emerald-500/10 border border-emerald-500/20 p-3 rounded-xl text-center">
+                                                        <p className="text-[10px] text-emerald-400 uppercase font-bold mb-1">Final</p>
+                                                        <p className="font-mono font-bold text-emerald-400 text-lg">{formatCurrency(booking.fare_final)}</p>
+                                                    </div>
+                                                    <div className="bg-white/5 border border-white/5 p-3 rounded-xl text-center">
+                                                        <p className="text-[10px] text-slate-500 uppercase font-bold mb-1">Waiting</p>
+                                                        <p className="font-mono font-bold text-amber-500">{formatCurrency(booking.waiting_fee)}</p>
+                                                    </div>
+                                                    <div className="bg-white/5 border border-white/5 p-3 rounded-xl text-center">
+                                                        <p className="text-[10px] text-slate-500 uppercase font-bold mb-1">Method</p>
+                                                        <div className="flex items-center justify-center gap-1.5 text-white">
+                                                            <CreditCard className="w-3 h-3 text-slate-400" />
+                                                            <p className="text-sm font-bold capitalize">{booking.payment_method?.replace('_', ' ') || 'Cash'}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Notes */}
+                                            {(booking.passenger_notes || booking.driver_notes || booking.admin_notes) && (
+                                                <div>
+                                                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                                                        <FileText className="w-4 h-4 text-slate-500" />
+                                                        Notes
+                                                    </h4>
+                                                    <div className="space-y-3">
+                                                        {booking.passenger_notes && (
+                                                            <div className="bg-blue-500/10 border border-blue-500/20 p-4 rounded-xl text-sm">
+                                                                <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-2">Passenger Note</p>
+                                                                <p className="text-white leading-relaxed">{booking.passenger_notes}</p>
+                                                            </div>
+                                                        )}
+                                                        {booking.driver_notes && (
+                                                            <div className="bg-indigo-500/10 border border-indigo-500/20 p-4 rounded-xl text-sm">
+                                                                <p className="text-xs text-indigo-400 font-bold uppercase tracking-wider mb-2">Driver Note</p>
+                                                                <p className="text-white leading-relaxed">{booking.driver_notes}</p>
+                                                            </div>
+                                                        )}
+                                                        {booking.admin_notes && (
+                                                            <div className="bg-white/5 border border-white/10 p-4 rounded-xl text-sm">
+                                                                <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-2">Admin Note</p>
+                                                                <p className="text-slate-200 leading-relaxed font-mono">{booking.admin_notes}</p>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
                                             )}
                                         </div>
+                                    )}
 
-                                        {/* Reason Input */}
-                                        {showReasonInput && (
-                                            <div className="bg-amber-50 dark:bg-amber-900/20 p-4 rounded-lg border border-amber-200 dark:border-amber-800">
-                                                <label className="block text-sm font-medium text-amber-800 dark:text-amber-300 mb-2">
-                                                    Reason for action (required)
-                                                </label>
-                                                <textarea
-                                                    value={overrideReason}
-                                                    onChange={(e) => setOverrideReason(e.target.value)}
-                                                    rows="2"
-                                                    className="w-full px-3 py-2 border border-amber-300 dark:border-amber-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent resize-none text-sm"
-                                                    placeholder="Enter reason for this action..."
-                                                />
-                                                <div className="flex gap-2 mt-3">
-                                                    <button
-                                                        onClick={confirmAction}
-                                                        disabled={!overrideReason || actionLoading}
-                                                        className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium disabled:opacity-50"
-                                                    >
-                                                        Confirm
-                                                    </button>
-                                                    <button
-                                                        onClick={() => {
-                                                            setShowReasonInput(false);
-                                                            setOverrideReason('');
-                                                            setPendingAction(null);
-                                                        }}
-                                                        className="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-medium"
-                                                    >
-                                                        Cancel
-                                                    </button>
+                                    {activeTab === 'timeline' && (
+                                        <div className="relative pl-2">
+                                            {timeline.length === 0 ? (
+                                                <div className="text-center py-12 text-slate-500">
+                                                    <Clock className="w-12 h-12 mx-auto mb-3 opacity-20" />
+                                                    <p>No timeline events yet</p>
                                                 </div>
-                                            </div>
-                                        )}
+                                            ) : (
+                                                <div className="space-y-0">
+                                                    {timeline.map((event, index) => {
+                                                        const eventConfig = timelineIcons[event.event_type] || { icon: FileText, color: 'text-slate-400', bg: 'bg-white/5', border: 'border-white/10' };
+                                                        const IconComponent = eventConfig.icon;
+                                                        const isLast = index === timeline.length - 1;
 
-                                        {/* Warning */}
-                                        <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-lg">
-                                            <div className="flex items-start gap-3">
-                                                <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
-                                                <div className="text-sm text-slate-600 dark:text-slate-400">
-                                                    <p className="font-medium text-slate-900 dark:text-white">Admin Override Warning</p>
-                                                    <p className="mt-1">
-                                                        Status changes bypass normal state machine validations. All overrides are logged for audit purposes
-                                                        and may affect driver metrics.
-                                                    </p>
+                                                        return (
+                                                            <div key={event.id} className="flex gap-4">
+                                                                <div className="relative flex flex-col items-center">
+                                                                    <div className={`w-8 h-8 rounded-full ${eventConfig.bg} ${eventConfig.border} border flex items-center justify-center z-10 shadow-lg`}>
+                                                                        <IconComponent className={`w-4 h-4 ${eventConfig.color}`} />
+                                                                    </div>
+                                                                    {!isLast && (
+                                                                        <div className="w-0.5 bg-white/10 flex-1 min-h-[40px] my-1"></div>
+                                                                    )}
+                                                                </div>
+                                                                <div className={`flex-1 ${!isLast ? 'pb-8' : ''}`}>
+                                                                    <p className="font-bold text-white capitalize text-sm">
+                                                                        {event.event_type.replace(/_/g, ' ')}
+                                                                    </p>
+                                                                    <p className="text-xs text-slate-500 mt-1 font-mono">
+                                                                        {formatDate(event.created_at)}
+                                                                        {event.actor_type && (
+                                                                            <span className="ml-2 text-slate-600 bg-white/5 px-1.5 py-0.5 rounded">
+                                                                                {event.actor_type}
+                                                                            </span>
+                                                                        )}
+                                                                    </p>
+                                                                    {event.details && typeof event.details === 'object' && Object.keys(event.details).length > 0 && (
+                                                                        <div className="mt-3 text-xs bg-black/30 border border-white/5 p-3 rounded-lg font-mono text-slate-400 whitespace-pre-wrap">
+                                                                            {JSON.stringify(event.details, null, 2).replace(/[{}"]/g, '')}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {activeTab === 'actions' && (
+                                        <div className="space-y-6">
+                                            {/* Status Override Actions */}
+                                            <div>
+                                                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">
+                                                    Status Actions
+                                                </h4>
+                                                {statusActions[booking.status] ? (
+                                                    <div className="flex flex-wrap gap-2">
+                                                        {statusActions[booking.status].map(action => (
+                                                            <button
+                                                                key={action.action}
+                                                                onClick={() => handleStatusChange(action.action, action.requiresReason)}
+                                                                disabled={actionLoading}
+                                                                className={`px-4 py-3 border rounded-xl text-sm font-bold transition-all disabled:opacity-50 flex-1 min-w-[200px] ${action.color}`}
+                                                            >
+                                                                {action.label}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                ) : (
+                                                    <p className="text-sm text-slate-500 italic">No manual actions available for this status</p>
+                                                )}
+                                            </div>
+
+                                            {/* Reason Input */}
+                                            <AnimatePresence>
+                                                {showReasonInput && (
+                                                    <motion.div
+                                                        initial={{ opacity: 0, height: 0 }}
+                                                        animate={{ opacity: 1, height: 'auto' }}
+                                                        exit={{ opacity: 0, height: 0 }}
+                                                        className="overflow-hidden"
+                                                    >
+                                                        <div className="bg-amber-500/10 p-5 rounded-xl border border-amber-500/20">
+                                                            <label className="block text-sm font-bold text-amber-500 mb-2">
+                                                                Reason for action (required)
+                                                            </label>
+                                                            <textarea
+                                                                value={overrideReason}
+                                                                onChange={(e) => setOverrideReason(e.target.value)}
+                                                                rows="3"
+                                                                className="w-full px-4 py-3 border border-amber-500/30 rounded-lg bg-black/40 text-white focus:ring-1 focus:ring-amber-500 focus:border-amber-500 transition-all resize-none text-sm placeholder:text-slate-600"
+                                                                placeholder="Enter a detailed reason for this override..."
+                                                            />
+                                                            <div className="flex gap-3 mt-4">
+                                                                <button
+                                                                    onClick={confirmAction}
+                                                                    disabled={!overrideReason || actionLoading}
+                                                                    className="px-6 py-2 bg-amber-500 hover:bg-amber-400 text-obsidian-950 rounded-lg text-sm font-bold shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50"
+                                                                >
+                                                                    Confirm Action
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => {
+                                                                        setShowReasonInput(false);
+                                                                        setOverrideReason('');
+                                                                        setPendingAction(null);
+                                                                    }}
+                                                                    className="px-6 py-2 bg-white/5 hover:bg-white/10 text-slate-300 rounded-lg text-sm font-bold transition-all"
+                                                                >
+                                                                    Cancel
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+
+                                            {/* Warning */}
+                                            <div className="bg-rose-500/5 border border-rose-500/10 p-5 rounded-xl">
+                                                <div className="flex items-start gap-4">
+                                                    <AlertTriangle className="w-6 h-6 text-rose-500 shrink-0 mt-0.5" />
+                                                    <div className="text-sm">
+                                                        <p className="font-bold text-rose-400 uppercase tracking-wide text-xs mb-1">Admin Override Warning</p>
+                                                        <p className="text-slate-400 leading-relaxed">
+                                                            Forcing state changes bypasses the standard booking flow checks. All overrides are permanently logged for security auditing.
+                                                        </p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                )}
-                            </div>
+                                    )}
+                                </div>
 
-                            {/* Footer */}
-                            <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
-                                <button
-                                    onClick={onClose}
-                                    className="px-4 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors"
-                                >
-                                    Close
-                                </button>
+                                {/* Footer */}
+                                <div className="px-6 py-4 bg-obsidian-950 border-t border-white/5 flex justify-end">
+                                    <button
+                                        onClick={onClose}
+                                        className="px-6 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-sm font-bold text-slate-300 hover:text-white transition-all"
+                                    >
+                                        Close
+                                    </button>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="text-center py-20 text-slate-500">
+                                <p>Booking not found</p>
                             </div>
-                        </>
-                    ) : (
-                        <div className="text-center py-20 text-slate-500">
-                            <p>Booking not found</p>
-                        </div>
-                    )}
+                        )}
+                    </motion.div>
                 </div>
             </div>
-        </div >
+        </AnimatePresence>
     );
 };
 

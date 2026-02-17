@@ -75,7 +75,8 @@ export default function LiveMap() {
     const [filters, setFilters] = useState({
         showAvailable: true,
         showBusy: true,
-        vehicleType: 'all'
+        vehicleType: 'all',
+        tenantId: 'all'
     });
 
     const [tenants, setTenants] = useState([]);
@@ -188,7 +189,13 @@ export default function LiveMap() {
         return Object.values(drivers).filter(d => {
             if (!filters.showAvailable && d.status === 'available') return false;
             if (!filters.showBusy && d.status !== 'available') return false;
-            if (filters.vehicleType !== 'all' && d.vehicle.toLowerCase() !== filters.vehicleType.toLowerCase()) return false;
+
+            // Vehicle Type Filter
+            if (filters.vehicleType && filters.vehicleType !== 'all' && d.vehicle.toLowerCase() !== filters.vehicleType.toLowerCase()) return false;
+
+            // Tenant Filter
+            if (filters.tenantId && filters.tenantId !== 'all' && String(d.tenantId) !== String(filters.tenantId)) return false;
+
             return true;
         });
     }, [drivers, filters]);
@@ -201,9 +208,9 @@ export default function LiveMap() {
         return activeBookings.find(b => b.driver_id === selectedDriver.id && ['assigned', 'arrived', 'started', 'waiting_started'].includes(b.status));
     }, [selectedDriver, activeBookings]);
 
-    // Enrich drivers with detailed status for UI (Mock logic since API only returns available/busy)
+    // Enriched Drivers (for UI/Map) - Derived from FILTERED drivers
     const enrichedDrivers = useMemo(() => {
-        return Object.values(drivers).map(d => {
+        return filteredDrivers.map(d => {
             // Stable random based on ID to keep status consistent across renders unless real status changes
             const seed = d.id.charCodeAt(0) + d.id.charCodeAt(d.id.length - 1);
 
@@ -219,7 +226,7 @@ export default function LiveMap() {
 
             return { ...d, detailedStatus };
         });
-    }, [drivers]);
+    }, [filteredDrivers]);
 
     return (
         <div className="h-[calc(100vh-100px)] rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-slate-100 flex shadow-inner">
@@ -364,23 +371,15 @@ export default function LiveMap() {
                 </div>
             </div>
 
-            {/* Right Sidebar (Auto-Hide) */}
-            <div className="fixed inset-y-0 right-0 z-[500] pointer-events-none group hover:pointer-events-auto flex items-stretch">
-                {/* Trigger Strip - Invisible area to catch hover */}
-                <div className="w-4 h-full bg-transparent pointer-events-auto cursor-w-resize" />
-
-                {/* Sidebar Content */}
-                <div className="h-full translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out shadow-2xl pointer-events-auto bg-slate-900 border-l border-slate-800">
-                    <MapSidebar
-                        drivers={enrichedDrivers}
-                        tenants={tenants}
-                        filters={filters}
-                        setFilters={setFilters}
-                        onSelectDriver={setSelectedDriver}
-                        selectedDriverId={selectedDriver?.id}
-                    />
-                </div>
-            </div>
+            {/* Right Sidebar (Self-Managing) */}
+            <MapSidebar
+                drivers={enrichedDrivers}
+                tenants={tenants}
+                filters={filters}
+                setFilters={setFilters}
+                onSelectDriver={setSelectedDriver}
+                selectedDriverId={selectedDriver?.id}
+            />
         </div>
     );
 }

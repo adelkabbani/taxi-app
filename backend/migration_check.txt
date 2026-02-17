@@ -1,0 +1,4 @@
+--- Schema Verification ---
+Found booking columns: auto_assignment_attempts, flight_number, service_type, group_id
+Found table: assignment_round_robin
+Found plain_password column: NO (Success)

@@ -155,7 +155,7 @@ export default function Dashboard() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <div className="glass-card px-4 py-2 rounded-full flex items-center gap-4">
+                    <div className="glass-panel px-4 py-2 rounded-full flex items-center gap-4 border border-white/5">
                         <div className="flex items-center gap-2">
                             <Database className={`w-3.5 h-3.5 ${health.database === 'ok' ? 'text-emerald-500' : 'text-red-500'}`} />
                             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">DB</span>
@@ -171,7 +171,7 @@ export default function Dashboard() {
                         whileHover={{ rotate: 180 }}
                         transition={{ duration: 0.5 }}
                         onClick={() => fetchData(true)}
-                        className="p-3 glass-card rounded-full hover:bg-white dark:hover:bg-slate-800 transition-colors shadow-sm"
+                        className="p-3 glass-panel rounded-full hover:bg-white/10 transition-colors shadow-sm border border-white/5"
                     >
                         <RefreshCw className={`w-5 h-5 text-slate-500 ${refreshing ? 'animate-spin' : ''}`} />
                     </motion.button>
@@ -218,82 +218,175 @@ export default function Dashboard() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Revenue Chart */}
+                {/* Pulse Revenue Chart */}
                 <motion.div
                     variants={itemVariants}
-                    className="lg:col-span-2 glass-card rounded-3xl p-6 relative overflow-hidden"
+                    className="lg:col-span-2 glass-panel rounded-3xl p-6 relative overflow-hidden animate-power-up"
+                    style={{ animationDelay: '0.1s' }}
                 >
                     <div className="flex justify-between items-center mb-6">
                         <div>
-                            <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                                Revenue Trends
+                            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                                <Activity className="w-5 h-5 text-gold-400" />
+                                Revenue Pulse
                             </h3>
-                            <p className="text-xs text-slate-500">Real-time financial performance</p>
+                            <p className="text-xs text-slate-400">Real-time earnings tracking</p>
                         </div>
-                        <div className="flex items-center gap-2 px-3 py-1 bg-emerald-500/10 rounded-full">
-                            <TrendingUp className="w-4 h-4 text-emerald-500" />
-                            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">+8.4% Growth</span>
+                        <div className="flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+                            <div className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                            </div>
+                            <span className="text-xs font-bold text-emerald-400">+8.4% Growth</span>
                         </div>
                     </div>
 
                     <div className="h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={stats.revenueTrend.map(d => ({
+                            <AreaChart data={stats.revenueTrend.map((d, i, arr) => ({
                                 ...d,
                                 hourLabel: new Date(d.hour).getHours() + ':00',
-                                revenue: Number(d.revenue)
+                                revenue: Number(d.revenue),
+                                isLast: i === arr.length - 1 // Mark last point
                             }))}>
                                 <defs>
                                     <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-                                        <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                                        <stop offset="5%" stopColor="#FBbf24" stopOpacity={0.3} /> {/* Gold */}
+                                        <stop offset="95%" stopColor="#FBbf24" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#94a3b8" opacity={0.1} />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#333" opacity={0.3} />
                                 <XAxis
                                     dataKey="hourLabel"
                                     axisLine={false}
                                     tickLine={false}
-                                    tick={{ fill: '#94a3b8', fontSize: 12 }}
+                                    tick={{ fill: '#64748b', fontSize: 12 }}
                                     minTickGap={30}
                                 />
                                 <YAxis
                                     axisLine={false}
                                     tickLine={false}
-                                    tick={{ fill: '#94a3b8', fontSize: 12 }}
+                                    tick={{ fill: '#64748b', fontSize: 12 }}
                                     tickFormatter={(value) => `€${value}`}
                                 />
                                 <Tooltip
-                                    contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', border: 'none', borderRadius: '12px', color: '#fff' }}
-                                    itemStyle={{ color: '#fff' }}
+                                    contentStyle={{ backgroundColor: '#0a0a0c', border: '1px solid #333', borderRadius: '12px', color: '#fff' }}
+                                    itemStyle={{ color: '#fbbf24' }}
                                     formatter={(value) => [`€${value}`, 'Revenue']}
                                 />
                                 <Area
                                     type="monotone"
                                     dataKey="revenue"
-                                    stroke="#10b981"
+                                    stroke="#fbbf24"
                                     strokeWidth={3}
                                     fillOpacity={1}
                                     fill="url(#colorRevenue)"
+                                    activeDot={(props) => {
+                                        const { cx, cy } = props;
+                                        return (
+                                            <g>
+                                                <circle cx={cx} cy={cy} r={6} fill="#fbbf24" stroke="white" strokeWidth={2} />
+                                                <circle cx={cx} cy={cy} r={12} fill="#fbbf24" opacity={0.3}>
+                                                    <animate attributeName="r" from="6" to="20" dur="1.5s" begin="0s" repeatCount="indefinite" />
+                                                    <animate attributeName="opacity" from="0.5" to="0" dur="1.5s" begin="0s" repeatCount="indefinite" />
+                                                </circle>
+                                            </g>
+                                        );
+                                    }}
                                 />
                             </AreaChart>
                         </ResponsiveContainer>
                     </div>
                 </motion.div>
 
-                {/* Control Panel & Quick Stats */}
+                {/* Fleet Health & Stats Column */}
                 <div className="space-y-6">
-                    {/* Dispatch Status Control */}
-                    <motion.div variants={itemVariants} className="glass-card rounded-3xl p-6">
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="font-bold text-slate-900 dark:text-white">Dispatch Control</h3>
-                            <div className={`w-2 h-2 rounded-full ${settings.stop_sell ? 'bg-red-500 animate-pulse' : 'bg-emerald-500'}`} />
+                    {/* Fleet Health Rings */}
+                    <motion.div
+                        variants={itemVariants}
+                        className="glass-panel rounded-3xl p-6 animate-power-up"
+                        style={{ animationDelay: '0.2s' }}
+                    >
+                        <h3 className="font-bold text-white mb-6 flex items-center gap-2">
+                            <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                            Fleet Health
+                        </h3>
+
+                        <div className="flex justify-around items-center">
+                            {/* Compliance Ring */}
+                            <div className="relative w-24 h-24 flex items-center justify-center">
+                                <svg className="w-full h-full transform -rotate-90">
+                                    <circle cx="48" cy="48" r="40" stroke="#333" strokeWidth="8" fill="transparent" />
+                                    <circle
+                                        cx="48" cy="48" r="40"
+                                        stroke={stats.documents.expired > 0 ? '#f43f5e' : '#10b981'}
+                                        strokeWidth="8"
+                                        fill="transparent"
+                                        strokeDasharray="251.2"
+                                        strokeDashoffset={251.2 * (1 - (stats.documents.total > 0 ? (stats.documents.total - stats.documents.expired) / stats.documents.total : 1))}
+                                        className="transition-all duration-1000 ease-out"
+                                        strokeLinecap="round"
+                                    />
+                                </svg>
+                                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span className={`text-xl font-bold ${stats.documents.expired > 0 ? 'text-rose-500' : 'text-emerald-500'}`}>
+                                        {stats.documents.total > 0 ? Math.round(((stats.documents.total - stats.documents.expired) / stats.documents.total) * 100) : 100}%
+                                    </span>
+                                    <span className="text-[10px] text-slate-500 uppercase font-bold">Docs</span>
+                                </div>
+                            </div>
+
+                            {/* Active Fleet Ring */}
+                            <div className="relative w-24 h-24 flex items-center justify-center">
+                                <svg className="w-full h-full transform -rotate-90">
+                                    <circle cx="48" cy="48" r="40" stroke="#333" strokeWidth="8" fill="transparent" />
+                                    <circle
+                                        cx="48" cy="48" r="40"
+                                        stroke="#0ea5e9"
+                                        strokeWidth="8"
+                                        fill="transparent"
+                                        strokeDasharray="251.2"
+                                        strokeDashoffset={251.2 * 0.25} // Mock 75% availability
+                                        className="transition-all duration-1000 ease-out"
+                                        strokeLinecap="round"
+                                    />
+                                </svg>
+                                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span className="text-xl font-bold text-sky-500">
+                                        {stats.onlineDrivers}
+                                    </span>
+                                    <span className="text-[10px] text-slate-500 uppercase font-bold">Online</span>
+                                </div>
+                            </div>
                         </div>
 
-                        <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 mb-4">
+                        <div className="mt-6 flex gap-2">
+                            <div className="flex-1 bg-rose-500/10 border border-rose-500/20 rounded-xl p-3 text-center">
+                                <span className="block text-xl font-bold text-rose-500">{stats.documents.expired}</span>
+                                <span className="text-[10px] text-rose-400 uppercase font-bold">Expired</span>
+                            </div>
+                            <div className="flex-1 bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 text-center">
+                                <span className="block text-xl font-bold text-amber-500">{stats.documents.pending}</span>
+                                <span className="text-[10px] text-amber-400 uppercase font-bold">Pending</span>
+                            </div>
+                        </div>
+                    </motion.div>
+
+                    {/* Dispatch Status Control */}
+                    <motion.div
+                        variants={itemVariants}
+                        className="glass-panel rounded-3xl p-6 animate-power-up"
+                        style={{ animationDelay: '0.3s' }}
+                    >
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="font-bold text-white">Dispatch Control</h3>
+                            <div className={`w-2 h-2 rounded-full ${settings.stop_sell ? 'bg-rose-500 animate-pulse' : 'bg-emerald-500'}`} />
+                        </div>
+
+                        <div className="bg-slate-900/50 rounded-2xl p-4 mb-4 border border-white/5">
                             <div className="flex justify-between items-center mb-2">
                                 <span className="text-xs font-semibold uppercase text-slate-500">System Status</span>
-                                <span className={`text-xs font-bold px-2 py-1 rounded ${settings.stop_sell ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'}`}>
+                                <span className={`text-xs font-bold px-2 py-1 rounded ${settings.stop_sell ? 'bg-rose-500/20 text-rose-400' : 'bg-emerald-500/20 text-emerald-400'}`}>
                                     {settings.stop_sell ? 'SUSPENDED' : 'ONLINE'}
                                 </span>
                             </div>
@@ -306,63 +399,36 @@ export default function Dashboard() {
                             disabled={updatingSettings}
                             onClick={() => updateSettings({ stop_sell: !settings.stop_sell })}
                             className={`w-full py-3 rounded-xl font-bold text-white shadow-lg transition-all transform active:scale-95 ${settings.stop_sell
-                                    ? 'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/30'
-                                    : 'bg-red-500 hover:bg-red-600 shadow-red-500/30'
+                                ? 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-900/20'
+                                : 'bg-rose-600 hover:bg-rose-500 shadow-rose-900/20'
                                 }`}
                         >
                             {updatingSettings ? 'Updating...' : settings.stop_sell ? 'Resume Operations' : 'Emergency Stop'}
                         </button>
                     </motion.div>
-
-                    {/* Activity Feed Mini */}
-                    <motion.div variants={itemVariants} className="glass-card rounded-3xl p-6 flex-1 min-h-[200px]">
-                        <h3 className="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                            <Activity className="w-4 h-4 text-indigo-500" />
-                            Live Feed
-                        </h3>
-                        <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                            {stats.recentActivity.length > 0 ? (
-                                stats.recentActivity.slice(0, 5).map((activity) => (
-                                    <div key={activity.id} className="flex gap-3 items-start">
-                                        <div className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${getStatusColorDot(activity.status)}`} />
-                                        <div>
-                                            <p className="text-sm font-medium text-slate-800 dark:text-slate-200">
-                                                {activity.booking_reference}
-                                            </p>
-                                            <p className="text-xs text-slate-500">
-                                                {formatTime(activity.updated_at)} · {activity.status.replace('_', ' ')}
-                                            </p>
-                                        </div>
-                                    </div>
-                                ))
-                            ) : (
-                                <p className="text-slate-400 text-sm italic text-center py-4">No recent activity</p>
-                            )}
-                        </div>
-                    </motion.div>
                 </div>
             </div>
 
-            {/* Bottom Quick Actions */}
-            <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-gradient-to-r from-violet-600 to-indigo-600 rounded-3xl p-6 text-white shadow-xl shadow-indigo-500/20 relative overflow-hidden group hover:-translate-y-1 transition-transform cursor-pointer">
+            {/* Bottom Quick Actions (Activity Feed moved here or kept?) - Keeping Quick Actions for now but updated style */}
+            <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-power-up" style={{ animationDelay: '0.4s' }}>
+                <div className="bg-gradient-to-r from-violet-900/50 to-indigo-900/50 border border-white/5 rounded-3xl p-6 text-white relative overflow-hidden group hover:border-indigo-500/50 transition-all cursor-pointer">
                     <div className="absolute right-0 top-0 p-6 opacity-10 group-hover:scale-110 transition-transform duration-500">
                         <Globe className="w-32 h-32" />
                     </div>
-                    <h3 className="text-xl font-bold mb-1">Global Map View</h3>
-                    <p className="text-indigo-100 text-sm mb-4">Track your entire fleet in real-time across all active zones.</p>
-                    <button className="bg-white/20 backdrop-blur-md px-4 py-2 rounded-xl text-sm font-bold group-hover:bg-white group-hover:text-indigo-600 transition-all">
+                    <h3 className="text-xl font-bold mb-1 text-indigo-300 group-hover:text-indigo-200">Global Map View</h3>
+                    <p className="text-slate-400 text-sm mb-4">Track your entire fleet in real-time across all active zones.</p>
+                    <button className="bg-indigo-500/20 hover:bg-indigo-500/40 border border-indigo-500/30 px-4 py-2 rounded-xl text-sm font-bold text-indigo-200 transition-all">
                         Launch Map
                     </button>
                 </div>
 
-                <div className="bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl p-6 text-white shadow-xl shadow-emerald-500/20 relative overflow-hidden group hover:-translate-y-1 transition-transform cursor-pointer">
+                <div className="bg-gradient-to-r from-emerald-900/50 to-teal-900/50 border border-white/5 rounded-3xl p-6 text-white relative overflow-hidden group hover:border-emerald-500/50 transition-all cursor-pointer">
                     <div className="absolute right-0 top-0 p-6 opacity-10 group-hover:scale-110 transition-transform duration-500">
                         <Coins className="w-32 h-32" />
                     </div>
-                    <h3 className="text-xl font-bold mb-1">Financial Report</h3>
-                    <p className="text-emerald-50 text-sm mb-4">Detailed breakdown of revenue, partner payouts, and margins.</p>
-                    <button className="bg-white/20 backdrop-blur-md px-4 py-2 rounded-xl text-sm font-bold group-hover:bg-white group-hover:text-teal-600 transition-all">
+                    <h3 className="text-xl font-bold mb-1 text-emerald-300 group-hover:text-emerald-200">Financial Report</h3>
+                    <p className="text-slate-400 text-sm mb-4">Detailed breakdown of revenue, partner payouts, and margins.</p>
+                    <button className="bg-emerald-500/20 hover:bg-emerald-500/40 border border-emerald-500/30 px-4 py-2 rounded-xl text-sm font-bold text-emerald-200 transition-all">
                         View Report
                     </button>
                 </div>
@@ -374,26 +440,27 @@ export default function Dashboard() {
 
 function StatCard({ title, value, icon, color, trend, trendUp, loading }) {
     const colorStyles = {
-        cyan: 'text-cyan-500 bg-cyan-500/10 border-cyan-200/50',
-        violet: 'text-violet-500 bg-violet-500/10 border-violet-200/50',
-        emerald: 'text-emerald-500 bg-emerald-500/10 border-emerald-200/50',
-        amber: 'text-amber-500 bg-amber-500/10 border-amber-200/50',
+        cyan: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20',
+        violet: 'text-violet-400 bg-violet-500/10 border-violet-500/20',
+        emerald: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
+        amber: 'text-gold-400 bg-gold-500/10 border-gold-500/20',
     };
 
-    // Fallback if color not found
+    // Fallback
     const activeStyle = colorStyles[color] || colorStyles.cyan;
+    const glowColor = color === 'amber' ? 'rgba(255, 215, 0, 0.4)' : 'rgba(56, 189, 248, 0.4)';
 
     return (
         <motion.div
             whileHover={{ y: -5 }}
-            className="glass-card p-6 rounded-3xl relative overflow-hidden group"
+            className="glass-panel p-6 rounded-3xl relative overflow-hidden group border border-white/5 hover:border-white/10"
         >
             <div className="flex justify-between items-start mb-4">
-                <div className={`p-3 rounded-2xl ${activeStyle.split(' ')[1]} ${activeStyle.split(' ')[0]}`}>
+                <div className={`p-3 rounded-2xl ${activeStyle}`}>
                     {icon}
                 </div>
                 {trend && (
-                    <div className={`flex items-center text-xs font-bold ${trendUp ? 'text-emerald-500' : 'text-slate-400'}`}>
+                    <div className={`flex items-center text-xs font-bold ${trendUp ? 'text-emerald-400' : 'text-rose-400'}`}>
                         {trendUp ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDown className="w-3 h-3 mr-1" />}
                         {trend}
                     </div>
@@ -401,14 +468,14 @@ function StatCard({ title, value, icon, color, trend, trendUp, loading }) {
             </div>
 
             <div>
-                <h4 className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">{title}</h4>
-                <div className={`text-3xl font-black text-slate-800 dark:text-white ${loading ? 'animate-pulse bg-slate-200 dark:bg-slate-700 h-8 w-24 rounded' : ''}`}>
+                <h4 className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">{title}</h4>
+                <div className={`text-3xl font-black font-mono tracking-tighter text-white ${loading ? 'animate-pulse bg-slate-800 h-8 w-24 rounded' : ''}`} style={{ textShadow: `0 0 20px ${glowColor}` }}>
                     {!loading && value}
                 </div>
             </div>
 
-            {/* Decoration */}
-            <div className={`absolute -right-6 -bottom-6 w-24 h-24 rounded-full ${activeStyle.split(' ')[1]} blur-2xl opacity-50 group-hover:opacity-100 transition-opacity`} />
+            {/* Gradient Orb Decoration */}
+            <div className={`absolute -right-6 -bottom-6 w-24 h-24 rounded-full ${activeStyle.split(' ')[1]} blur-3xl opacity-20 group-hover:opacity-40 transition-opacity`} />
         </motion.div>
     );
 }

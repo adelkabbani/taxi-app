@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { X, Search, User, Car, MapPin, Star, Clock } from 'lucide-react';
+import { X, Search, Star, Clock, MapPin, Phone, Car, Check, Calendar } from 'lucide-react';
 import api from '../lib/api';
 import { toast } from 'react-hot-toast';
+import { motion, AnimatePresence } from 'framer-motion';
 import AvailabilityBadge from './AvailabilityBadge';
 
 const AssignDriverModal = ({ isOpen, onClose, booking, onAssigned }) => {
@@ -65,186 +66,179 @@ const AssignDriverModal = ({ isOpen, onClose, booking, onAssigned }) => {
         return fullName.includes(term) || plate.includes(term);
     });
 
-    // Calculate rough distance (for display only - real calc would use Haversine)
     const getDistance = (driver) => {
         if (!driver.current_lat || !booking?.pickup_lat) return null;
         const dLat = Math.abs(driver.current_lat - booking.pickup_lat);
         const dLng = Math.abs(driver.current_lng - booking.pickup_lng);
-        const km = Math.sqrt(dLat * dLat + dLng * dLng) * 111; // Rough km estimate
+        const km = Math.sqrt(dLat * dLat + dLng * dLng) * 111;
         return km.toFixed(1);
     };
 
-    if (!isOpen) return null;
-
     return (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
-            <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
-                <div className="fixed inset-0 transition-opacity" aria-hidden="true" onClick={onClose}>
-                    <div className="absolute inset-0 bg-slate-900 opacity-75"></div>
-                </div>
-
-                <div className="inline-block align-bottom bg-white dark:bg-dark-card rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full border border-slate-200 dark:border-slate-800">
-                    {/* Header */}
-                    <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-gradient-to-r from-emerald-500 to-teal-600">
-                        <div className="flex justify-between items-center">
-                            <div>
-                                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                                    <User className="w-5 h-5" />
-                                    Assign Driver
-                                </h3>
-                                {booking && (
-                                    <p className="text-emerald-100 text-sm mt-1">
-                                        Booking #{booking.booking_reference}
-                                    </p>
-                                )}
-                            </div>
-                            <button type="button" onClick={onClose} className="text-white/80 hover:text-white">
-                                <X className="h-6 w-6" />
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Booking Summary */}
-                    {booking && (
-                        <div className="px-6 py-3 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
-                            <div className="flex justify-between items-start">
-                                <div className="flex items-start gap-3">
-                                    <MapPin className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
-                                    <div className="text-sm">
-                                        <p className="text-slate-900 dark:text-white font-medium truncate">{booking.pickup_address}</p>
-                                        <p className="text-slate-500 text-xs mt-0.5">
-                                            <Clock className="w-3 h-3 inline mr-1" />
-                                            {booking.scheduled_pickup_time ? new Date(booking.scheduled_pickup_time).toLocaleString() : 'ASAP'}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className="text-right">
-                                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 capitalize">
-                                        {booking.service_type?.replace(/_/g, ' ') || 'Standard'}
-                                    </span>
-                                    {booking.vehicle_type && (
-                                        <p className="text-xs text-slate-500 mt-1 capitalize">
-                                            Req: {booking.vehicle_type}
-                                        </p>
+        <AnimatePresence>
+            {isOpen && (
+                <>
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50"
+                        onClick={onClose}
+                    />
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                        <motion.div
+                            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                            className="bg-[#0f1115] w-full max-w-xl rounded-2xl shadow-2xl border border-amber-500/20 overflow-hidden"
+                            onClick={e => e.stopPropagation()}
+                        >
+                            {/* Header */}
+                            <div className="px-6 py-4 border-b border-white/5 flex justify-between items-center bg-gradient-to-r from-amber-500/10 to-transparent">
+                                <div>
+                                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                                        <Car className="w-5 h-5 text-amber-500" />
+                                        Assign Driver
+                                    </h3>
+                                    {booking && (
+                                        <div className="flex items-center gap-2 text-xs text-slate-400 mt-1">
+                                            <span className="bg-white/5 px-2 py-0.5 rounded text-white/70">
+                                                #{booking.booking_reference}
+                                            </span>
+                                        </div>
                                     )}
                                 </div>
+                                <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-400 hover:text-white">
+                                    <X className="w-5 h-5" />
+                                </button>
                             </div>
-                        </div>
-                    )}
 
-                    {/* Search */}
-                    <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
-                        <div className="relative">
-                            <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-                            <input
-                                type="text"
-                                placeholder="Search by name or license plate..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                            />
-                        </div>
-                    </div>
-
-                    {/* Driver List */}
-                    <div className="max-h-80 overflow-y-auto">
-                        {loading ? (
-                            <div className="flex justify-center py-12">
-                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
-                            </div>
-                        ) : filteredDrivers.length === 0 ? (
-                            <div className="text-center py-12 text-slate-500">
-                                <User className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                                <p>No available drivers found</p>
-                                <p className="text-xs mt-1">Try adjusting your search or wait for drivers to become available</p>
-                            </div>
-                        ) : (
-                            <div className="divide-y divide-slate-200 dark:divide-slate-700">
-                                {filteredDrivers.map(driver => {
-                                    const distance = getDistance(driver);
-                                    const isSelected = selectedDriver?.id === driver.id;
-
-                                    return (
-                                        <button
-                                            key={driver.id}
-                                            onClick={() => setSelectedDriver(driver)}
-                                            className={`w-full px-6 py-4 text-left hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${isSelected ? 'bg-emerald-50 dark:bg-emerald-900/20 border-l-4 border-emerald-500' : ''
-                                                }`}
-                                        >
-                                            <div className="flex items-center justify-between">
-                                                <div className="flex items-center gap-4">
-                                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm ${isSelected ? 'bg-emerald-500' : 'bg-slate-400'
-                                                        }`}>
-                                                        {driver.first_name?.[0]}{driver.last_name?.[0]}
-                                                    </div>
-                                                    <div>
-                                                        <p className="font-bold text-slate-900 dark:text-white">
-                                                            {driver.first_name} {driver.last_name}
-                                                        </p>
-                                                        <div className="flex items-center gap-3 mt-1 text-xs text-slate-500">
-                                                            <span className="flex items-center gap-1">
-                                                                <Car className="w-3 h-3" />
-                                                                {driver.license_plate}
-                                                            </span>
-                                                            <span className="uppercase">{driver.vehicle_type}</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className="text-right">
-                                                    <AvailabilityBadge availability={driver.availability} isStale={driver.isStale} />
-                                                    <div className="flex items-center gap-2 mt-2 text-xs text-slate-500">
-                                                        <div className="flex items-center gap-1">
-                                                            <Star className="w-3 h-3 text-amber-500" />
-                                                            {driver.acceptance_rate || 100}%
-                                                        </div>
-                                                        {distance && (
-                                                            <span>~{distance}km</span>
-                                                        )}
+                            {/* Booking Snapshot */}
+                            {booking && (
+                                <div className="px-6 py-3 bg-white/5 border-b border-white/5">
+                                    <div className="flex justify-between items-start">
+                                        <div className="flex items-start gap-3">
+                                            <div className="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-400 mt-0.5">
+                                                <MapPin className="w-4 h-4" />
+                                            </div>
+                                            <div>
+                                                <p className="text-slate-200 text-sm font-medium">{booking.pickup_address}</p>
+                                                <div className="flex items-center gap-3 mt-1">
+                                                    <div className="flex items-center gap-1.5 text-xs text-amber-400">
+                                                        <Clock className="w-3 h-3" />
+                                                        {booking.scheduled_pickup_time ? new Date(booking.scheduled_pickup_time).toLocaleString() : 'ASAP'}
                                                     </div>
                                                 </div>
                                             </div>
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        )}
-                    </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
 
-                    {/* Footer */}
-                    <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 flex justify-between items-center">
-                        <span className="text-sm text-slate-500">
-                            {filteredDrivers.length} driver{filteredDrivers.length !== 1 ? 's' : ''} available
-                        </span>
-                        <div className="flex gap-3">
-                            <button
-                                type="button"
-                                onClick={onClose}
-                                className="px-4 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleAssign}
-                                disabled={!selectedDriver || assigning}
-                                className="px-6 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-lg text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                            >
-                                {assigning ? (
-                                    <>
-                                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-                                        Assigning...
-                                    </>
-                                ) : (
-                                    <>
-                                        <User className="w-4 h-4" />
-                                        Assign Driver
-                                    </>
-                                )}
-                            </button>
-                        </div>
+                            <div className="p-6">
+                                {/* Search */}
+                                <div className="mb-4 relative">
+                                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-500" />
+                                    <input
+                                        type="text"
+                                        placeholder="Search by name or license plate..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        className="w-full bg-slate-900/50 border border-slate-800 rounded-xl py-2 pl-10 pr-4 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all"
+                                    />
+                                </div>
+
+                                {/* Driver List */}
+                                <div className="h-64 overflow-y-auto pr-2 space-y-2 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-700">
+                                    {loading ? (
+                                        <div className="flex items-center justify-center h-full text-slate-500">
+                                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div>
+                                        </div>
+                                    ) : filteredDrivers.length === 0 ? (
+                                        <div className="flex flex-col items-center justify-center h-full text-slate-500 gap-2">
+                                            <Car className="w-8 h-8 opacity-20" />
+                                            <span className="text-sm">No available drivers found</span>
+                                        </div>
+                                    ) : (
+                                        filteredDrivers.map(driver => (
+                                            <button
+                                                key={driver.id}
+                                                onClick={() => setSelectedDriver(driver)}
+                                                className={`w-full p-3 rounded-xl border transition-all text-left group ${selectedDriver?.id === driver.id
+                                                        ? 'bg-amber-500/10 border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.1)]'
+                                                        : 'bg-slate-800/30 border-white/5 hover:border-white/10 hover:bg-slate-800/50'
+                                                    }`}
+                                            >
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm transition-colors ${selectedDriver?.id === driver.id
+                                                                ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20'
+                                                                : 'bg-slate-800 text-slate-400 group-hover:bg-slate-700 group-hover:text-white'
+                                                            }`}>
+                                                            {driver.first_name?.[0]}{driver.last_name?.[0]}
+                                                        </div>
+                                                        <div>
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="font-semibold text-white">
+                                                                    {driver.first_name} {driver.last_name}
+                                                                </span>
+                                                                <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-800 border border-slate-700 text-slate-400">
+                                                                    {driver.license_plate}
+                                                                </span>
+                                                            </div>
+                                                            <div className="flex items-center gap-3 mt-1 text-xs text-slate-500">
+                                                                <span className="flex items-center gap-1">
+                                                                    <Star className="w-3 h-3 text-amber-500" />
+                                                                    {driver.acceptance_rate || 100}%
+                                                                </span>
+                                                                {getDistance(driver) && (
+                                                                    <span className="flex items-center gap-1">
+                                                                        <MapPin className="w-3 h-3" />
+                                                                        ~{getDistance(driver)}km
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <AvailabilityBadge availability={driver.availability} isStale={driver.isStale} />
+                                                </div>
+                                            </button>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Footer */}
+                            <div className="px-6 py-4 bg-slate-900/50 border-t border-white/5 flex justify-end gap-3">
+                                <button
+                                    onClick={onClose}
+                                    className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleAssign}
+                                    disabled={!selectedDriver || assigning}
+                                    className="px-6 py-2 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-black font-bold rounded-lg text-sm shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                >
+                                    {assigning ? (
+                                        <>
+                                            <div className="animate-spin rounded-full h-4 w-4 border-2 border-black border-t-transparent"></div>
+                                            Assigning...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Check className="w-4 h-4" />
+                                            Confirm Assignment
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+                        </motion.div>
                     </div>
-                </div>
-            </div>
-        </div>
+                </>
+            )}
+        </AnimatePresence>
     );
 };
 

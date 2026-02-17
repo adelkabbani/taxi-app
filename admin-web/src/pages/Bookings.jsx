@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import {
     Plus, Search, Filter, RefreshCw, Calendar, ChevronLeft, ChevronRight,
     Eye, UserPlus, MoreHorizontal, Clock, MapPin, Download
@@ -223,89 +224,119 @@ export default function Bookings() {
     const totalPages = Math.ceil(pagination.total / pagination.limit);
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-8">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Bookings</h1>
-                    <p className="text-slate-500 text-sm mt-1">
-                        Manage all bookings from manual entries, Booking.com, and partner APIs
+                    <h1 className="text-3xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-gold-200 to-gold-400">
+                        Dispatch Console
+                    </h1>
+                    <p className="text-slate-400 text-sm font-medium mt-1">
+                        Live monitoring of manual, app, and partner bookings
                     </p>
                 </div>
                 <button
                     onClick={() => setIsCreateModalOpen(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white rounded-lg font-medium transition-all shadow-lg shadow-sky-500/25"
+                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 hover:to-amber-500 text-obsidian-950 rounded-xl font-bold shadow-lg shadow-gold-500/20 transition-all hover:scale-105 active:scale-95"
                 >
-                    <Plus className="w-4 h-4" />
+                    <Plus className="w-5 h-5" />
                     New Booking
                 </button>
             </div>
 
-            {/* Quick Stats */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4 flex items-center justify-between">
-                    <div>
-                        <p className="text-sm font-medium text-amber-600 dark:text-amber-400">Pending Assignment</p>
-                        <p className="text-2xl font-bold text-amber-700 dark:text-amber-300 mt-1">{stats.pending}</p>
+            {/* Quick Stats Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="glass-panel p-5 rounded-2xl border border-amber-500/20 bg-amber-500/5 relative overflow-hidden group"
+                >
+                    <div className="flex justify-between items-start relative z-10">
+                        <div>
+                            <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Pending Assignment</p>
+                            <p className="text-3xl font-black text-white font-mono">{stats.pending}</p>
+                        </div>
+                        <div className="p-3 rounded-xl bg-amber-500/10 text-amber-500 group-hover:bg-amber-500 group-hover:text-obsidian-900 transition-colors">
+                            <Clock className="w-6 h-6" />
+                        </div>
                     </div>
-                    <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center">
-                        <Clock className="w-6 h-6 text-amber-600" />
-                    </div>
-                </div>
-                <div className="bg-sky-50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800 rounded-xl p-4 flex items-center justify-between">
-                    <div>
-                        <p className="text-sm font-medium text-sky-600 dark:text-sky-400">In Progress</p>
-                        <p className="text-2xl font-bold text-sky-700 dark:text-sky-300 mt-1">{stats.inProgress}</p>
-                    </div>
-                    <div className="w-12 h-12 bg-sky-100 dark:bg-sky-900/50 rounded-full flex items-center justify-center">
-                        <MapPin className="w-6 h-6 text-sky-600" />
-                    </div>
-                </div>
-                <div className={`${stats.noShowPending > 0 ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 animate-pulse' : 'bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700'} border rounded-xl p-4 flex items-center justify-between`}>
-                    <div>
-                        <p className={`text-sm font-medium ${stats.noShowPending > 0 ? 'text-red-600 dark:text-red-400' : 'text-slate-600 dark:text-slate-400'}`}>No-Show Alerts</p>
-                        <p className={`text-2xl font-bold mt-1 ${stats.noShowPending > 0 ? 'text-red-700 dark:text-red-300' : 'text-slate-700 dark:text-slate-300'}`}>{stats.noShowPending}</p>
-                    </div>
-                    <div className={`w-12 h-12 ${stats.noShowPending > 0 ? 'bg-red-100 dark:bg-red-900/50' : 'bg-slate-100 dark:bg-slate-800'} rounded-full flex items-center justify-center`}>
-                        <Eye className={`w-6 h-6 ${stats.noShowPending > 0 ? 'text-red-600' : 'text-slate-600'}`} />
-                    </div>
-                </div>
-            </div>
+                </motion.div>
 
-            {/* Tabs */}
-            <div className="flex border-b border-slate-200 dark:border-slate-800">
-                <button
-                    onClick={() => setActiveTab('active')}
-                    className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'active'
-                        ? 'border-sky-500 text-sky-600 dark:text-sky-400'
-                        : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="glass-panel p-5 rounded-2xl border border-sky-500/20 bg-sky-500/5 relative overflow-hidden group"
+                >
+                    <div className="flex justify-between items-start relative z-10">
+                        <div>
+                            <p className="text-xs font-bold uppercase tracking-wider text-sky-400 mb-1">In Progress</p>
+                            <p className="text-3xl font-black text-white font-mono">{stats.inProgress}</p>
+                        </div>
+                        <div className="p-3 rounded-xl bg-sky-500/10 text-sky-400 group-hover:bg-sky-500 group-hover:text-obsidian-900 transition-colors">
+                            <MapPin className="w-6 h-6" />
+                        </div>
+                    </div>
+                </motion.div>
+
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className={`glass-panel p-5 rounded-2xl border relative overflow-hidden group ${stats.noShowPending > 0
+                        ? 'border-rose-500/40 bg-rose-500/10 animate-pulse-slow'
+                        : 'border-white/10 bg-white/5'
                         }`}
                 >
-                    Active Queue
-                </button>
-                <button
-                    onClick={() => setActiveTab('finished')}
-                    className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'finished'
-                        ? 'border-sky-500 text-sky-600 dark:text-sky-400'
-                        : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-                        }`}
-                >
-                    Finished / Historical
-                </button>
+                    <div className="flex justify-between items-start relative z-10">
+                        <div>
+                            <p className={`text-xs font-bold uppercase tracking-wider mb-1 ${stats.noShowPending > 0 ? 'text-rose-400' : 'text-slate-400'}`}>No-Show Alerts</p>
+                            <p className="text-3xl font-black text-white font-mono">{stats.noShowPending}</p>
+                        </div>
+                        <div className={`p-3 rounded-xl transition-colors ${stats.noShowPending > 0
+                            ? 'bg-rose-500/20 text-rose-500 group-hover:bg-rose-500 group-hover:text-white'
+                            : 'bg-white/5 text-slate-400'
+                            }`}>
+                            <Eye className="w-6 h-6" />
+                        </div>
+                    </div>
+                </motion.div>
             </div>
 
-            {/* Filters Bar */}
-            <div className="bg-white dark:bg-dark-card rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-4">
-                <div className="flex flex-col lg:flex-row gap-4">
+            {/* Filter Bar & Tabs */}
+            <div className="flex flex-col gap-4">
+                <div className="flex border-b border-white/10">
+                    <button
+                        onClick={() => setActiveTab('active')}
+                        className={`px-8 py-3 text-sm font-bold border-b-2 transition-all ${activeTab === 'active'
+                            ? 'border-gold-500 text-gold-400'
+                            : 'border-transparent text-slate-500 hover:text-slate-300'
+                            }`}
+                    >
+                        Active Queue
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('finished')}
+                        className={`px-8 py-3 text-sm font-bold border-b-2 transition-all ${activeTab === 'finished'
+                            ? 'border-gold-500 text-gold-400'
+                            : 'border-transparent text-slate-500 hover:text-slate-300'
+                            }`}
+                    >
+                        History
+                    </button>
+                </div>
+
+                <div className="glass-panel p-4 rounded-xl flex flex-col lg:flex-row gap-4 border border-white/5">
                     {/* Search */}
-                    <div className="relative flex-1">
-                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                    <div className="relative flex-1 group">
+                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-500 group-focus-within:text-gold-500 transition-colors" />
                         <input
                             type="text"
                             placeholder="Search by Flight #, Name, Ref..."
                             value={filters.search}
                             onChange={(e) => handleFilterChange('search', e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+                            className="w-full pl-10 pr-4 py-2 bg-obsidian-900/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-gold-500/50 focus:ring-1 focus:ring-gold-500/50 transition-all placeholder:text-slate-600"
                         />
                     </div>
 
@@ -313,7 +344,7 @@ export default function Bookings() {
                     <select
                         value={filters.status}
                         onChange={(e) => handleFilterChange('status', e.target.value)}
-                        className="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-sky-500 focus:border-transparent min-w-[160px]"
+                        className="px-4 py-2 bg-obsidian-900/50 border border-white/10 rounded-lg text-sm text-slate-300 focus:outline-none focus:border-gold-500/50 min-w-[160px] cursor-pointer"
                     >
                         {statusOptions.map(opt => (
                             <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -324,7 +355,7 @@ export default function Bookings() {
                     <select
                         value={filters.datePreset}
                         onChange={(e) => handleFilterChange('datePreset', e.target.value)}
-                        className="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-sky-500 focus:border-transparent min-w-[140px]"
+                        className="px-4 py-2 bg-obsidian-900/50 border border-white/10 rounded-lg text-sm text-slate-300 focus:outline-none focus:border-gold-500/50 min-w-[140px] cursor-pointer"
                     >
                         <option value="all">All Dates</option>
                         <option value="today">Today</option>
@@ -333,167 +364,142 @@ export default function Bookings() {
                         <option value="custom">Custom Range</option>
                     </select>
 
-                    {/* More Filters Toggle */}
-                    <button
-                        onClick={() => setShowFilters(!showFilters)}
-                        className={`flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-medium transition-colors ${showFilters
-                            ? 'bg-sky-50 border-sky-200 text-sky-700 dark:bg-sky-900/20 dark:border-sky-800 dark:text-sky-400'
-                            : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'
-                            }`}
-                    >
-                        <Filter className="w-4 h-4" />
-                        Filters
-                    </button>
+                    {/* More Filters & Refresh */}
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => setShowFilters(!showFilters)}
+                            className={`flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-bold transition-all ${showFilters
+                                ? 'bg-gold-500/10 border-gold-500/30 text-gold-400'
+                                : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10 hover:text-white'
+                                }`}
+                        >
+                            <Filter className="w-4 h-4" />
+                            <span className="hidden sm:inline">Filters</span>
+                        </button>
 
-                    {/* Refresh */}
-                    <button
-                        onClick={() => fetchBookings(true)}
-                        disabled={refreshing}
-                        className="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
-                    >
-                        <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-                        Refresh
-                    </button>
-                </div>
-
-                {/* Extended Filters */}
-                {showFilters && (
-                    <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        {(filters.datePreset === 'custom') && (
-                            <>
-                                <div>
-                                    <label className="block text-xs font-medium text-slate-500 mb-1">From Date</label>
-                                    <input
-                                        type="datetime-local"
-                                        value={filters.from}
-                                        onChange={(e) => handleFilterChange('from', e.target.value)}
-                                        className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-sky-500 focus:border-transparent"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-medium text-slate-500 mb-1">To Date</label>
-                                    <input
-                                        type="datetime-local"
-                                        value={filters.to}
-                                        onChange={(e) => handleFilterChange('to', e.target.value)}
-                                        className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-sky-500 focus:border-transparent"
-                                    />
-                                </div>
-                            </>
-                        )}
-                        <div>
-                            <label className="block text-xs font-medium text-slate-500 mb-1">Source / Partner</label>
-                            <select
-                                value={filters.partnerId}
-                                onChange={(e) => handleFilterChange('partnerId', e.target.value)}
-                                className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-sky-500 focus:border-transparent"
-                            >
-                                <option value="">All Sources</option>
-                                <option value="manual">Manual / Direct</option>
-                                {partners.map(partner => (
-                                    <option key={partner.id} value={partner.id}>{partner.name}</option>
-                                ))}
-                            </select>
-                        </div>
+                        <button
+                            onClick={() => fetchBookings(true)}
+                            disabled={refreshing}
+                            className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-bold text-slate-400 hover:bg-white/10 hover:text-white transition-all disabled:opacity-50"
+                        >
+                            <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+                        </button>
                     </div>
-                )}
+                </div>
             </div>
 
             {/* Bookings Table */}
-            <div className="bg-white dark:bg-dark-card rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+            <div className="glass-panel rounded-2xl overflow-hidden border border-white/5 shadow-2xl">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left">
-                        <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 uppercase text-xs font-semibold">
+                    <table className="w-full text-left border-collapse">
+                        <thead className="bg-obsidian-900/50 border-b border-white/5 text-slate-500 uppercase text-[10px] font-bold tracking-wider">
                             <tr>
-                                <th className="px-4 py-4">Reference</th>
-                                <th className="px-4 py-4">Source</th>
-                                <th className="px-4 py-4">Passenger</th>
-                                <th className="px-4 py-4">Pickup</th>
-                                <th className="px-4 py-4">Time</th>
-                                <th className="px-4 py-4">Driver</th>
-                                <th className="px-4 py-4">Status</th>
-                                <th className="px-4 py-4">Fare</th>
-                                <th className="px-4 py-4 text-right">Actions</th>
+                                <th className="px-6 py-4">Reference</th>
+                                <th className="px-6 py-4">Source</th>
+                                <th className="px-6 py-4">Passenger</th>
+                                <th className="px-6 py-4">Pickup</th>
+                                <th className="px-6 py-4">Time</th>
+                                <th className="px-6 py-4">Driver</th>
+                                <th className="px-6 py-4">Status</th>
+                                <th className="px-6 py-4">Fare</th>
+                                <th className="px-6 py-4 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
+                        <tbody className="divide-y divide-white/5">
                             {loading ? (
                                 <tr>
-                                    <td colSpan="9" className="px-4 py-12 text-center text-slate-500">
-                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500 mx-auto mb-2"></div>
-                                        Loading bookings...
+                                    <td colSpan="9" className="px-6 py-16 text-center text-slate-500">
+                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold-500 mx-auto mb-3"></div>
+                                        <span className="text-xs font-mono animate-pulse">SYNCING BOOKING DATA...</span>
                                     </td>
                                 </tr>
                             ) : bookings.length === 0 ? (
                                 <tr>
-                                    <td colSpan="9" className="px-4 py-12 text-center text-slate-500">
-                                        <Calendar className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                                        <p>No bookings found</p>
-                                        <p className="text-xs mt-1">Try adjusting your filters or create a new booking</p>
+                                    <td colSpan="9" className="px-6 py-20 text-center text-slate-600">
+                                        <Calendar className="w-12 h-12 mx-auto mb-3 opacity-20" />
+                                        <p className="font-medium">No bookings found</p>
+                                        <p className="text-xs mt-1">Try adjusting your filters</p>
                                     </td>
                                 </tr>
                             ) : (
-                                bookings.map((booking) => (
-                                    <tr key={booking.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
-                                        <td className="px-4 py-4">
-                                            <span className="font-mono font-bold text-slate-900 dark:text-white text-sm">
+                                bookings.map((booking, index) => (
+                                    <motion.tr
+                                        key={booking.id}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: index * 0.05 }}
+                                        className="group hover:bg-white/[0.02] transition-colors"
+                                    >
+                                        <td className="px-6 py-4">
+                                            <span className="font-mono font-bold text-gold-500/90 text-sm tracking-wide">
                                                 {booking.booking_reference}
                                             </span>
                                         </td>
-                                        <td className="px-4 py-4">
+                                        <td className="px-6 py-4">
                                             <SourceBadge source={booking.source} partnerName={booking.partner_name} />
                                             {booking.service_type && (
-                                                <p className="text-xs text-slate-500 mt-1 capitalize">
+                                                <p className="text-[10px] text-slate-500 mt-1.5 capitalize font-medium flex items-center gap-1">
                                                     {booking.service_type.replace('_', ' ')}
-                                                    {booking.flight_number && ` (${booking.flight_number})`}
+                                                    {booking.flight_number && (
+                                                        <span className="text-slate-400 bg-white/5 px-1 rounded">
+                                                            {booking.flight_number}
+                                                        </span>
+                                                    )}
                                                 </p>
                                             )}
                                         </td>
-                                        <td className="px-4 py-4">
+                                        <td className="px-6 py-4">
                                             <div className="max-w-[150px]">
-                                                <p className="font-medium text-slate-900 dark:text-white truncate">
+                                                <p className="font-bold text-slate-200 truncate group-hover:text-white transition-colors">
                                                     {booking.passenger_name || 'Unknown'}
                                                 </p>
-                                                <p className="text-xs text-slate-500 truncate">
+                                                <p className="text-xs text-slate-500 truncate font-mono mt-0.5">
                                                     {booking.passenger_phone}
                                                 </p>
                                             </div>
                                         </td>
-                                        <td className="px-4 py-4">
-                                            <p className="text-sm text-slate-700 dark:text-slate-300 max-w-[200px] truncate" title={booking.pickup_address}>
+                                        <td className="px-6 py-4">
+                                            <p className="text-sm text-slate-400 max-w-[220px] truncate" title={booking.pickup_address}>
                                                 {booking.pickup_address}
                                             </p>
                                         </td>
-                                        <td className="px-4 py-4">
-                                            <p className="text-sm text-slate-700 dark:text-slate-300 whitespace-nowrap">
-                                                {formatDate(booking.scheduled_pickup_time)}
-                                            </p>
+                                        <td className="px-6 py-4">
+                                            <div className="flex flex-col">
+                                                <span className="text-sm font-medium text-slate-300">
+                                                    {new Date(booking.scheduled_pickup_time).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}
+                                                </span>
+                                                <span className="text-[10px] text-slate-500 uppercase font-bold">
+                                                    {new Date(booking.scheduled_pickup_time).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' })}
+                                                </span>
+                                            </div>
                                         </td>
-                                        <td className="px-4 py-4">
+                                        <td className="px-6 py-4">
                                             {booking.driver_name ? (
-                                                <div>
-                                                    <p className="font-medium text-slate-900 dark:text-white text-sm">
+                                                <div className="flex flex-col">
+                                                    <span className="font-bold text-slate-200 text-sm">
                                                         {booking.driver_name}
-                                                    </p>
-                                                    <p className="text-xs text-slate-500">{booking.license_plate}</p>
+                                                    </span>
+                                                    <span className="text-[10px] text-gold-500/60 font-mono border border-gold-500/10 bg-gold-500/5 px-1 rounded w-fit mt-0.5">
+                                                        {booking.license_plate}
+                                                    </span>
                                                 </div>
                                             ) : (
-                                                <span className="text-slate-400 text-sm italic">Unassigned</span>
+                                                <span className="text-slate-600 text-xs italic">Unassigned</span>
                                             )}
                                         </td>
-                                        <td className="px-4 py-4">
+                                        <td className="px-6 py-4">
                                             <StatusBadge status={booking.status} />
                                         </td>
-                                        <td className="px-4 py-4">
-                                            <span className="font-semibold text-slate-900 dark:text-white">
+                                        <td className="px-6 py-4">
+                                            <span className="font-bold font-mono text-emerald-400">
                                                 {formatCurrency(booking.fare_final || booking.fare_estimate)}
                                             </span>
                                         </td>
-                                        <td className="px-4 py-4">
-                                            <div className="flex items-center justify-end gap-2">
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
                                                 <button
                                                     onClick={() => openDetails(booking.id)}
-                                                    className="p-2 text-slate-500 hover:text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-900/20 rounded-lg transition-colors"
+                                                    className="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors border border-transparent hover:border-white/10"
                                                     title="View Details"
                                                 >
                                                     <Eye className="w-4 h-4" />
@@ -501,7 +507,7 @@ export default function Bookings() {
                                                 {booking.status === 'pending' && (
                                                     <button
                                                         onClick={() => openAssign(booking)}
-                                                        className="p-2 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg transition-colors"
+                                                        className="p-1.5 text-emerald-500 hover:bg-emerald-500/10 border border-emerald-500/20 hover:border-emerald-500/50 rounded-lg transition-colors"
                                                         title="Assign Driver"
                                                     >
                                                         <UserPlus className="w-4 h-4" />
@@ -509,7 +515,7 @@ export default function Bookings() {
                                                 )}
                                             </div>
                                         </td>
-                                    </tr>
+                                    </motion.tr>
                                 ))
                             )}
                         </tbody>
@@ -518,25 +524,25 @@ export default function Bookings() {
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                    <div className="px-4 py-3 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                        <p className="text-sm text-slate-500">
-                            Showing {((pagination.page - 1) * pagination.limit) + 1} to {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} bookings
+                    <div className="px-6 py-4 border-t border-white/5 flex items-center justify-between bg-obsidian-900/30">
+                        <p className="text-xs text-slate-500 font-medium">
+                            Showing {((pagination.page - 1) * pagination.limit) + 1} - {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total}
                         </p>
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={() => handlePageChange(pagination.page - 1)}
                                 disabled={pagination.page === 1}
-                                className="p-2 border border-slate-200 dark:border-slate-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                className="p-2 border border-white/10 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/5 text-slate-400 hover:text-white transition-colors"
                             >
                                 <ChevronLeft className="w-4 h-4" />
                             </button>
-                            <span className="text-sm text-slate-700 dark:text-slate-300 px-3">
-                                Page {pagination.page} of {totalPages}
+                            <span className="text-xs font-mono text-slate-400 px-3">
+                                {pagination.page} / {totalPages}
                             </span>
                             <button
                                 onClick={() => handlePageChange(pagination.page + 1)}
                                 disabled={pagination.page === totalPages}
-                                className="p-2 border border-slate-200 dark:border-slate-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                className="p-2 border border-white/10 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/5 text-slate-400 hover:text-white transition-colors"
                             >
                                 <ChevronRight className="w-4 h-4" />
                             </button>

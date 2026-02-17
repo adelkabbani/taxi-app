@@ -4,39 +4,37 @@
 
 @layer base {
   body {
-    @apply font-sans bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100;
+    @apply font-sans bg-obsidian-900 text-gray-200 antialiased selection:bg-gold-500/30 selection:text-gold-400 overflow-hidden; /* Prevent body scroll, let app container handle it */
     background-image: 
-      radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.1) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.1) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.1) 0px, transparent 50%),
-      radial-gradient(at 0% 100%, rgba(245, 158, 11, 0.1) 0px, transparent 50%);
+      radial-gradient(at 0% 0%, rgba(255, 215, 0, 0.03) 0px, transparent 50%), /* Subtle Gold Top-Left */
+      radial-gradient(at 90% 10%, rgba(218, 165, 32, 0.02) 0px, transparent 40%), /* Dim Gold Top-Right */
+      radial-gradient(at 50% 100%, rgba(10, 10, 12, 1) 0px, transparent 60%); /* Obsidian bottom anchor */
     background-attachment: fixed;
   }
 }
 
 @layer utilities {
-  .glass-card {
-    @apply bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-white/20 dark:border-white/5 shadow-xl;
+  .glass-panel {
+    @apply bg-obsidian-800/90 backdrop-blur-md border border-obsidian-700 shadow-2xl;
+  }
+
+  .glass-panel-hover {
+    @apply hover:border-gold-500/30 transition-colors duration-300;
   }
   
   .text-glow {
-    text-shadow: 0 0 20px currentColor;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.25);
   }
   
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
+  .text-glow-strong {
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
   }
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-/* Custom Scrollbar for premium feel */
+/* Premium Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -44,26 +42,26 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-slate-300 dark:bg-slate-700 rounded-full;
+  @apply bg-obsidian-700 rounded-full hover:bg-gold-600/50 transition-colors;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-slate-400 dark:bg-slate-600;
-}
-
-/* Leaflet Map Customization */
+/* Leaflet Map Dark Mode Override */
 .leaflet-container {
-  @apply z-0 font-sans;
+  @apply z-0 font-sans bg-obsidian-900;
+}
+
+.leaflet-tile {
+  filter: brightness(0.7) invert(1) contrast(1.5) hue-rotate(200deg) saturate(0.3) brightness(0.7);
 }
 
 .custom-popup .leaflet-popup-content-wrapper {
-  @apply rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 dark:bg-dark-card p-0 overflow-hidden;
-}
-
-.custom-popup .leaflet-popup-content {
-  @apply m-0;
+  @apply rounded-lg shadow-xl border border-obsidian-700 bg-obsidian-800 text-gray-200 p-0 overflow-hidden;
 }
 
 .custom-popup .leaflet-popup-tip {
-  @apply dark:bg-dark-card;
+  @apply bg-obsidian-800;
+}
+
+.custom-popup .leaflet-popup-close-button {
+  @apply text-gray-400 hover:text-gold-400;
 }

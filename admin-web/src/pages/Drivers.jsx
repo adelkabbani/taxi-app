@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import api from '../lib/api';
 import AvailabilityBadge from '../components/AvailabilityBadge';
 import DriverDetailsModal from '../components/DriverDetailsModal';

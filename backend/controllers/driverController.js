@@ -365,5 +365,14 @@ module.exports = {
     getAirportTracking,
     suspendDriver,
     unsuspendDriver,
-    updateDriverPassword
+    updateDriverPassword,
+    deleteDriver: async (req, res) => {
+        const { id } = req.params;
+        // Verify admin
+        if (req.user.role !== 'admin') {
+            throw new AppError('Not authorized to delete drivers', 403);
+        }
+        await driverService.softDeleteDriver(parseInt(id), req.user.id);
+        res.json({ success: true, message: 'Driver soft deleted successfully' });
+    }
 };
