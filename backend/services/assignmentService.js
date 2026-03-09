@@ -16,18 +16,24 @@ const MAX_CASCADE_ATTEMPTS = 5;
  */
 const assignBooking = async (bookingId) => {
     try {
-        // 1. Get Booking details
-        const bookingResult = await db.query(
-            `SELECT b.*, t.id as tenant_id, br.vehicle_type 
-             FROM bookings b
-             JOIN tenants t ON b.tenant_id = t.id
-             LEFT JOIN booking_requirements br ON b.id = br.booking_id
-             WHERE b.id = $1`,
-            [bookingId]
-        );
+        // 1. Get Booking details with a row-level lock to prevent concurrent dispatch workers
+        //    from racing on the same booking. SKIP LOCKED causes workers to immediately drop
+        //    attempts on rows another transaction already holds — no deadlock, no hang.
+        const bookingResult = await db.transaction(async (client) => {
+            return await client.query(
+                `SELECT b.*, t.id as tenant_id, br.vehicle_type 
+                 FROM bookings b
+                 JOIN tenants t ON b.tenant_id = t.id
+                 LEFT JOIN booking_requirements br ON b.id = br.booking_id
+                 WHERE b.id = $1 AND b.status = 'pending'
+                 FOR UPDATE SKIP LOCKED`,
+                [bookingId]
+            );
+        });
 
         if (bookingResult.rows.length === 0) {
-            throw new AppError('Booking not found', 404);
+            logger.info(`Booking ${bookingId} is already locked or not pending — skipping.`);
+            return null; // Another worker is handling it
         }
 
         const booking = bookingResult.rows[0];
@@ -131,7 +137,7 @@ const selectDriverRoundRobin = async (eligibleDrivers, tenantId) => {
 const assignToDriver = async (booking, driver) => {
     return await db.transaction(async (client) => {
         // Lock booking row to prevent race conditions
-        const lock = await client.query('SELECT status FROM bookings WHERE id = $1 FOR UPDATE NOWAIT', [booking.id]);
+        const lock = await client.query('SELECT status FROM bookings WHERE id = $1 FOR UPDATE SKIP LOCKED', [booking.id]);
 
         if (lock.rows[0].status !== 'pending' && booking.auto_assignment_attempts === 0) {
             throw new AppError('Booking is no longer pending', 400);

@@ -208,28 +208,33 @@ async function startServer() {
 }
 
 
-// Handle graceful shutdown
-process.on('SIGTERM', async () => {
-  logger.info('SIGTERM received, shutting down gracefully...');
-  server.close(async () => {
-    await db.destroy();
-    await redis.quit();
-    assignmentScheduler.stop();
-    logger.info('Server shut down complete');
-    process.exit(0);
-  });
-});
+// Handle graceful shutdown — releases DB pool, Redis, and unbinds the port
+const gracefulShutdown = (signal) => {
+  logger.info(`${signal} received — shutting down gracefully...`);
 
-process.on('SIGINT', async () => {
-  logger.info('SIGINT received, shutting down gracefully...');
+  // Force-kill after 10 s if connections won't close
+  const forceExit = setTimeout(() => {
+    logger.error('Could not close connections in time — forcefully shutting down');
+    process.exit(1);
+  }, 10000);
+  forceExit.unref(); // Don't let this timer keep the process alive
+
   server.close(async () => {
-    await db.destroy();
-    await redis.quit();
-    assignmentScheduler.stop();
-    logger.info('Server shut down complete');
-    process.exit(0);
+    try {
+      assignmentScheduler.stop();
+      await db.destroy();   // Release PostgreSQL connection pool
+      await redis.quit();   // Release Redis connection
+      logger.info('Server shut down complete — port released');
+      process.exit(0);
+    } catch (err) {
+      logger.error('Error during shutdown cleanup', err);
+      process.exit(1);
+    }
   });
-});
+};
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 // Start the server only if run directly
 if (require.main === module) {
