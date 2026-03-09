@@ -42,32 +42,45 @@ async function seedAdmin() {
         if (!tenant) throw new Error('No tenants found — create at least one tenant first.');
         console.log(`✓ Canonical tenant: [${tenant.id}] ${tenant.name} (${tenant.booking_count} bookings)`);
 
-        // 2. Wipe ALL existing admins for admin@taxi.com
-        const deleted = await client.query(
-            `DELETE FROM users WHERE email = $1 RETURNING id`,
-            [ADMIN_EMAIL]
-        );
-        if (deleted.rowCount > 0) {
-            console.log(`🗑  Removed ${deleted.rowCount} old admin account(s): [${deleted.rows.map(r => r.id).join(', ')}]`);
-        } else {
-            console.log('  No existing admin accounts found — clean slate.');
-        }
-
-        // 3. Generate a fresh bcrypt hash
+        // 2. Generate a fresh bcrypt hash
         const salt = await bcrypt.genSalt(12);
         const hash = await bcrypt.hash(ADMIN_PASSWORD, salt);
         console.log('✓ Fresh bcrypt hash generated (rounds: 12)');
 
-        // 4. Insert the one true super-admin
-        const inserted = await client.query(`
-            INSERT INTO users
-                (email, password_hash, role, status, is_active, tenant_id, first_name, last_name, created_at, updated_at)
-            VALUES
-                ($1, $2, 'admin', 'active', true, $3, 'Super', 'Admin', NOW(), NOW())
-            RETURNING id, email, role, tenant_id
-        `, [ADMIN_EMAIL, hash, tenant.id]);
+        // 3. Find existing admin (we cannot delete due to FK constraints on bookings)
+        const existing = await client.query(
+            `SELECT id FROM users WHERE email = $1 LIMIT 1`,
+            [ADMIN_EMAIL]
+        );
 
-        const admin = inserted.rows[0];
+        let admin;
+        if (existing.rowCount > 0) {
+            // UPDATE in-place to preserve FK references
+            console.log(`🔄 Existing admin found (ID: ${existing.rows[0].id}) — updating password & status...`);
+            const updated = await client.query(`
+                UPDATE users
+                SET password_hash = $1,
+                    role          = 'admin',
+                    status        = 'active',
+                    is_active     = true,
+                    tenant_id     = $2,
+                    updated_at    = NOW()
+                WHERE email = $3
+                RETURNING id, email, role, tenant_id
+            `, [hash, tenant.id, ADMIN_EMAIL]);
+            admin = updated.rows[0];
+        } else {
+            // Fresh insert — no existing user to worry about
+            console.log('  No existing admin found — inserting fresh account...');
+            const inserted = await client.query(`
+                INSERT INTO users
+                    (email, password_hash, role, status, is_active, tenant_id, first_name, last_name, created_at, updated_at)
+                VALUES
+                    ($1, $2, 'admin', 'active', true, $3, 'Super', 'Admin', NOW(), NOW())
+                RETURNING id, email, role, tenant_id
+            `, [ADMIN_EMAIL, hash, tenant.id]);
+            admin = inserted.rows[0];
+        }
         console.log('\n✅ Super-Admin created successfully!');
         console.log('─────────────────────────────────────');
         console.log(`   ID:        ${admin.id}`);

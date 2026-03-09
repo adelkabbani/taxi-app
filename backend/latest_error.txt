@@ -4069,3 +4069,69 @@ REQUEST: GET /api/bookings
 BODY: {}
 USER: 6
 ----------------------------------------
+
+TIMESTAMP: 2026-03-09T02:23:10.536Z
+ERROR: Invalid credentials
+STACK: Error: Invalid credentials
+    at d:\website@Antigravity\taxi\backend\routes\auth.js:61:19
+REQUEST: POST /api/auth/login
+BODY: {"email":"admin@taxi.com","password":"Admin@Taxio123!"}
+USER: undefined
+----------------------------------------
+
+TIMESTAMP: 2026-03-09T02:23:32.264Z
+ERROR: Invalid credentials
+STACK: Error: Invalid credentials
+    at d:\website@Antigravity\taxi\backend\routes\auth.js:61:19
+REQUEST: POST /api/auth/login
+BODY: {"email":"admin@taxi.com","password":"Admin@Taxio123!"}
+USER: undefined
+----------------------------------------
+
+TIMESTAMP: 2026-03-09T02:23:49.923Z
+ERROR: invalid input value for enum booking_status: "assigned,arrived,started,waiting_started"
+STACK: error: invalid input value for enum booking_status: "assigned,arrived,started,waiting_started"
+    at d:\website@Antigravity\taxi\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Object.query (d:\website@Antigravity\taxi\backend\config\database.js:31:24)
+    at async getAllBookings (d:\website@Antigravity\taxi\backend\controllers\bookingController.js:113:20)
+REQUEST: GET /api/bookings
+BODY: {}
+USER: 6
+----------------------------------------
+
+TIMESTAMP: 2026-03-09T02:23:49.953Z
+ERROR: invalid input value for enum booking_status: "assigned,arrived,started,waiting_started"
+STACK: error: invalid input value for enum booking_status: "assigned,arrived,started,waiting_started"
+    at d:\website@Antigravity\taxi\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Object.query (d:\website@Antigravity\taxi\backend\config\database.js:31:24)
+    at async getAllBookings (d:\website@Antigravity\taxi\backend\controllers\bookingController.js:113:20)
+REQUEST: GET /api/bookings
+BODY: {}
+USER: 6
+----------------------------------------
+
+TIMESTAMP: 2026-03-09T02:31:54.256Z
+ERROR: invalid input value for enum booking_status: "assigned,arrived,started,waiting_started"
+STACK: error: invalid input value for enum booking_status: "assigned,arrived,started,waiting_started"
+    at d:\website@Antigravity\taxi\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Object.query (d:\website@Antigravity\taxi\backend\config\database.js:31:24)
+    at async getAllBookings (d:\website@Antigravity\taxi\backend\controllers\bookingController.js:113:20)
+REQUEST: GET /api/bookings
+BODY: {}
+USER: 6
+----------------------------------------
+
+TIMESTAMP: 2026-03-09T02:31:54.334Z
+ERROR: invalid input value for enum booking_status: "assigned,arrived,started,waiting_started"
+STACK: error: invalid input value for enum booking_status: "assigned,arrived,started,waiting_started"
+    at d:\website@Antigravity\taxi\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Object.query (d:\website@Antigravity\taxi\backend\config\database.js:31:24)
+    at async getAllBookings (d:\website@Antigravity\taxi\backend\controllers\bookingController.js:113:20)
+REQUEST: GET /api/bookings
+BODY: {}
+USER: 6
+----------------------------------------

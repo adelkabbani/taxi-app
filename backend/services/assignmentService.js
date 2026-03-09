@@ -131,7 +131,7 @@ const selectDriverRoundRobin = async (eligibleDrivers, tenantId) => {
 const assignToDriver = async (booking, driver) => {
     return await db.transaction(async (client) => {
         // Lock booking row to prevent race conditions
-        const lock = await client.query('SELECT status FROM bookings WHERE id = $1 FOR UPDATE', [booking.id]);
+        const lock = await client.query('SELECT status FROM bookings WHERE id = $1 FOR UPDATE NOWAIT', [booking.id]);
 
         if (lock.rows[0].status !== 'pending' && booking.auto_assignment_attempts === 0) {
             throw new AppError('Booking is no longer pending', 400);
