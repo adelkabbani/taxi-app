@@ -3877,3 +3877,195 @@ REQUEST: GET /api/bookings
 BODY: {}
 USER: 6
 ----------------------------------------
+
+TIMESTAMP: 2026-02-17T21:33:59.404Z
+ERROR: Token expired
+STACK: Error: Token expired
+    at d:\website@Antigravity\taxi\backend\middleware\auth.js:58:19
+    at d:\website@Antigravity\taxi\backend\middleware\errorHandler.js:51:21
+    at Layer.handle [as handle_request] (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\layer.js:95:5)
+    at next (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\layer.js:95:5)
+    at d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:346:12)
+    at next (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:280:10)
+    at Function.handle (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:175:3)
+REQUEST: GET /api/tenants/current/settings
+BODY: {}
+USER: undefined
+----------------------------------------
+
+TIMESTAMP: 2026-02-17T21:33:59.450Z
+ERROR: Token expired
+STACK: Error: Token expired
+    at d:\website@Antigravity\taxi\backend\middleware\auth.js:58:19
+    at d:\website@Antigravity\taxi\backend\middleware\errorHandler.js:51:21
+    at Layer.handle [as handle_request] (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:328:13)
+    at d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:346:12)
+    at next (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:280:10)
+    at d:\website@Antigravity\taxi\backend\node_modules\express-rate-limit\dist\index.cjs:807:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async d:\website@Antigravity\taxi\backend\node_modules\express-rate-limit\dist\index.cjs:691:5
+REQUEST: GET /api/stats/dashboard
+BODY: {}
+USER: undefined
+----------------------------------------
+
+TIMESTAMP: 2026-02-17T21:33:59.519Z
+ERROR: Token expired
+STACK: Error: Token expired
+    at d:\website@Antigravity\taxi\backend\middleware\auth.js:58:19
+    at d:\website@Antigravity\taxi\backend\middleware\errorHandler.js:51:21
+    at Layer.handle [as handle_request] (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\layer.js:95:5)
+    at next (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\layer.js:95:5)
+    at d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:346:12)
+    at next (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:280:10)
+    at Function.handle (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:175:3)
+REQUEST: GET /api/tenants/current/settings
+BODY: {}
+USER: undefined
+----------------------------------------
+
+TIMESTAMP: 2026-02-17T21:33:59.549Z
+ERROR: Token expired
+STACK: Error: Token expired
+    at d:\website@Antigravity\taxi\backend\middleware\auth.js:58:19
+    at d:\website@Antigravity\taxi\backend\middleware\errorHandler.js:51:21
+    at Layer.handle [as handle_request] (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:328:13)
+    at d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:346:12)
+    at next (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:280:10)
+    at d:\website@Antigravity\taxi\backend\node_modules\express-rate-limit\dist\index.cjs:807:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async d:\website@Antigravity\taxi\backend\node_modules\express-rate-limit\dist\index.cjs:691:5
+REQUEST: GET /api/stats/dashboard
+BODY: {}
+USER: undefined
+----------------------------------------
+
+TIMESTAMP: 2026-02-17T21:34:13.896Z
+ERROR: Token expired
+STACK: Error: Token expired
+    at d:\website@Antigravity\taxi\backend\middleware\auth.js:58:19
+    at d:\website@Antigravity\taxi\backend\middleware\errorHandler.js:51:21
+    at Layer.handle [as handle_request] (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\layer.js:95:5)
+    at next (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\layer.js:95:5)
+    at d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:346:12)
+    at next (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:280:10)
+    at Function.handle (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:175:3)
+REQUEST: GET /api/tenants/current/settings
+BODY: {}
+USER: undefined
+----------------------------------------
+
+TIMESTAMP: 2026-02-17T21:34:13.949Z
+ERROR: Token expired
+STACK: Error: Token expired
+    at d:\website@Antigravity\taxi\backend\middleware\auth.js:58:19
+    at d:\website@Antigravity\taxi\backend\middleware\errorHandler.js:51:21
+    at Layer.handle [as handle_request] (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:328:13)
+    at d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:346:12)
+    at next (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:280:10)
+    at d:\website@Antigravity\taxi\backend\node_modules\express-rate-limit\dist\index.cjs:807:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async d:\website@Antigravity\taxi\backend\node_modules\express-rate-limit\dist\index.cjs:691:5
+REQUEST: GET /api/stats/dashboard
+BODY: {}
+USER: undefined
+----------------------------------------
+
+TIMESTAMP: 2026-02-17T21:34:14.476Z
+ERROR: Token expired
+STACK: Error: Token expired
+    at d:\website@Antigravity\taxi\backend\middleware\auth.js:58:19
+    at d:\website@Antigravity\taxi\backend\middleware\errorHandler.js:51:21
+    at Layer.handle [as handle_request] (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\layer.js:95:5)
+    at next (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\layer.js:95:5)
+    at d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:346:12)
+    at next (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:280:10)
+    at Function.handle (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:175:3)
+REQUEST: GET /api/tenants/current/settings
+BODY: {}
+USER: undefined
+----------------------------------------
+
+TIMESTAMP: 2026-02-17T21:34:14.578Z
+ERROR: Token expired
+STACK: Error: Token expired
+    at d:\website@Antigravity\taxi\backend\middleware\auth.js:58:19
+    at d:\website@Antigravity\taxi\backend\middleware\errorHandler.js:51:21
+    at Layer.handle [as handle_request] (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:328:13)
+    at d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:346:12)
+    at next (d:\website@Antigravity\taxi\backend\node_modules\express\lib\router\index.js:280:10)
+    at d:\website@Antigravity\taxi\backend\node_modules\express-rate-limit\dist\index.cjs:807:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async d:\website@Antigravity\taxi\backend\node_modules\express-rate-limit\dist\index.cjs:691:5
+REQUEST: GET /api/stats/dashboard
+BODY: {}
+USER: undefined
+----------------------------------------
+
+TIMESTAMP: 2026-02-17T21:34:26.475Z
+ERROR: invalid input value for enum booking_status: "assigned,arrived,started,waiting_started"
+STACK: error: invalid input value for enum booking_status: "assigned,arrived,started,waiting_started"
+    at d:\website@Antigravity\taxi\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Object.query (d:\website@Antigravity\taxi\backend\config\database.js:31:24)
+    at async getAllBookings (d:\website@Antigravity\taxi\backend\controllers\bookingController.js:113:20)
+REQUEST: GET /api/bookings
+BODY: {}
+USER: 6
+----------------------------------------
+
+TIMESTAMP: 2026-02-17T21:34:27.213Z
+ERROR: invalid input value for enum booking_status: "assigned,arrived,started,waiting_started"
+STACK: error: invalid input value for enum booking_status: "assigned,arrived,started,waiting_started"
+    at d:\website@Antigravity\taxi\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Object.query (d:\website@Antigravity\taxi\backend\config\database.js:31:24)
+    at async getAllBookings (d:\website@Antigravity\taxi\backend\controllers\bookingController.js:113:20)
+REQUEST: GET /api/bookings
+BODY: {}
+USER: 6
+----------------------------------------
+
+TIMESTAMP: 2026-02-17T21:34:59.238Z
+ERROR: invalid input value for enum booking_status: "assigned,arrived,started,waiting_started"
+STACK: error: invalid input value for enum booking_status: "assigned,arrived,started,waiting_started"
+    at d:\website@Antigravity\taxi\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Object.query (d:\website@Antigravity\taxi\backend\config\database.js:31:24)
+    at async getAllBookings (d:\website@Antigravity\taxi\backend\controllers\bookingController.js:113:20)
+REQUEST: GET /api/bookings
+BODY: {}
+USER: 6
+----------------------------------------
+
+TIMESTAMP: 2026-02-17T21:34:59.565Z
+ERROR: invalid input value for enum booking_status: "assigned,arrived,started,waiting_started"
+STACK: error: invalid input value for enum booking_status: "assigned,arrived,started,waiting_started"
+    at d:\website@Antigravity\taxi\backend\node_modules\pg-pool\index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Object.query (d:\website@Antigravity\taxi\backend\config\database.js:31:24)
+    at async getAllBookings (d:\website@Antigravity\taxi\backend\controllers\bookingController.js:113:20)
+REQUEST: GET /api/bookings
+BODY: {}
+USER: 6
+----------------------------------------
