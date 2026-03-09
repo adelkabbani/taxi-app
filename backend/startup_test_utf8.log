@@ -1,0 +1,8 @@
+﻿SERVER INIT REACHED
+2025-12-26 22:39:46 [[32minfo[39m]: [32mSocket.io handlers initialized[39m
+2025-12-26 22:39:46 [[32minfo[39m]: [32mNew database connection established[39m
+2025-12-26 22:39:46 [[32minfo[39m]: [32mÔ£ô Database connected[39m
+2025-12-26 22:39:46 [[32minfo[39m]: [32mÔ£ô Redis connected[39m
+2025-12-26 22:39:46 [[32minfo[39m]: [32mÔ£ô Server running on port 3001[39m
+2025-12-26 22:39:46 [[32minfo[39m]: [32mÔ£ô Environment: development[39m
+2025-12-26 22:39:46 [[32minfo[39m]: [32mÔ£ô API Base URL: http://localhost:3001[39m

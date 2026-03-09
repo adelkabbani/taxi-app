@@ -411,24 +411,24 @@ export default function Dashboard() {
 
             {/* Bottom Quick Actions (Activity Feed moved here or kept?) - Keeping Quick Actions for now but updated style */}
             <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-power-up" style={{ animationDelay: '0.4s' }}>
-                <div className="bg-gradient-to-r from-violet-900/50 to-indigo-900/50 border border-white/5 rounded-3xl p-6 text-white relative overflow-hidden group hover:border-indigo-500/50 transition-all cursor-pointer">
-                    <div className="absolute right-0 top-0 p-6 opacity-10 group-hover:scale-110 transition-transform duration-500">
-                        <Globe className="w-32 h-32" />
+                <div className="glass-panel border border-obsidian-700/50 hover:border-gold-500/30 rounded-3xl p-6 text-white relative overflow-hidden group transition-all cursor-pointer">
+                    <div className="absolute right-0 top-0 p-6 opacity-10 group-hover:opacity-20 group-hover:scale-110 transition-all duration-500">
+                        <Globe className="w-32 h-32 text-gold-400" />
                     </div>
-                    <h3 className="text-xl font-bold mb-1 text-indigo-300 group-hover:text-indigo-200">Global Map View</h3>
+                    <h3 className="text-xl font-bold mb-1 text-gold-300 group-hover:text-gold-200">Global Map View</h3>
                     <p className="text-slate-400 text-sm mb-4">Track your entire fleet in real-time across all active zones.</p>
-                    <button className="bg-indigo-500/20 hover:bg-indigo-500/40 border border-indigo-500/30 px-4 py-2 rounded-xl text-sm font-bold text-indigo-200 transition-all">
+                    <button className="bg-gold-500/10 hover:bg-gold-500/20 border border-gold-500/30 px-4 py-2 rounded-xl text-sm font-bold text-gold-300 transition-all">
                         Launch Map
                     </button>
                 </div>
 
-                <div className="bg-gradient-to-r from-emerald-900/50 to-teal-900/50 border border-white/5 rounded-3xl p-6 text-white relative overflow-hidden group hover:border-emerald-500/50 transition-all cursor-pointer">
-                    <div className="absolute right-0 top-0 p-6 opacity-10 group-hover:scale-110 transition-transform duration-500">
-                        <Coins className="w-32 h-32" />
+                <div className="glass-panel border border-obsidian-700/50 hover:border-emerald-500/30 rounded-3xl p-6 text-white relative overflow-hidden group transition-all cursor-pointer">
+                    <div className="absolute right-0 top-0 p-6 opacity-10 group-hover:opacity-20 group-hover:scale-110 transition-all duration-500">
+                        <Coins className="w-32 h-32 text-emerald-400" />
                     </div>
                     <h3 className="text-xl font-bold mb-1 text-emerald-300 group-hover:text-emerald-200">Financial Report</h3>
                     <p className="text-slate-400 text-sm mb-4">Detailed breakdown of revenue, partner payouts, and margins.</p>
-                    <button className="bg-emerald-500/20 hover:bg-emerald-500/40 border border-emerald-500/30 px-4 py-2 rounded-xl text-sm font-bold text-emerald-200 transition-all">
+                    <button className="bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 px-4 py-2 rounded-xl text-sm font-bold text-emerald-200 transition-all">
                         View Report
                     </button>
                 </div>

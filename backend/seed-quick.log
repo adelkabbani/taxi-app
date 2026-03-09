@@ -1,0 +1,26 @@
+🌱 Quick Seed Starting...
+
+Tenant ID: 1
+
+📦 Creating partners...
+  ✓ Booking.com
+  ✓ Welcome Pickups
+  ✓ GetYourGuide
+  ✓ Hotel Adlon
+
+Partner IDs: Booking.com=1, Welcome=12, GYG=2, Hotel=4
+Driver ID: 8
+
+📋 Creating sample bookings...
+  ✓ TX-1766726127273-B1 - booking.com - pending
+  ✓ TX-1766726127273-W1 - welcome - assigned
+  ✓ TX-1766726127273-W2 - welcome - pending
+  ✓ TX-1766726127273-G1 - getyourguide - accepted
+  ✓ TX-1766726127273-H1 - hotel - assigned
+  ✓ TX-1766726127273-P1 - phone - pending
+  ✓ TX-1766726127273-M1 - manual - started
+  ✓ TX-1766726127273-A1 - api - no_show_requested
+
+✅ Quick seed completed!
+
+Refresh your browser to see the bookings with different source badges.

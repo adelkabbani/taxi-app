@@ -1,0 +1,20 @@
+🌱 Starting database seed...
+Creating tenant...
+Creating admin user...
+Creating drivers...
+User Hans already exists (ID: 7)
+Vehicle B-TX 1001 already exists (ID: 3)
+Driver profile for Hans already exists
+User Klaus already exists (ID: 8)
+Vehicle B-TX 1002 already exists (ID: 4)
+Driver profile for Klaus already exists
+User Sophie already exists (ID: 9)
+Vehicle B-TX 1003 already exists (ID: 5)
+Driver profile for Sophie already exists
+User Mehmet already exists (ID: 10)
+Vehicle B-TX 1004 already exists (ID: 6)
+Driver profile for Mehmet already exists
+User Anna already exists (ID: 11)
+Vehicle B-TX 1005 already exists (ID: 7)
+Driver profile for Anna already exists
+✅ Seeding complete!

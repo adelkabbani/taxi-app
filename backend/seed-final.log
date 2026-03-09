@@ -1,0 +1,20 @@
+🌱 Starting database seed...
+Creating tenant...
+Creating admin user...
+Creating drivers...
+Created user Hans (ID: 7)
+Created vehicle B-TX 1001 (ID: 3)
+Created driver profile for Hans (ID: 3)
+Created user Klaus (ID: 8)
+Created vehicle B-TX 1002 (ID: 4)
+Created driver profile for Klaus (ID: 4)
+Created user Sophie (ID: 9)
+Created vehicle B-TX 1003 (ID: 5)
+Created driver profile for Sophie (ID: 5)
+Created user Mehmet (ID: 10)
+Created vehicle B-TX 1004 (ID: 6)
+Created driver profile for Mehmet (ID: 6)
+Created user Anna (ID: 11)
+Created vehicle B-TX 1005 (ID: 7)
+Created driver profile for Anna (ID: 7)
+✅ Seeding complete!

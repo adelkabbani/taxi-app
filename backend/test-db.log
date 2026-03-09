@@ -1,0 +1,4 @@
+Testing database connection...
+Tables found: tenants, users, vehicles, vehicle_capabilities, drivers, driver_capabilities, driver_metrics, driver_shifts, driver_breaks, partners, partner_pricing_rules, partner_settlements, booking_requirements, booking_timeline, event_logs, proof_assets, external_bookings, webhook_logs, fraud_flags, location_updates, blacklist, admin_audit_logs, invoices, flight_tracking, notifications, bookings
+Booking columns found: passenger_name, passenger_phone, source
+SUCCESS!
