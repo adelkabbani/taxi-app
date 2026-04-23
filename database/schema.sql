@@ -51,7 +51,7 @@ CREATE INDEX idx_users_phone ON users(phone);
 -- VEHICLES & CAPABILITIES
 -- ============================================
 
-CREATE TYPE vehicle_type AS ENUM ('sedan', 'van', 'business_van', 'luxury', 'accessible');
+CREATE TYPE vehicle_type AS ENUM ('sedan', 'van', 'business_van', 'luxury', 'accessible', 'economy_sedan', 'business');
 CREATE TYPE vehicle_status AS ENUM ('active', 'maintenance', 'inactive');
 
 CREATE TABLE vehicles (
@@ -82,6 +82,16 @@ CREATE TABLE vehicle_capabilities (
 
 CREATE INDEX idx_vehicles_tenant ON vehicles(tenant_id);
 CREATE INDEX idx_vehicles_type ON vehicles(vehicle_type);
+
+CREATE TABLE pricing_rules (
+    id SERIAL PRIMARY KEY,
+    tenant_id INTEGER REFERENCES tenants(id) ON DELETE CASCADE,
+    vehicle_type vehicle_type NOT NULL,
+    min_price DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(tenant_id, vehicle_type)
+);
 
 -- ============================================
 -- DRIVERS & METRICS
@@ -229,13 +239,13 @@ CREATE TABLE bookings (
     -- Status and lifecycle
     status booking_status DEFAULT 'pending',
     created_by_user_id INTEGER REFERENCES users(id),
-    assigned_at TIMESTAMP,
-    accepted_at TIMESTAMP,
-    arrived_at TIMESTAMP,
-    waiting_started_at TIMESTAMP,
-    started_at TIMESTAMP,
-    completed_at TIMESTAMP,
-    cancelled_at TIMESTAMP,
+    assigned_at TIMESTAMPTZ,
+    accepted_at TIMESTAMPTZ,
+    arrived_at TIMESTAMPTZ,
+    waiting_started_at TIMESTAMPTZ,
+    started_at TIMESTAMPTZ,
+    completed_at TIMESTAMPTZ,
+    cancelled_at TIMESTAMPTZ,
     
     -- Pickup and dropoff
     pickup_address TEXT NOT NULL,
@@ -246,7 +256,7 @@ CREATE TABLE bookings (
     dropoff_lng DECIMAL(10, 7),
     
     -- Timing
-    scheduled_pickup_time TIMESTAMP,
+    scheduled_pickup_time TIMESTAMPTZ,
     estimated_duration_minutes INTEGER,
     
     -- Pricing
@@ -262,8 +272,8 @@ CREATE TABLE bookings (
     driver_notes TEXT,
     admin_notes TEXT,
     
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- Booking requirements (vehicle constraints)

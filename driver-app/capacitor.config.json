@@ -1,0 +1,9 @@
+{
+  "appId": "com.antigravity.driver",
+  "appName": "AntiGravity Driver",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "http",
+    "cleartext": true
+  }
+}

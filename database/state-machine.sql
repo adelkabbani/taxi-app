@@ -19,7 +19,7 @@ BEGIN
         RAISE EXCEPTION 'Invalid transition from pending to %', NEW.status;
     END IF;
     
-    IF OLD.status = 'assigned' AND NEW.status NOT IN ('accepted', 'auto_released', 'cancelled') THEN
+    IF OLD.status = 'assigned' AND NEW.status NOT IN ('accepted', 'auto_released', 'cancelled', 'pending') THEN
         RAISE EXCEPTION 'Invalid transition from assigned to %', NEW.status;
     END IF;
     
@@ -159,10 +159,13 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER log_booking_state_changes
-    AFTER UPDATE OF status ON bookings
-    FOR EACH ROW
-    EXECUTE FUNCTION log_booking_state_change();
+-- TEMPORARILY DISABLED: The Node.js application layer (eventLogger.js) is already 
+-- handling timeline insertions with rich user context. Having this trigger active 
+-- creates duplicate logs where the actor is always "system".
+-- CREATE TRIGGER log_booking_state_changes
+--     AFTER UPDATE OF status ON bookings
+--     FOR EACH ROW
+--     EXECUTE FUNCTION log_booking_state_change();
 
 -- ============================================
 -- TIMEOUT MANAGEMENT

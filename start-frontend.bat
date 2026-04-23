@@ -1,6 +1,6 @@
 @echo off
 D:
-cd "D:\website@Antigravity\taxi\admin-web"
+cd "D:\website@Antigravity\drive2flight\admin-web"
 echo ========================================
 echo Starting Taxi Admin - Frontend Server
 echo Current directory: %CD%

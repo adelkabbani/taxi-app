@@ -1,7 +1,7 @@
 @echo off
 echo Starting Taxi Dispatch Backend Server...
 echo.
-cd /d d:\website@Antigravity\taxi\backend
+cd /d d:\website@Antigravity\drive2flight\backend
 echo Current directory: %CD%
 echo.
 echo Starting server on port 3002...
