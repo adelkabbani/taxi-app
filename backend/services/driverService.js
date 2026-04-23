@@ -13,15 +13,16 @@ const { AppError } = require('../middleware/errorHandler');
  * Get all drivers with filters
  */
 const getAllDrivers = async (filters, tenantId) => {
-    const { availability, includeStale, search, page = 1, limit = 20 } = filters;
+    const { availability, includeStale, includeBusy, search, page = 1, limit = 20 } = filters;
     const offset = (page - 1) * limit;
 
     let query = `
     SELECT 
       d.*,
+      CONCAT_WS(' ', u.first_name, u.last_name) AS driver_name,
       u.first_name, u.last_name, u.email, u.phone,
       v.license_plate, v.vehicle_type,
-      dm.acceptance_rate, dm.total_bookings, dm.cancelled_bookings,
+      dm.acceptance_rate, dm.total_bookings, dm.accepted_bookings, dm.cancelled_bookings, dm.rejected_bookings,
       t.name AS company_name,
       t.id AS tenant_id,
       CASE 
@@ -30,7 +31,7 @@ const getAllDrivers = async (filters, tenantId) => {
       END AS is_stale
     FROM drivers d
     JOIN users u ON d.user_id = u.id
-    JOIN tenants t ON u.tenant_id = t.id
+    LEFT JOIN tenants t ON u.tenant_id = t.id
     LEFT JOIN vehicles v ON d.vehicle_id = v.id
     LEFT JOIN driver_metrics dm ON d.id = dm.driver_id
     WHERE 1=1
@@ -39,15 +40,27 @@ const getAllDrivers = async (filters, tenantId) => {
     const params = [];
     let paramIndex = 1;
 
-    // Optional Tenant Filter
-    if (tenantId) {
+    // SuperAdmin Visibility Fix: only filter if tenantId is explicitly provided
+    if (tenantId !== null && tenantId !== undefined && tenantId !== '') {
         query += ` AND u.tenant_id = $${paramIndex}`;
         params.push(tenantId);
         paramIndex++;
     }
 
-    if (availability) {
-        query += ` AND d.availability = $${paramIndex}`;
+    // SuperAdmin Visibility: return ALL unless explicitly filtered
+    const isSuperAdmin = !tenantId;
+    
+    // Default: Only show active drivers unless it's a specific search or SuperAdmin
+    if (!search && !isSuperAdmin) {
+        query += ` AND d.is_active IS NOT FALSE`;
+    }
+
+    if (availability && !isSuperAdmin) {
+        if (includeBusy && availability === 'available') {
+            query += ` AND d.availability IN ($${paramIndex}, 'busy')`;
+        } else {
+            query += ` AND d.availability = $${paramIndex}`;
+        }
         params.push(availability);
         paramIndex++;
     }
@@ -62,15 +75,17 @@ const getAllDrivers = async (filters, tenantId) => {
         paramIndex++;
     }
 
-    if (!includeStale && !search) { // Only filter stale if not searching specific driver
+    if (!includeStale && !search && !isSuperAdmin) { // Allow SuperAdmin to see stale locations
         query += ` AND d.location_updated_at > NOW() - INTERVAL '${process.env.LOCATION_STALENESS_TIMEOUT_SECONDS || 60} seconds'`;
     }
-
 
     query += ` ORDER BY d.id LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
     params.push(limit, offset);
 
+
+
     const result = await db.query(query, params);
+
 
     // Get active suspensions
     const suspensions = await db.query(`
@@ -101,6 +116,7 @@ const getDriverById = async (driverId, tenantId) => {
       dc.languages,
       dm.acceptance_rate, dm.total_bookings, dm.accepted_bookings, dm.rejected_bookings,
       dm.cancelled_bookings, dm.late_arrivals, dm.no_shows,
+      (SELECT COUNT(*)::int FROM bookings b WHERE $1 = ANY(b.excluded_drivers) AND b.driver_id IS NULL) as blacklisted_tours_count,
       CASE 
         WHEN d.location_updated_at > NOW() - INTERVAL '${process.env.LOCATION_STALENESS_TIMEOUT_SECONDS || 60} seconds' THEN false
         ELSE true
@@ -209,7 +225,7 @@ const findNearbyDrivers = async (lat, lng, filters, tenantId) => {
     let query = `
     SELECT 
       d.id, d.current_lat, d.current_lng, d.location_updated_at,
-      u.first_name || ' ' || u.last_name AS driver_name,
+      CONCAT_WS(' ', u.first_name, u.last_name) AS driver_name,
       v.vehicle_type, v.license_plate,
       vc.has_airport_permit,
       dm.acceptance_rate
@@ -513,9 +529,9 @@ const updateDriverPassword = async (driverId, newPassword) => {
     // 2. Hash new password
     const passwordHash = await bcrypt.hash(newPassword, 10);
 
-    // 3. Update users table with hash AND plain text
+    // 3. Update users table with hash AND increment token_version for Force Logout
     await db.query(
-        'UPDATE users SET password_hash = $1 WHERE id = $2',
+        'UPDATE users SET password_hash = $1, token_version = token_version + 1 WHERE id = $2',
         [passwordHash, driver.rows[0].user_id]
     );
 
@@ -577,4 +593,110 @@ module.exports = {
             return { success: true };
         });
     }
+};
+
+/**
+ * Get full fleet for assignment (Isolated Strategy)
+ * Includes all active drivers, partners, and subcontractors across all tenants
+ * includes dynamic scheduling conflict detection (75-minute window)
+ */
+const getFleetForAssignment = async (bookingId) => {
+    // 1. Get the target booking details (support both numeric ID and reference string)
+    const idFilter = isNaN(bookingId) ? 'booking_reference = $1' : 'id = $1';
+    const bookingRes = await db.query(
+        `SELECT id, scheduled_pickup_time, estimated_duration_minutes, excluded_drivers FROM bookings WHERE ${idFilter}`,
+        [bookingId]
+    );
+
+    if (bookingRes.rows.length === 0) {
+        throw new AppError('Booking not found', 404);
+    }
+    const booking = bookingRes.rows[0];
+
+    // 2. Fetch the entire applicable fleet
+    // Base is 'users' to include Partners/Subcontractors who may lack a drivers table entry
+    const query = `
+        SELECT 
+            u.id AS user_id,
+            d.id AS id,
+            d.availability,
+            d.current_lat, d.current_lng, d.location_updated_at,
+            CONCAT_WS(' ', u.first_name, u.last_name) AS driver_name,
+            u.first_name, u.last_name, u.email, u.phone, u.role,
+            v.license_plate, v.vehicle_type,
+            dm.acceptance_rate,
+            t.name AS company_name,
+            t.id AS tenant_id
+        FROM users u
+        LEFT JOIN drivers d ON u.id = d.user_id
+        LEFT JOIN tenants t ON u.tenant_id = t.id
+        LEFT JOIN vehicles v ON d.vehicle_id = v.id
+        LEFT JOIN driver_metrics dm ON d.id = dm.driver_id
+        WHERE u.role::text = 'driver'
+          AND u.status = 'active'
+          AND d.id IS NOT NULL
+          AND d.is_active IS NOT FALSE
+          AND ($1::integer[] IS NULL OR NOT (d.id = ANY($1)))
+        ORDER BY COALESCE(d.id, u.id) DESC
+        LIMIT 1000
+    `;
+
+    const fleetResults = await db.query(query, [booking.excluded_drivers]);
+    const fleet = fleetResults.rows;
+
+    // 3. For each fleet member, check for scheduling conflicts
+    // 75-minute window matches bookingService.js assignDriver logic
+    const results = await Promise.all(fleet.map(async (member) => {
+        // If no driver record exists, they can't have an assigned tour conflict
+        if (!member.id) {
+            return {
+                ...member,
+                availability: 'offline',
+                onlineStatus: 'offline',
+                bookingAvailability: 'available'
+            };
+        }
+
+        const conflictResult = await db.query(
+            `SELECT id 
+             FROM bookings 
+             WHERE driver_id = $1 
+             AND status IN ('assigned', 'accepted', 'arrived', 'waiting_started', 'started')
+             AND (
+                (scheduled_pickup_time, scheduled_pickup_time + (COALESCE(estimated_duration_minutes, 60) + 15) * interval '1 minute') 
+                OVERLAPS 
+                ($2::timestamp, $2::timestamp + (COALESCE($3, 60) + 15) * interval '1 minute')
+             )`,
+            [member.id, booking.scheduled_pickup_time, booking.estimated_duration_minutes]
+        );
+
+        const hasConflict = conflictResult.rows.length > 0;
+
+        return {
+            ...member,
+            availability: member.availability || 'offline',
+            onlineStatus: member.availability || 'offline',
+            bookingAvailability: hasConflict ? 'busy' : 'available'
+        };
+    }));
+
+    return results;
+};
+
+module.exports = {
+    getAllDrivers,
+    getDriverById,
+    updateLocation,
+    updateAvailability,
+    findNearbyDrivers,
+    startShift,
+    endShift,
+    startBreak,
+    endBreak,
+    createDriver,
+    suspendDriver,
+    unsuspendDriver,
+    updateDriverPassword,
+    getFleetForAssignment,
+    softDeleteDriver: (driverId, deletedBy) => { /* already defined above, but we need it here if not using the internal definition */ }
 };

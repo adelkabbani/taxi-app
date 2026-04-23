@@ -50,10 +50,10 @@ const uploadEvidence = async (file, evidenceData, uploadedBy) => {
     } = evidenceData;
 
     try {
-        // Validate GPS accuracy
+        // Validate GPS accuracy (lower number = more precise; reject only very poor signals)
         if (!validateGPSAccuracy(gpsAccuracy)) {
             throw new AppError(
-                `GPS accuracy too low (${gpsAccuracy}m). Maximum allowed: ${process.env.GPS_ACCURACY_THRESHOLD_METERS || 50}m`,
+                `GPS signal too weak (±${gpsAccuracy}m uncertainty). Please move to an open area and try again. Maximum allowed: ±${process.env.GPS_ACCURACY_THRESHOLD_METERS || 500}m`,
                 400
             );
         }
@@ -165,7 +165,7 @@ const getEvidenceByBooking = async (bookingId, tenantId) => {
         `SELECT pa.*
      FROM proof_assets pa
      JOIN bookings b ON pa.booking_id = b.id
-     WHERE pa.booking_id = $1 AND b.tenant_id = $2
+     WHERE pa.booking_id = $1 AND ($2::int IS NULL OR b.tenant_id = $2)
      ORDER BY pa.captured_at ASC`,
         [bookingId, tenantId]
     );

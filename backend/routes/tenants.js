@@ -92,7 +92,18 @@ router.get('/',
 router.get('/current/settings',
     protect,
     asyncHandler(async (req, res) => {
-        if (!req.tenantId) throw new AppError('No tenant context', 400);
+        // If Super Admin (no tenantId), return system default or dummy settings to avoid 400s
+        if (!req.tenantId) {
+            return res.json({
+                success: true,
+                data: {
+                    id: null,
+                    name: 'System Global',
+                    stop_sell: false,
+                    auto_assign_min_fare: 50.00
+                }
+            });
+        }
 
         const result = await db.query(
             'SELECT id, name, stop_sell, auto_assign_min_fare FROM tenants WHERE id = $1',

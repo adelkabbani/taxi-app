@@ -10,6 +10,9 @@ import Drivers from './pages/Drivers'
 import LiveMap from './pages/LiveMap'
 import Analytics from './pages/Analytics'
 import Documents from './pages/Documents'
+import B2BPricing from './pages/B2BPricing'
+import Invoices from './pages/Invoices'
+import TabletAds from './pages/TabletAds'
 
 // Placeholder for protected route logic
 const ProtectedRoute = ({ children }) => {
@@ -41,6 +44,9 @@ function App() {
                     <Route path="documents" element={<Documents />} />
                     <Route path="tenants" element={<Tenants />} />
                     <Route path="tenants/:id" element={<TenantDetails />} />
+                    <Route path="pricing" element={<B2BPricing />} />
+                    <Route path="invoices" element={<Invoices />} />
+                    <Route path="tablet-ads" element={<TabletAds />} />
                 </Route>
 
                 <Route path="*" element={<Navigate to="/dashboard" replace />} />

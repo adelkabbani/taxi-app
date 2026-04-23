@@ -4,79 +4,79 @@ import { Globe, Smartphone, Phone, User, Calendar, Map, Briefcase, Box } from 'l
 // Source configuration with Nano Gold theme
 const sourceConfig = {
     'booking.com': {
-        bg: 'bg-blue-500/10',
-        text: 'text-blue-400',
-        border: 'border-blue-500/20',
+        bg: 'bg-cyan-500/10',
+        text: 'text-cyan-600 dark:text-cyan-400',
+        border: 'border-cyan-500/20',
         icon: Globe,
         label: 'Booking.com'
     },
     'welcome': {
-        bg: 'bg-orange-500/10',
-        text: 'text-orange-400',
-        border: 'border-orange-500/20',
+        bg: 'bg-gold-500/10',
+        text: 'text-gold-600 dark:text-gold-400',
+        border: 'border-gold-500/20',
         icon: Briefcase,
         label: 'Welcome Pickups'
     },
     'getyourguide': {
         bg: 'bg-rose-500/10',
-        text: 'text-rose-400',
+        text: 'text-rose-600 dark:text-rose-400',
         border: 'border-rose-500/20',
         icon: Map,
         label: 'GetYourGuide'
     },
     'viator': {
         bg: 'bg-emerald-500/10',
-        text: 'text-emerald-400',
+        text: 'text-emerald-600 dark:text-emerald-400',
         border: 'border-emerald-500/20',
         icon: Globe,
         label: 'Viator'
     },
     'hotel': {
-        bg: 'bg-indigo-500/10',
-        text: 'text-indigo-400',
-        border: 'border-indigo-500/20',
+        bg: 'bg-cyan-500/10',
+        text: 'text-cyan-600 dark:text-cyan-300',
+        border: 'border-cyan-500/20',
         icon: Briefcase,
         label: 'Hotel Concierge'
     },
     'manual': {
-        bg: 'bg-slate-500/10',
-        text: 'text-slate-400',
-        border: 'border-slate-500/20',
+        bg: 'bg-gray-100 dark:bg-white/5',
+        text: 'text-gray-500 dark:text-gray-400',
+        border: 'border-gray-200 dark:border-white/10',
         icon: User,
         label: 'Manual Entry'
     },
     'api': {
-        bg: 'bg-violet-500/10',
-        text: 'text-violet-400',
-        border: 'border-violet-500/20',
+        bg: 'bg-emerald-500/10',
+        text: 'text-emerald-600 dark:text-emerald-400',
+        border: 'border-emerald-500/20',
         icon: Box,
         label: 'External API'
     },
     'partner': {
         bg: 'bg-cyan-500/10',
-        text: 'text-cyan-400',
+        text: 'text-cyan-600 dark:text-cyan-400',
         border: 'border-cyan-500/20',
         icon: Briefcase,
         label: 'Partner Network'
     },
     'phone': {
-        bg: 'bg-amber-500/10',
-        text: 'text-amber-400',
-        border: 'border-amber-500/20',
+        bg: 'bg-gold-500/10',
+        text: 'text-gold-600 dark:text-gold-400',
+        border: 'border-gold-500/20',
         icon: Phone,
         label: 'Phone Booking'
     },
     'app': {
-        bg: 'bg-sky-500/10',
-        text: 'text-sky-400',
-        border: 'border-sky-500/20',
+        bg: 'bg-cyan-500/10',
+        text: 'text-cyan-600 dark:text-cyan-400',
+        border: 'border-cyan-500/20',
         icon: Smartphone,
         label: 'Passenger App'
     },
     'website': {
-        bg: 'bg-purple-500/10',
-        text: 'text-purple-400',
-        border: 'border-purple-500/20',
+        bg: 'bg-emerald-500/10',
+        text: 'text-emerald-600 dark:text-emerald-400',
+        border: 'border-emerald-500/20',
         icon: Globe,
         label: 'Website'
     }

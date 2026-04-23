@@ -33,20 +33,27 @@ const protect = asyncHandler(async (req, res, next) => {
             throw new AppError('User not found or inactive', 401);
         }
 
+        const user = result.rows[0];
+
+        // Token Versioning (Force Logout check)
+        // If the token version is outdated, the session is invalid
+        const dbVersion = user.token_version || 0;
+        if (decoded.token_version !== undefined && decoded.token_version !== dbVersion) {
+            throw new AppError('Session expired. Please log in again.', 401);
+        }
+
         // Attach user to request
-        req.user = result.rows[0];
+        req.user = user;
 
         // Super Admin Impersonation Logic
         const tenantOverride = req.headers['x-tenant-id'];
-        if (req.user.role === 'admin' && tenantOverride) {
-            req.tenantId = parseInt(tenantOverride);
+        
+        // Only allow override if user is an admin AND belongs to no specific tenant (Super Admin)
+        if (req.user.role === 'admin' && !req.user.tenant_id && tenantOverride) {
+            req.tenantId = tenantOverride === 'all' ? null : parseInt(tenantOverride);
         } else {
-            req.tenantId = result.rows[0].tenant_id;
-
-            // Fallback for Super Admin in single-tenant mode
-            if (!req.tenantId && process.env.MULTI_TENANT_ENABLED !== 'true') {
-                req.tenantId = parseInt(process.env.DEFAULT_TENANT_ID) || 1;
-            }
+            // Otherwise, strictly use the user's assigned tenant_id
+            req.tenantId = req.user.tenant_id;
         }
 
         next();
@@ -74,22 +81,28 @@ const restrictTo = (...roles) => {
 };
 
 /**
- * Generate JWT token
+ * Generate JWT token with versioning
  */
-const generateToken = (userId) => {
+const generateToken = (user) => {
     return jwt.sign(
-        { id: userId },
+        { 
+            id: user.id,
+            token_version: user.token_version || 0
+        },
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
     );
 };
 
 /**
- * Generate refresh token
+ * Generate refresh token with versioning
  */
-const generateRefreshToken = (userId) => {
+const generateRefreshToken = (user) => {
     return jwt.sign(
-        { id: userId },
+        { 
+            id: user.id,
+            token_version: user.token_version || 0
+        },
         process.env.JWT_REFRESH_SECRET,
         { expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d' }
     );

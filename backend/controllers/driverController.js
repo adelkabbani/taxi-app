@@ -10,11 +10,31 @@ const { AppError } = require('../middleware/errorHandler');
  * Get all drivers with filters
  */
 const getAllDrivers = async (req, res) => {
-    const drivers = await driverService.getAllDrivers(req.query, req.tenantId);
+    let tenantId = req.tenantId;
+
+    // Superadmin bypass: allow tenant_id from query if user is an admin with no fixed tenant
+    if (req.user.role === 'admin' && !req.user.tenant_id && req.query.tenant_id) {
+        tenantId = req.query.tenant_id === 'all' ? null : parseInt(req.query.tenant_id);
+    }
+
+    const drivers = await driverService.getAllDrivers(req.query, tenantId);
 
     res.json({
         success: true,
         data: drivers
+    });
+};
+
+/**
+ * Get full fleet for assignment (Isolated)
+ */
+const getFleetForAssignment = async (req, res) => {
+    const { bookingId } = req.params;
+    const fleet = await driverService.getFleetForAssignment(bookingId);
+
+    res.json({
+        success: true,
+        data: fleet
     });
 };
 
@@ -95,18 +115,22 @@ const updateAvailability = async (req, res) => {
 const updateLocation = async (req, res) => {
     const { lat, lng, accuracy, heading, speed } = req.body;
 
-    // Get driver ID
+    // Get driver ID and metadata for broadcast
     const db = require('../config/database');
-    const result = await db.query(
-        'SELECT id FROM drivers WHERE user_id = $1',
-        [req.user.id]
-    );
+    const result = await db.query(`
+        SELECT d.id, v.vehicle_type, v.license_plate, u.first_name, u.last_name, u.tenant_id
+        FROM drivers d 
+        JOIN users u ON d.user_id = u.id 
+        LEFT JOIN vehicles v ON d.vehicle_id = v.id
+        WHERE d.user_id = $1
+    `, [req.user.id]);
 
     if (result.rows.length === 0) {
         throw new AppError('Driver profile not found', 404);
     }
 
-    const driverId = result.rows[0].id;
+    const driverData = result.rows[0];
+    const driverId = driverData.id;
 
     await driverService.updateLocation(driverId, {
         lat, lng, accuracy, heading, speed
@@ -121,6 +145,10 @@ const updateLocation = async (req, res) => {
             lat,
             lng,
             heading,
+            name: `${driverData.first_name || ''} ${driverData.last_name || ''}`.trim() || 'Driver',
+            vehicle: driverData.vehicle_type || 'Unknown',
+            plate: driverData.license_plate || '',
+            tenantId: driverData.tenant_id,
             timestamp: new Date().toISOString()
         });
     }
@@ -349,6 +377,56 @@ const updateDriverPassword = async (req, res) => {
     });
 };
 
+/**
+ * Get real-time statistics for the logged-in driver
+ */
+const getDriverStats = async (req, res) => {
+    const db = require('../config/database');
+    
+    // 1. Get driver ID from user ID
+    const driverResult = await db.query(
+        'SELECT id FROM drivers WHERE user_id = $1',
+        [req.user.id]
+    );
+
+    if (driverResult.rows.length === 0) {
+        throw new AppError('Driver profile not found', 404);
+    }
+
+    const driverId = driverResult.rows[0].id;
+
+    // 2. Query Lifetime Completed Tours
+    const completedRes = await db.query(
+        "SELECT COUNT(*) as count FROM bookings WHERE driver_id = $1 AND status = 'completed'",
+        [driverId]
+    );
+
+    // 3. Query Lifetime Cancelled Tours
+    const cancelledRes = await db.query(
+        "SELECT COUNT(*) as count FROM bookings WHERE driver_id = $1 AND status = 'cancelled'",
+        [driverId]
+    );
+
+    // 4. Query Monthly Income (Sum of completed fares for current month)
+    const incomeRes = await db.query(
+        `SELECT COALESCE(SUM(fare_final), 0) as total 
+         FROM bookings 
+         WHERE driver_id = $1 
+         AND status = 'completed' 
+         AND completed_at >= date_trunc('month', now())`,
+        [driverId]
+    );
+
+    res.json({
+        success: true,
+        data: {
+            lifetime_completed: parseInt(completedRes.rows[0].count),
+            lifetime_cancelled: parseInt(cancelledRes.rows[0].count),
+            monthly_income: parseFloat(incomeRes.rows[0].total)
+        }
+    });
+};
+
 module.exports = {
     getAllDrivers,
     getDriverById,
@@ -366,6 +444,8 @@ module.exports = {
     suspendDriver,
     unsuspendDriver,
     updateDriverPassword,
+    getDriverStats,
+    getFleetForAssignment,
     deleteDriver: async (req, res) => {
         const { id } = req.params;
         // Verify admin

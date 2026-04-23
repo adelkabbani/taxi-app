@@ -52,19 +52,19 @@ REM Wait a moment for processes to fully terminate
 timeout /t 2 /nobreak >nul
 
 echo [1/3] Starting Backend Server (Port 3002)...
-start "Backend Server" cmd /k "cd /d d:\website@Antigravity\taxi\backend && echo Backend Server Starting... && node server.js"
+start "Backend Server" cmd /k "cd /d d:\website@Antigravity\drive2flight\backend && echo Backend Server Starting... && node server.js"
 
 REM Wait for backend to initialize
 timeout /t 3 /nobreak >nul
 
 echo [2/3] Starting Admin Dashboard (Port 5173)...
-start "Admin Dashboard" cmd /k "cd /d d:\website@Antigravity\taxi\admin-web && echo Admin Dashboard Starting... && npm run dev"
+start "Admin Dashboard" cmd /k "cd /d d:\website@Antigravity\drive2flight\admin-web && echo Admin Dashboard Starting... && npm run dev"
 
 REM Wait for admin to initialize
 timeout /t 2 /nobreak >nul
 
 echo [3/3] Starting Driver App (Port 5174)...
-start "Driver App" cmd /k "cd /d d:\website@Antigravity\taxi\driver-app && echo Driver App Starting... && npm run dev"
+start "Driver App" cmd /k "cd /d d:\website@Antigravity\drive2flight\driver-app && echo Driver App Starting... && npm run dev"
 
 echo.
 echo ========================================

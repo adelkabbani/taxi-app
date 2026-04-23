@@ -1,5 +1,5 @@
 const express = require('express');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const { body, validationResult } = require('express-validator');
 const db = require('../config/database');
 const redis = require('../config/redis');
@@ -16,7 +16,7 @@ const router = express.Router();
  * @access  Public
  */
 router.post('/login',
-    // rateLimiter.auth, // DISABLED FOR DEV
+    rateLimiter.auth,
     [
         body('email').optional().isEmail(),
         body('phone').optional().isMobilePhone(),
@@ -39,7 +39,7 @@ router.post('/login',
         // Find user
         let query, params;
         if (email) {
-            query = 'SELECT * FROM users WHERE email = $1 AND status = $2';
+            query = 'SELECT * FROM users WHERE LOWER(email) = LOWER($1) AND status = $2';
             params = [email, 'active'];
         } else {
             query = 'SELECT * FROM users WHERE phone = $1 AND status = $2';
@@ -62,8 +62,8 @@ router.post('/login',
         }
 
         // Generate tokens
-        const token = generateToken(user.id);
-        const refreshToken = generateRefreshToken(user.id);
+        const token = generateToken(user);
+        const refreshToken = generateRefreshToken(user);
 
         // Store refresh token in Redis
         await redis.setex(`refresh_token:${user.id}`, 7 * 24 * 60 * 60, refreshToken);
@@ -117,8 +117,25 @@ router.post('/refresh',
                 throw new AppError('Invalid refresh token', 401);
             }
 
+            // Fetch user to get latest token_version
+            const userResult = await db.query(
+                "SELECT * FROM users WHERE id = $1 AND status = 'active'",
+                [decoded.id]
+            );
+
+            if (userResult.rows.length === 0) {
+                throw new AppError('User not found or inactive', 401);
+            }
+
+            const user = userResult.rows[0];
+
+            // Verify token version matching during refresh
+            if (decoded.token_version !== undefined && decoded.token_version !== user.token_version) {
+                throw new AppError('Session expired. Please log in again.', 401);
+            }
+
             // Generate new access token
-            const token = generateToken(decoded.id);
+            const token = generateToken(user);
 
             res.json({
                 success: true,
@@ -199,7 +216,7 @@ router.post('/register',
         const user = result.rows[0];
 
         // Generate token
-        const token = generateToken(user.id);
+        const token = generateToken(user);
 
         logger.info('New user registered', {
             userId: user.id,

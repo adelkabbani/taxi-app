@@ -10,45 +10,35 @@ const pool = new Pool({
     password: process.env.DB_PASSWORD,
 });
 
-async function resetAdmin() {
-    console.log('🔄 Resetting Admin Credentials...');
-
+async function resetUser(email, plainPassword) {
+    console.log(`🔄 Resetting Credentials for ${email}...`);
     try {
         const client = await pool.connect();
         try {
-            // 1. Generate Hash for 'admin123'
             const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash('admin123', salt);
-            console.log('🔑 Generated new password hash.');
-
-            // 2. Check if user exists
-            const check = await client.query("SELECT id FROM users WHERE email = 'admin@taxi.com'");
-
+            const hashedPassword = await bcrypt.hash(plainPassword, salt);
+            const check = await client.query("SELECT id FROM users WHERE email = $1", [email]);
             if (check.rows.length > 0) {
-                // UPDATE
                 await client.query(
-                    "UPDATE users SET password_hash = $1, status = 'active', role = 'admin' WHERE email = 'admin@taxi.com'",
-                    [hashedPassword]
+                    "UPDATE users SET password_hash = $1, status = 'active' WHERE email = $2",
+                    [hashedPassword, email]
                 );
-                console.log('✅ UPDATED existing admin user password to: admin123');
+                console.log(`✅ UPDATED ${email} password to: ${plainPassword}`);
             } else {
-                // INSERT
-                await client.query(
-                    `INSERT INTO users (email, password_hash, role, first_name, last_name, phone, status, tenant_id)
-                     VALUES ($1, $2, 'admin', 'System', 'Admin', '+1234567890', 'active', 1)`,
-                    [hashedPassword, 'admin@taxi.com']
-                );
-                console.log('✅ CREATED new admin user with password: admin123');
+                console.log(`❌ User ${email} not found.`);
             }
-
         } finally {
             client.release();
         }
     } catch (err) {
         console.error('❌ Error:', err.message);
-    } finally {
-        await pool.end();
     }
 }
 
-resetAdmin();
+async function runReset() {
+    await resetAdmin();
+    await resetUser('hans.driver@taxi.com', 'Adel1234567890');
+    await pool.end();
+}
+
+runReset();

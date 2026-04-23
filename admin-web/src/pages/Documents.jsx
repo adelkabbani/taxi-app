@@ -99,147 +99,134 @@ export default function Documents() {
 
     if (loading && !documents.length) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="h-full flex items-center justify-center bg-white dark:bg-ink-black-950 transition-colors">
                 <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="mt-4 text-gray-600">Loading documents...</p>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold-500 mx-auto"></div>
+                    <p className="mt-4 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 transition-colors">Decrypting Repository...</p>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="p-6">
+        <div className="space-y-6">
             {/* Header */}
-            <div className="mb-6 flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Driver Documents</h1>
-                    <p className="text-gray-600 mt-2">Review and verify driver uploaded documents</p>
+                    <h1 className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-1 transition-colors">Archival Intelligence</h1>
+                    <p className="text-gray-500 dark:text-gray-400 text-xs font-bold uppercase tracking-widest transition-colors">Verify personnel authorization</p>
                 </div>
                 <button
                     onClick={() => setShowUploadModal(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white font-medium rounded-lg transition-colors shadow-sm"
+                    className="flex items-center gap-2 px-5 py-2.5 bg-gold-400 hover:bg-gold-500 text-ink-black-950 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-[0_10px_15px_-3px_rgba(234,179,8,0.2)] active:scale-95"
                 >
                     <Plus className="w-5 h-5" />
-                    Upload Document
+                    Inject Data
                 </button>
             </div>
-
-            {/* Stats Cards */}
+               {/* Stats Cards */}
             {stats && (
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                        <div className="text-sm font-medium text-yellow-800">Pending Review</div>
-                        <div className="text-2xl font-bold text-yellow-900 mt-2">{stats.pending || 0}</div>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="bg-white dark:bg-gold-500/10 border border-gray-100 dark:border-gold-500/20 rounded-2xl p-5 shadow-sm dark:shadow-2xl transition-colors">
+                        <div className="text-[10px] font-black text-gold-600 dark:text-gray-400 uppercase tracking-widest transition-colors">Awaiting Verification</div>
+                        <div className="text-3xl font-black text-gold-500 dark:text-gold-400 mt-2 tracking-tighter transition-colors">{stats.pending || 0}</div>
                     </div>
-                    <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                        <div className="text-sm font-medium text-green-800">Approved</div>
-                        <div className="text-2xl font-bold text-green-900 mt-2">{stats.approved || 0}</div>
+                    <div className="bg-white dark:bg-emerald-500/10 border border-gray-100 dark:border-emerald-500/20 rounded-2xl p-5 shadow-sm dark:shadow-2xl transition-colors">
+                        <div className="text-[10px] font-black text-emerald-600 dark:text-gray-400 uppercase tracking-widest transition-colors">Authorized</div>
+                        <div className="text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-2 tracking-tighter transition-colors">{stats.approved || 0}</div>
                     </div>
-                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                        <div className="text-sm font-medium text-red-800">Rejected</div>
-                        <div className="text-2xl font-bold text-red-900 mt-2">{stats.rejected || 0}</div>
+                    <div className="bg-white dark:bg-rose-500/10 border border-gray-100 dark:border-rose-500/20 rounded-2xl p-5 shadow-sm dark:shadow-2xl transition-colors">
+                        <div className="text-[10px] font-black text-rose-600 dark:text-gray-400 uppercase tracking-widest transition-colors">Restricted</div>
+                        <div className="text-3xl font-black text-rose-600 dark:text-rose-400 mt-2 tracking-tighter transition-colors">{stats.rejected || 0}</div>
                     </div>
-                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                        <div className="text-sm font-medium text-gray-800">Expired</div>
-                        <div className="text-2xl font-bold text-gray-900 mt-2">{stats.expired || 0}</div>
+                    <div className="bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl p-5 shadow-sm dark:shadow-2xl transition-colors">
+                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest transition-colors">Invalid/Expired</div>
+                        <div className="text-3xl font-black text-gray-400 dark:text-gray-300 mt-2 tracking-tighter transition-colors">{stats.expired || 0}</div>
                     </div>
                 </div>
             )}
 
             {/* Error Message */}
             {error && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                    <p className="text-red-800">{error}</p>
+                <div className="bg-rose-500/10 border border-rose-500/20 rounded-xl p-4 mb-6">
+                    <p className="text-rose-500 text-xs font-black uppercase tracking-widest">{error}</p>
                 </div>
             )}
 
             {/* Documents Table */}
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="bg-white dark:bg-ink-black-900/40 backdrop-blur-md rounded-2xl border border-gray-100 dark:border-white/5 overflow-hidden shadow-xl dark:shadow-2xl transition-colors">
                 <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                            <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Type
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Driver
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    File
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Uploaded
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Days Pending
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Expiry
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Actions
-                                </th>
+                    <table className="w-full text-left">
+                        <thead className="bg-gray-50 dark:bg-white/5 transition-colors">
+                             <tr className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest transition-colors">
+                                <th className="px-6 py-5">Classification</th>
+                                <th className="px-6 py-5">Personnel</th>
+                                <th className="px-6 py-5">Intel Trace</th>
+                                <th className="px-6 py-5">Arrival</th>
+                                <th className="px-6 py-5">Persistence</th>
+                                <th className="px-6 py-5">Expiry</th>
+                                <th className="px-6 py-5 text-right">Control</th>
                             </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                            {documents.length === 0 ? (
+                        <tbody className="divide-y divide-gray-100 dark:divide-white/[0.03]">
+                             {documents.length === 0 ? (
                                 <tr>
-                                    <td colSpan="7" className="px-6 py-12 text-center text-gray-500">
-                                        🎉 No pending documents to review!
+                                     <td colSpan="7" className="px-6 py-12 text-center text-gray-400 dark:text-gray-500 transition-colors">
+                                        <p className="text-[10px] font-black uppercase tracking-[0.2em]">🎉 Repository Purged • No data to verify</p>
                                     </td>
                                 </tr>
                             ) : (
                                 documents.map((doc) => (
-                                    <tr key={doc.document_id} className="hover:bg-gray-50">
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center">
-                                                <span className="text-2xl mr-2">{getDocumentTypeIcon(doc.document_type)}</span>
-                                                <span className="text-sm font-medium text-gray-900 capitalize">
+                                    <tr key={doc.document_id} className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors group">
+                                        <td className="px-6 py-5 whitespace-nowrap">
+                                            <div className="flex items-center gap-3">
+                                                <span className="text-xl opacity-60 group-hover:opacity-100 transition-opacity">{getDocumentTypeIcon(doc.document_type)}</span>
+                                                 <span className="text-[10px] font-black text-gray-400 dark:text-gray-300 uppercase tracking-widest group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors">
                                                     {doc.document_type.replace('_', ' ')}
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">{doc.driver_name}</div>
-                                            <div className="text-sm text-gray-500">{doc.driver_phone}</div>
+                                        <td className="px-6 py-5 whitespace-nowrap">
+                                            <div className="text-sm font-bold text-ink-black-900 dark:text-white mb-0.5 transition-colors">{doc.driver_name}</div>
+                                            <div className="text-[10px] text-gray-400 dark:text-gray-500 font-mono uppercase transition-colors">{doc.driver_phone}</div>
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <div className="text-sm text-gray-900">{doc.file_name}</div>
+                                        <td className="px-6 py-5">
+                                            <div className="text-[10px] font-bold text-gray-400 truncate max-w-[150px]">{doc.file_name}</div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <td className="px-6 py-5 whitespace-nowrap text-[10px] text-gray-500 font-mono">
                                             {formatDate(doc.uploaded_at)}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${parseInt(doc.days_pending) > 7 ? 'bg-red-100 text-red-800' :
-                                                parseInt(doc.days_pending) > 3 ? 'bg-yellow-100 text-yellow-800' :
-                                                    'bg-green-100 text-green-800'
+                                        <td className="px-6 py-5 whitespace-nowrap">
+                                            <span className={`px-2 py-0.5 text-[9px] font-black uppercase tracking-widest rounded-lg border ${parseInt(doc.days_pending) > 7 ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' :
+                                                parseInt(doc.days_pending) > 3 ? 'bg-gold-500/10 text-gold-400 border-gold-500/20' :
+                                                    'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                                                 }`}>
-                                                {doc.days_pending} days
+                                                {doc.days_pending} CYCLES
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {doc.expiry_date ? formatDate(doc.expiry_date) : 'N/A'}
-                                            {doc.is_expired && (
-                                                <span className="ml-2 text-red-600 font-semibold">⚠️ Expired</span>
+                                        <td className="px-6 py-5 whitespace-nowrap text-[10px] font-mono">
+                                            <span className={doc.is_expired ? 'text-rose-500 font-black' : 'text-gray-400'}>
+                                                {doc.expiry_date ? formatDate(doc.expiry_date) : 'PERMANENT'}
+                                            </span>
+                                             {doc.is_expired && (
+                                                <span className="ml-2 animate-pulse text-rose-500">⚠️ EXPIRED</span>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                         <td className="px-6 py-5 whitespace-nowrap text-[10px] font-black uppercase tracking-widest text-right">
                                             <button
                                                 onClick={() => handleVerify(doc.document_id, 'approved')}
-                                                className="text-green-600 hover:text-green-900 mr-3"
+                                                className="text-emerald-600 dark:text-emerald-400 hover:text-ink-black-950 dark:hover:text-white transition-colors mr-4"
                                             >
-                                                ✓ Approve
+                                                [ Authorize ]
                                             </button>
-                                            <button
+                                             <button
                                                 onClick={() => {
                                                     const notes = prompt('Reason for rejection:');
                                                     if (notes) handleVerify(doc.document_id, 'rejected', notes);
                                                 }}
-                                                className="text-red-600 hover:text-red-900"
+                                                className="text-rose-600 dark:text-rose-400 hover:text-ink-black-950 dark:hover:text-white transition-colors"
                                             >
-                                                ✗ Reject
+                                                [ Reject ]
                                             </button>
                                         </td>
                                     </tr>
@@ -250,21 +237,30 @@ export default function Documents() {
                 </div>
             </div>
 
-            {/* Document Types Breakdown */}
+             {/* Document Types Breakdown */}
             {stats && stats.byType && (
-                <div className="mt-6 bg-white rounded-lg shadow p-6">
-                    <h2 className="text-lg font-semibold text-gray-900 mb-4">Documents by Type</h2>
+                <div className="bg-white dark:bg-ink-black-900 border border-gray-100 dark:border-white/5 rounded-2xl p-6 shadow-xl mt-8 transition-colors">
+                    <h2 className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-6 transition-colors">Type Density</h2>
                     <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                         {Object.entries(stats.byType).map(([type, counts]) => (
-                            <div key={type} className="border rounded-lg p-4">
-                                <div className="text-2xl mb-2">{getDocumentTypeIcon(type)}</div>
-                                <div className="text-sm font-medium text-gray-700 capitalize mb-2">
+                            <div key={type} className="bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 hover:border-gray-200 dark:hover:border-white/10 rounded-xl p-4 transition-all group">
+                                <div className="text-2xl mb-3 opacity-60 group-hover:scale-110 transition-transform">{getDocumentTypeIcon(type)}</div>
+                                <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-3">
                                     {type.replace('_', ' ')}
                                 </div>
-                                <div className="text-xs text-gray-600">
-                                    <div>Pending: {counts.pending || 0}</div>
-                                    <div>Approved: {counts.approved || 0}</div>
-                                    <div>Rejected: {counts.rejected || 0}</div>
+                                 <div className="space-y-1 text-[9px] font-black uppercase tracking-widest">
+                                    <div className="flex justify-between text-gold-600 dark:text-gold-400">
+                                        <span>Pending:</span>
+                                        <span>{counts.pending || 0}</span>
+                                    </div>
+                                    <div className="flex justify-between text-emerald-600/60 dark:text-emerald-400/60">
+                                        <span>Authorized:</span>
+                                        <span>{counts.approved || 0}</span>
+                                    </div>
+                                    <div className="flex justify-between text-rose-600/60 dark:text-rose-400/60">
+                                        <span>Restricted:</span>
+                                        <span>{counts.rejected || 0}</span>
+                                    </div>
                                 </div>
                             </div>
                         ))}

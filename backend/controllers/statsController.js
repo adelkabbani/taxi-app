@@ -6,10 +6,10 @@ const logger = require('../config/logger');
  */
 const getDashboardStats = async (req, res) => {
     try {
-        // tenant_id can be null for Super Admin (view all)
         const tenantId = req.user.tenant_id || null;
+        const { startDate, endDate } = req.query;
 
-        const stats = await statsService.getDashboardStats(tenantId);
+        const stats = await statsService.getDashboardStats(tenantId, startDate, endDate);
         res.json(stats);
     } catch (error) {
         logger.error('Error in statsController.getDashboardStats:', error);
@@ -52,8 +52,29 @@ const getAnalyticsStats = async (req, res) => {
     }
 };
 
+const getRevenuePulse = async (req, res) => {
+    try {
+        const tenantId = req.user.tenant_id || null;
+        const { date } = req.query;
+
+        if (!date) {
+            return res.status(400).json({ error: 'Date is required (YYYY-MM-DD)' });
+        }
+
+        const stats = await statsService.getRevenuePulse(tenantId, date);
+        res.json(stats);
+    } catch (error) {
+        logger.error('Error in statsController.getRevenuePulse:', error);
+        res.status(500).json({
+            error: 'Internal Server Error',
+            message: 'Failed to fetch revenue pulse'
+        });
+    }
+};
+
 module.exports = {
     getDashboardStats,
     getBookingQuickStats,
-    getAnalyticsStats
+    getAnalyticsStats,
+    getRevenuePulse
 };

@@ -21,6 +21,10 @@ export default defineConfig({
             '/socket.io': {
                 target: 'http://localhost:3002',
                 ws: true,
+            },
+            '/uploads': {
+                target: 'http://localhost:3002',
+                changeOrigin: true,
             }
         }
     }

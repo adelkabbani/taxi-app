@@ -27,6 +27,17 @@ router.get('/',
 );
 
 /**
+ * @route   GET /api/bookings/driver/me
+ * @desc    Get active bookings for current driver
+ * @access  Private (driver)
+ * NOTE: Must be registered BEFORE GET /:id to prevent Express from treating 'driver' as an :id
+ */
+router.get('/driver/me',
+    restrictTo('driver'),
+    asyncHandler(bookingController.getDriverBookings)
+);
+
+/**
  * @route   GET /api/bookings/:id
  * @desc    Get booking by ID
  * @access  Private (all roles)
@@ -77,6 +88,19 @@ router.patch('/:id/assign',
 );
 
 /**
+ * @route   PATCH /api/bookings/:id/unassign
+ * @desc    Unassign driver from booking
+ * @access  Private (admin)
+ */
+router.patch('/:id/unassign',
+    restrictTo('admin'),
+    param('id').isInt(),
+    asyncHandler(bookingController.unassignDriver)
+);
+
+// NOTE: GET /driver/me was moved above GET /:id to fix route ordering
+
+/**
  * @route   PATCH /api/bookings/:id/accept
  * @desc    Driver accepts booking
  * @access  Private (driver)
@@ -115,6 +139,17 @@ router.patch('/:id/arrive',
         body('accuracy').optional().isFloat({ min: 0 })
     ],
     asyncHandler(bookingController.markArrived)
+);
+
+/**
+ * @route   PATCH /api/bookings/:id/receive
+ * @desc    Driver marks passenger as received (collected)
+ * @access  Private (driver)
+ */
+router.patch('/:id/receive',
+    restrictTo('driver'),
+    param('id').isInt(),
+    asyncHandler(bookingController.markReceived)
 );
 
 /**
@@ -203,6 +238,18 @@ router.get('/:id/evidence',
 );
 
 /**
+ * @route   GET /api/bookings/:id/assignment-logs
+ * @desc    Get assignment logs for a booking
+ * @access  Private (admin)
+ */
+router.get('/:id/assignment-logs',
+    restrictTo('admin'),
+    param('id').isInt(),
+    asyncHandler(bookingController.getAssignmentLogs)
+);
+
+
+/**
  * @route   PATCH /api/bookings/:id/override
  * @desc    Admin override booking status
  * @access  Private (admin only)
@@ -216,6 +263,43 @@ router.patch('/:id/override',
     ],
     asyncHandler(bookingController.adminOverride)
 );
+
+/**
+ * @route   PATCH /api/bookings/:id/approve-price
+ * @desc    Admin rescues quarantined tour: needs_review_price → pending
+ * @access  Private (admin only)
+ */
+router.patch('/:id/approve-price',
+    restrictTo('admin'),
+    param('id').isInt(),
+    asyncHandler(bookingController.approvePrice)
+);
+
+/**
+ * @route   PATCH /api/bookings/:id/reject-quarantine
+ * @desc    Admin manually rejects a quarantined tour
+ * @access  Private (admin only)
+ */
+router.patch('/:id/reject-quarantine',
+    restrictTo('admin'),
+    [
+        param('id').isInt(),
+        body('reason').optional().isString()
+    ],
+    asyncHandler(bookingController.rejectQuarantine)
+);
+
+/**
+ * @route   PATCH /api/bookings/:id/reset
+ * @desc    Admin reset booking to pending
+ * @access  Private (admin only)
+ */
+router.patch('/:id/reset',
+    restrictTo('admin'),
+    param('id').isInt(),
+    asyncHandler(bookingController.resetBooking)
+);
+
 
 /**
  * @route   PATCH /api/bookings/:id/accept-auto-assignment
@@ -310,6 +394,20 @@ router.patch('/:id/manual-reassign',
         });
 
         res.json({ success: true, message: 'Booking manually reassigned' });
+    })
+);
+
+/**
+ * @route   POST /api/bookings/admin/force-sweep
+ * @desc    Manually trigger the Nightly Auto-Sweeper to clear stale bookings
+ * @access  Private (admin only)
+ */
+router.post('/admin/force-sweep',
+    restrictTo('admin'),
+    asyncHandler(async (req, res) => {
+        const nightlySweeper = require('../workers/nightlySweeper');
+        await nightlySweeper.performNightlySweep();
+        res.json({ success: true, message: 'Nightly sweep triggered manually' });
     })
 );
 

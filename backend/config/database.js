@@ -7,7 +7,7 @@ const pool = new Pool({
     port: process.env.DB_PORT || 5432,
     database: process.env.DB_NAME || 'taxi_dispatch',
     user: process.env.DB_USER || 'postgres',
-    password: process.env.DB_PASSWORD,
+    password: String(process.env.DB_PASSWORD || ''),
     min: parseInt(process.env.DB_POOL_MIN) || 2,
     max: parseInt(process.env.DB_POOL_MAX) || 10,
     idleTimeoutMillis: 30000,

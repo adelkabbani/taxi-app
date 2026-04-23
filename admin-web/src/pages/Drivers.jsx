@@ -1,19 +1,21 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import api from '../lib/api';
 import AvailabilityBadge from '../components/AvailabilityBadge';
 import DriverDetailsModal from '../components/DriverDetailsModal';
 import CreateDriverModal from '../components/CreateDriverModal';
 import SuspendDriverModal from '../components/SuspendDriverModal';
-import { Plus, Ban, RotateCcw } from 'lucide-react';
+import { Plus, Ban, RotateCcw, Search, Key } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 export default function Drivers() {
+    const [searchParams, setSearchParams] = useSearchParams();
     const [drivers, setDrivers] = useState([]);
-    const [allDrivers, setAllDrivers] = useState([]); // Store unfiltered list
+    const [allDrivers, setAllDrivers] = useState([]); 
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedFleet, setSelectedFleet] = useState('all'); // Fleet filter (Company Name)
+    const [selectedFleet, setSelectedFleet] = useState('all'); 
     const [selectedDriverId, setSelectedDriverId] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -21,7 +23,6 @@ export default function Drivers() {
     const [driverToSuspend, setDriverToSuspend] = useState(null);
     const [tenants, setTenants] = useState([]);
 
-    // Fetch Tenants for Filter
     useEffect(() => {
         api.get('/tenants')
             .then(res => setTenants(res.data.data))
@@ -34,19 +35,13 @@ export default function Drivers() {
             const response = await api.get('/drivers', {
                 params: {
                     search: searchTerm,
+                    tenant_id: selectedFleet === 'all' ? undefined : selectedFleet,
                     includeStale: true,
-                    limit: 100 // Increase limit to ensure we get enough data for filtering
+                    limit: 100
                 }
             });
+            setDrivers(response.data.data);
             setAllDrivers(response.data.data);
-
-            // Apply fleet filter
-            let filtered = response.data.data;
-            if (selectedFleet !== 'all') {
-                // Filter by tenant_id (ensure robust comparison)
-                filtered = filtered.filter(d => String(d.tenant_id) === String(selectedFleet));
-            }
-            setDrivers(filtered);
         } catch (err) {
             console.error('Failed to fetch drivers:', err);
         } finally {
@@ -55,9 +50,20 @@ export default function Drivers() {
     };
 
     useEffect(() => {
+        const tenantIdParam = searchParams.get('tenantId');
+        if (tenantIdParam) {
+            setSelectedFleet(tenantIdParam);
+            localStorage.setItem('tenantOverride', tenantIdParam);
+        } else {
+            const savedFleet = localStorage.getItem('tenantOverride') || 'all';
+            setSelectedFleet(savedFleet);
+        }
+    }, [searchParams]);
+
+    useEffect(() => {
         const timer = setTimeout(() => {
             fetchDrivers();
-        }, 300); // Debounce search
+        }, 300); 
         return () => clearTimeout(timer);
     }, [searchTerm, selectedFleet]);
 
@@ -76,25 +82,42 @@ export default function Drivers() {
         }
     };
 
+    const handleImpersonate = async (userId) => {
+        const loadingToast = toast.loading('Initiating Magic Login...');
+        try {
+            const response = await api.post('/admin/impersonate', { userId });
+            const token = response.data.token;
+            const driverUrl = `http://localhost:5174/?token=${token}`;
+            window.open(driverUrl, '_blank');
+            toast.success('Magic Login Success!', { id: loadingToast });
+        } catch (error) {
+            console.error('Impersonation failed:', error);
+            toast.error(error.response?.data?.message || 'Failed to initiate Magic Login.', { id: loadingToast });
+        }
+    };
+
     return (
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Driver Management</h1>
+                <h1 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Driver Management</h1>
 
                 <div className="flex gap-3 w-full sm:w-auto flex-wrap">
                     <button
                         onClick={() => setIsCreateModalOpen(true)}
-                        className="flex items-center gap-2 px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white rounded-lg text-sm font-bold shadow-sm transition-all"
+                        className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 hover:to-amber-500 text-ink-black-950 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-gold-500/20"
                     >
                         <Plus className="w-4 h-4" />
                         Add Driver
                     </button>
 
-                    {/* Fleet Filter Dropdown */}
                     <select
                         value={selectedFleet}
-                        onChange={(e) => setSelectedFleet(e.target.value)}
-                        className="px-4 py-2 bg-white dark:bg-dark-card border border-slate-200 dark:border-slate-800 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 shadow-sm cursor-pointer"
+                        onChange={(e) => {
+                            const val = e.target.value;
+                            setSelectedFleet(val);
+                            localStorage.setItem('tenantOverride', val);
+                        }}
+                        className="px-4 py-2 bg-white dark:bg-ink-black-900 border border-regal-navy/12 dark:border-white/5 rounded-xl text-[10px] font-black uppercase tracking-widest text-ink-black-950 dark:text-gray-300 focus:outline-none focus:ring-1 focus:ring-gold-500/50 shadow-sm cursor-pointer hover:border-regal-navy/25 dark:hover:border-white/10 transition-all"
                     >
                         <option value="all">All Fleets</option>
                         {tenants.map(tenant => (
@@ -105,101 +128,133 @@ export default function Drivers() {
                     <div className="relative w-full sm:w-64">
                         <input
                             type="text"
-                            placeholder="Search name or plate..."
+                            placeholder="SEARCH AGENT..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 bg-white dark:bg-dark-card border border-slate-200 dark:border-slate-800 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
+                            className="w-full pl-10 pr-4 py-2.5 bg-regal-navy/5 dark:bg-ink-black-900 border border-regal-navy/10 dark:border-white/5 rounded-xl text-[10px] font-black uppercase tracking-widest text-ink-black-950 dark:text-white placeholder:text-slate-400 dark:placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-gold-500/50 transition-all"
                         />
-                        <svg className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
+                        <Search className="absolute left-3.5 top-3 h-3.5 w-3.5 text-gray-600" />
                     </div>
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-dark-card rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+            <div className="bg-white dark:bg-ink-black-900/40 backdrop-blur-md rounded-2xl border border-regal-navy/10 dark:border-white/5 overflow-hidden shadow-[0_8px_40px_rgba(0,29,61,0.10)] dark:shadow-2xl transition-colors">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
-                        <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 uppercase text-xs font-semibold">
+                        <thead className="bg-regal-navy/4 dark:bg-white/5 text-slate-500 dark:text-gray-500 uppercase text-[10px] font-black tracking-widest transition-colors">
                             <tr>
-                                <th className="px-6 py-4">Driver</th>
-                                <th className="px-6 py-4">Company</th>
-                                <th className="px-6 py-4">Vehicle</th>
-                                <th className="px-6 py-4">Status</th>
-                                <th className="px-6 py-4">Acceptance</th>
-                                <th className="px-6 py-4 text-right">Actions</th>
+                                <th className="px-6 py-5">Ident Connection</th>
+                                <th className="px-6 py-5">Fleet Node</th>
+                                <th className="px-6 py-5">Unit Specs</th>
+                                <th className="px-6 py-5">Operational Status</th>
+                                <th className="px-6 py-5">Affinity</th>
+                                <th className="px-6 py-5">Rejections</th>
+                                <th className="px-6 py-5 text-right">Control</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
+                        <tbody className="divide-y divide-regal-navy/6 dark:divide-white/[0.03]">
                             {loading ? (
                                 <tr>
-                                    <td colSpan="6" className="px-6 py-12 text-center text-slate-500">
+                                    <td colSpan="7" className="px-6 py-12 text-center text-slate-500">
                                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
                                         Loading drivers...
                                     </td>
                                 </tr>
                             ) : drivers.length === 0 ? (
                                 <tr>
-                                    <td colSpan="6" className="px-6 py-12 text-center text-slate-500">
+                                    <td colSpan="7" className="px-6 py-12 text-center text-slate-500">
                                         No drivers found matching your search.
                                     </td>
                                 </tr>
                             ) : (
                                 drivers.map((driver) => (
-                                    <tr key={driver.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
-                                        <td className="px-6 py-4">
+                                    <tr key={driver.id} className="hover:bg-regal-navy/4 dark:hover:bg-white/[0.02] transition-colors group">
+                                        <td className="px-6 py-5">
                                             <div className="flex flex-col">
-                                                <span className="font-bold text-slate-900 dark:text-white">
-                                                    {driver.first_name} {driver.last_name}
+                                                <span className="text-sm font-bold text-ink-black-950 dark:text-white group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors">
+                                                    {driver.driver_name || (driver.first_name || driver.last_name ? `${driver.first_name || ''} ${driver.last_name || ''}`.trim() : 'Unnamed Driver')}
                                                 </span>
-                                                <span className="text-xs text-slate-500">{driver.email}</span>
+                                                <span className="text-[10px] text-gray-400 dark:text-gray-500 font-mono tracking-tighter">{driver.email}</span>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+                                        <td className="px-6 py-5">
+                                            <span className="inline-flex items-center px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-regal-navy/6 dark:bg-white/5 text-regal-navy dark:text-gray-400 border border-regal-navy/10 dark:border-white/5 group-hover:border-gold-500/20 transition-all">
                                                 {driver.company_name}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-6 py-5">
                                             <div className="flex flex-col">
-                                                <span className="font-medium text-slate-700 dark:text-slate-200">
+                                                <span className="text-sm font-bold text-ink-black-800 dark:text-gray-200 font-mono tracking-wider transition-colors">
                                                     {driver.license_plate}
                                                 </span>
-                                                <span className="text-xs text-slate-500 uppercase">{driver.vehicle_type}</span>
+                                                <span className="text-[10px] text-gray-400 dark:text-gray-500 uppercase font-black tracking-widest transition-colors">{driver.vehicle_type}</span>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-6 py-5">
                                             <AvailabilityBadge
                                                 availability={driver.availability}
                                                 isStale={new Date() - new Date(driver.location_updated_at) > 300000}
                                                 suspended={!!driver.suspension}
                                             />
                                             {driver.suspension && (
-                                                <div className="text-[10px] text-red-500 font-bold mt-1 uppercase truncate max-w-[120px]" title={driver.suspension.reason}>
-                                                    Reason: {driver.suspension.reason}
+                                                <div className="text-[10px] text-rose-500 font-black mt-1 uppercase tracking-tighter truncate max-w-[120px]" title={driver.suspension.reason}>
+                                                    RESTRICTED: {driver.suspension.reason}
                                                 </div>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex flex-col">
-                                                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{driver.acceptance_rate}%</span>
-                                                <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1 mt-1">
-                                                    <div
-                                                        className="bg-sky-500 h-1 rounded-full transition-all"
-                                                        style={{ width: `${driver.acceptance_rate}%` }}
-                                                    ></div>
-                                                </div>
+                                        <td className="px-6 py-5">
+                                            <div className="flex flex-col w-24">
+                                                {(() => {
+                                                    const accepted = parseInt(driver.accepted_bookings || 0);
+                                                    const rejected = parseInt(driver.rejected_bookings || 0);
+                                                    const affinity = (accepted + rejected) > 0 
+                                                        ? Math.round((accepted / (accepted + rejected)) * 100) 
+                                                        : 100;
+                                                    return (
+                                                        <>
+                                                            <div className="flex justify-between items-end mb-1">
+                                                                <span className="text-[10px] font-black text-gray-400 dark:text-gray-300 transition-colors">{affinity}%</span>
+                                                            </div>
+                                                            <div className="w-full bg-regal-navy/8 dark:bg-white/5 rounded-full h-1 overflow-hidden transition-colors">
+                                                                <div
+                                                                    className="bg-gold-500 h-1 rounded-full shadow-[0_0_8px_rgba(234,179,8,0.4)] transition-all"
+                                                                    style={{ width: `${affinity}%` }}
+                                                                ></div>
+                                                            </div>
+                                                        </>
+                                                    );
+                                                })()}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 text-right">
+                                        <td className="px-6 py-5">
+                                            <div className="flex items-center gap-2">
+                                                <span className={`text-sm font-black ${driver.rejected_bookings > 5 ? 'text-rose-500' : driver.rejected_bookings > 0 ? 'text-amber-500' : 'text-gray-500'}`}>
+                                                    {driver.rejected_bookings || 0}
+                                                </span>
+                                                {driver.rejected_bookings > 0 && (
+                                                    <span className="text-[10px] text-gray-600 font-black uppercase tracking-tighter">Declinature</span>
+                                                )}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-5 text-right">
                                             <div className="flex justify-end gap-2">
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleImpersonate(driver.user_id);
+                                                    }}
+                                                    className="p-2 text-gold-500 hover:bg-gold-500/10 rounded-xl transition-all"
+                                                    title="Magic Login (Impersonate)"
+                                                >
+                                                    <Key className="w-4 h-4" />
+                                                </button>
                                                 {driver.suspension ? (
                                                     <button
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             handleUnsuspend(driver.id);
                                                         }}
-                                                        className="p-2 text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 rounded-lg transition-colors"
+                                                        className="p-2 text-emerald-500 hover:bg-emerald-500/10 rounded-xl transition-all"
                                                         title="Unsuspend/Restore Access"
                                                     >
                                                         <RotateCcw className="w-4 h-4" />
@@ -211,7 +266,7 @@ export default function Drivers() {
                                                             setDriverToSuspend(driver);
                                                             setIsSuspendModalOpen(true);
                                                         }}
-                                                        className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg transition-colors"
+                                                        className="p-2 text-gray-600 hover:text-rose-500 hover:bg-rose-500/10 rounded-xl transition-all"
                                                         title="Suspend/Stop Driver"
                                                     >
                                                         <Ban className="w-4 h-4" />
@@ -222,9 +277,9 @@ export default function Drivers() {
                                                         e.stopPropagation();
                                                         openDetails(driver.id);
                                                     }}
-                                                    className="px-3 py-1.5 text-xs font-bold text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-950/30 rounded-lg transition-colors"
+                                                    className="px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-gold-600 dark:text-gold-400 hover:text-ink-black-950 dark:hover:text-white hover:bg-gold-500/10 rounded-lg border border-gold-500/20 transition-all"
                                                 >
-                                                    Details
+                                                    View Details
                                                 </button>
                                             </div>
                                         </td>

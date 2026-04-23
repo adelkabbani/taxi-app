@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const logger = require('../config/logger');
 
 /**
@@ -13,9 +14,24 @@ module.exports = (io) => {
 
         // Authentication (clients should send auth token)
         socket.on('authenticate', (data) => {
-            const { token, userId, role } = data;
+            const { token } = data;
 
-            // TODO: Verify JWT token here
+            if (!token) {
+                socket.emit('auth_error', { message: 'No token provided' });
+                return socket.disconnect(true);
+            }
+
+            let decoded;
+            try {
+                decoded = jwt.verify(token, process.env.JWT_SECRET);
+            } catch (err) {
+                socket.emit('auth_error', { message: 'Invalid or expired token' });
+                return socket.disconnect(true);
+            }
+
+            const userId = decoded.id;
+            const role = data.role;
+
             socket.userId = userId;
             socket.userRole = role;
 
@@ -60,6 +76,22 @@ module.exports = (io) => {
                 heading,
                 speed,
                 timestamp: new Date().toISOString()
+            });
+        });
+
+        // Simulator / admin location broadcast (used by simulator.js and driver apps)
+        socket.on('driver_location_update', (data) => {
+            const { driverId, lat, lng, accuracy, heading, speed, timestamp } = data;
+
+            // Broadcast to all admins so LiveMap.jsx receives real-time position changes
+            io.to('admins').emit('driver_location', {
+                driverId,
+                lat,
+                lng,
+                accuracy,
+                heading: heading || 0,
+                speed,
+                timestamp: timestamp || new Date().toISOString()
             });
         });
 
@@ -128,8 +160,8 @@ module.exports = (io) => {
     };
 
     // Broadcast driver assignment
-    io.broadcastDriverAssigned = (bookingId, driverId) => {
-        io.to(`user:${driverId}`).emit('booking_assigned', { bookingId });
+    io.broadcastDriverAssigned = (bookingId, driverUserId, driverId) => {
+        io.to(`user:${driverUserId}`).emit('booking_assigned', { bookingId });
         io.to(`booking:${bookingId}`).emit('driver_assigned', { driverId });
         io.to('admins').emit('booking_updated', {
             bookingId,

@@ -1,6 +1,8 @@
 const { Client } = require('pg');
 const dotenv = require('dotenv');
 const io = require('socket.io-client');
+const fs = require('fs');
+const path = require('path');
 
 dotenv.config();
 
@@ -11,9 +13,6 @@ const dbConfig = {
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME || 'taxi_dispatch'
 };
-
-const fs = require('fs');
-const path = require('path');
 
 function log(msg) {
     const timestamp = new Date().toISOString();
@@ -32,11 +31,11 @@ async function simulate() {
 
         // Get first 3 drivers
         const res = await client.query(`
-      SELECT d.id, u.first_name, u.last_name 
-      FROM drivers d 
-      JOIN users u ON d.user_id = u.id 
-      LIMIT 3
-    `);
+            SELECT d.id, u.first_name, u.last_name, d.user_id 
+            FROM drivers d 
+            JOIN users u ON d.user_id = u.id 
+            LIMIT 3
+        `);
 
         const drivers = res.rows;
         if (drivers.length === 0) {
@@ -50,32 +49,50 @@ async function simulate() {
         const centerLat = 52.3667;
         const centerLng = 13.5033;
 
-        log('Connecting to socket at http://localhost:3001');
-        const socket = io('http://localhost:3001');
+        const API_PORT = process.env.PORT || 3000;
+        log(`Connecting to socket at http://localhost:${API_PORT}`);
+        const socket = io(`http://localhost:${API_PORT}`);
 
         socket.on('connect', () => {
             log('Connected to Backend Socket');
 
+            // Authenticate to unlock the socket connection
+            socket.emit('authenticate', {
+                token: 'sim-token',
+                userId: 999,
+                role: 'admin'
+            });
+        });
+
+        socket.on('authenticated', () => {
+            log('Socket Authenticated. Starting movement loop...');
             let step = 0;
+
             setInterval(async () => {
                 step += 0.01;
                 for (let i = 0; i < drivers.length; i++) {
                     const d = drivers[i];
                     const lat = centerLat + 0.01 * Math.sin(step + i);
                     const lng = centerLng + 0.01 * Math.cos(step + i);
+                    const heading = (step * 57.29) % 360;
 
+                    // 1. Update the database
+                    await client.query(
+                        "UPDATE drivers SET current_lat = $1, current_lng = $2, location_updated_at = NOW(), availability = 'available' WHERE id = $3",
+                        [lat, lng, d.id]
+                    );
+
+                    // 2. Broadcast socket event so LiveMap.jsx updates in real-time
                     socket.emit('driver_location_update', {
                         driverId: d.id,
                         lat,
                         lng,
-                        heading: (step * 57.29) % 360,
-                        accuracy: 10
+                        heading,
+                        accuracy: 10,
+                        timestamp: new Date().toISOString()
                     });
 
-                    await client.query(
-                        'UPDATE drivers SET current_lat = $1, current_lng = $2, location_updated_at = NOW() WHERE id = $3',
-                        [lat, lng, d.id]
-                    );
+                    log(`Updated ${d.first_name} → DB + Socket: ${lat.toFixed(4)}, ${lng.toFixed(4)}`);
                 }
             }, 2000);
         });

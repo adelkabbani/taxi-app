@@ -23,7 +23,7 @@ USER: ${req.user?.id}
     }
 
     // Log error with request context
-    logger.error('Error occurred', {
+    logger.error(`Error occurred: ${err.message}`, {
         requestId: req.requestId,
         error: err.message,
         stack: err.stack,

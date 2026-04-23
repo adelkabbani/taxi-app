@@ -23,6 +23,16 @@ router.get('/',
 );
 
 /**
+ * @route   GET /api/drivers/assignment/:bookingId
+ * @desc    Get full fleet for assignment (Isolated)
+ * @access  Private (admin/fleet_manager)
+ */
+router.get('/assignment/:bookingId',
+    restrictTo('admin', 'fleet_manager'),
+    asyncHandler(driverController.getFleetForAssignment)
+);
+
+/**
  * @route   POST /api/drivers
  * @desc    Create a new driver and vehicle
  * @access  Private (admin/fleet_manager)
@@ -46,6 +56,16 @@ router.post('/',
 );
 
 /**
+ * @route   GET /api/drivers/stats
+ * @desc    Get real-time statistics for the logged-in driver
+ * @access  Private (driver)
+ */
+router.get('/stats',
+    restrictTo('driver'),
+    asyncHandler(driverController.getDriverStats)
+);
+
+/**
  * @route   GET /api/drivers/:id
  * @desc    Get driver by ID with metrics
  * @access  Private
@@ -63,6 +83,66 @@ router.get('/:id',
 router.get('/me/profile',
     restrictTo('driver'),
     asyncHandler(driverController.getMyProfile)
+);
+
+/**
+ * @route   GET /api/drivers/me/trips
+ * @desc    Get trip history for the logged-in driver (completed, cancelled, shuttles)
+ * @access  Private (driver)
+ */
+router.get('/me/trips',
+    restrictTo('driver'),
+    asyncHandler(async (req, res) => {
+        const db = require('../config/database');
+        const { type = 'completed', page = 1, limit = 30 } = req.query;
+        const offset = (parseInt(page) - 1) * parseInt(limit);
+
+        // Map type to booking statuses
+        const statusMap = {
+            completed: ['completed'],
+            cancelled: ['cancelled', 'no_show_confirmed', 'auto_released'],
+            shuttles: ['completed', 'cancelled'] // shuttle bookings filtered by source
+        };
+
+        const statuses = statusMap[type] || statusMap.completed;
+
+        let whereExtra = '';
+        if (type === 'shuttles') {
+            whereExtra = `AND b.source = 'shuttle'`;
+        }
+
+        const result = await db.query(
+            `SELECT
+                b.id,
+                b.booking_reference,
+                b.pickup_address,
+                b.dropoff_address,
+                b.scheduled_pickup_time,
+                b.actual_pickup_time,
+                b.actual_dropoff_time,
+                b.status,
+                b.passenger_name,
+                b.passenger_count,
+                b.luggage_count,
+                b.fare_estimate,
+                b.fare_final,
+                b.waiting_fee,
+                b.source,
+                b.flight_number
+             FROM bookings b
+             JOIN driver_assignments da ON da.booking_id = b.id
+             JOIN drivers d ON da.driver_id = d.id
+             WHERE d.user_id = $1
+               AND b.status = ANY($2)
+               ${whereExtra}
+               AND da.status IN ('accepted', 'completed')
+             ORDER BY b.scheduled_pickup_time DESC
+             LIMIT $3 OFFSET $4`,
+            [req.user.id, statuses, parseInt(limit), offset]
+        );
+
+        res.json({ success: true, data: result.rows });
+    })
 );
 
 /**

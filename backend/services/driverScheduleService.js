@@ -100,23 +100,24 @@ const getAvailableDrivers = async (pickupDateTime, vehicleType, tenantId) => {
     try {
         const query = `
             SELECT d.id, d.user_id, d.vehicle_id, d.priority_level, d.driver_type,
-                   u.first_name, u.last_name, v.vehicle_type, t.priority as fleet_priority
+                   u.first_name, u.last_name, v.vehicle_type, t.dispatch_priority as fleet_priority,
+                   u.tenant_id, d.current_lat, d.current_lng
             FROM drivers d
             JOIN users u ON d.user_id = u.id
-            JOIN tenants t ON u.tenant_id = t.id
+            LEFT JOIN tenants t ON u.tenant_id = t.id
             JOIN vehicles v ON d.vehicle_id = v.id
             JOIN driver_schedules ds ON d.id = ds.driver_id
-            WHERE u.tenant_id = $1
+            WHERE ($1::int IS NULL OR u.tenant_id = $1)
               AND LOWER(v.vehicle_type::text) = LOWER($2::text)
               AND ds.schedule_date = $3
               AND ds.is_holiday = false
               AND ds.start_time <= $4
               AND ds.end_time >= $4
-              AND d.status = 'active'
               AND u.status = 'active'
-            ORDER BY t.priority ASC, d.priority_level ASC, d.id ASC
+            ORDER BY t.dispatch_priority ASC, d.priority_level ASC, d.id ASC
         `;
 
+        console.log(`   🔎 [SQL-DEBUG] Tenant: ${tenantId}, Type: ${vehicleType}, Date: ${dateStr}, Time: ${timeStr}`);
         const result = await db.query(query, [tenantId, vehicleType, dateStr, timeStr]);
         return result.rows;
     } catch (error) {

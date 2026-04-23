@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import { useSocket } from '../lib/socket';
 import { Navigation, Users, MapPin, Clock, CreditCard } from 'lucide-react';
 import api from '../lib/api';
+import { toast } from 'react-hot-toast';
 import MapControlPanel from '../components/MapControlPanel';
 import MapSidebar from '../components/MapSidebar';
 
@@ -76,7 +77,7 @@ export default function LiveMap() {
         showAvailable: true,
         showBusy: true,
         vehicleType: 'all',
-        tenantId: 'all'
+        tenantId: localStorage.getItem('tenantOverride') || 'all'
     });
 
     const [tenants, setTenants] = useState([]);
@@ -89,73 +90,94 @@ export default function LiveMap() {
                     api.get('/drivers', { params: { limit: 100 } }),
                     api.get('/bookings', {
                         params: {
-                            status: 'assigned,arrived,started,waiting_started',
+                            status: 'assigned,arrived,started,waiting_started,received',
                             limit: 50
                         }
                     }),
                     api.get('/tenants')
                 ]);
 
-                // Process drivers
+                // Process drivers — safe array access regardless of API shape
+                const rawDrivers = driversRes.data?.data || driversRes.data?.drivers || [];
                 const driverMap = {};
-                driversRes.data.data.forEach(d => {
-                    if (d.current_lat && d.current_lng) {
-                        driverMap[d.id] = {
-                            id: d.id,
-                            name: `${d.first_name} ${d.last_name}`,
-                            vehicle: d.vehicle_type,
-                            plate: d.license_plate,
-                            lat: d.current_lat,
-                            lng: d.current_lng,
+                rawDrivers.forEach(d => {
+                    const lat = parseFloat(d.current_lat);
+                    const lng = parseFloat(d.current_lng);
+                    if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
+                        driverMap[String(d.id)] = {
+                            id: String(d.id),
+                            name: d.driver_name || `${d.first_name || ''} ${d.last_name || ''} `.trim() || 'Unknown Driver',
+                            vehicle: d.vehicle_type || 'Unknown',
+                            plate: d.license_plate || '',
+                            lat,
+                            lng,
                             heading: d.heading || 0,
-                            status: d.availability,
+                            status: d.availability || 'unavailable',
                             currentBookingId: d.current_booking_id,
                             updatedAt: d.location_updated_at,
-                            tenantId: d.tenant_id, // Ensure this exists
-                            companyName: d.company_name, // Ensure this exists from backend
+                            tenantId: d.tenant_id,
+                            companyName: d.company_name || '',
                         };
                     }
                 });
                 setDrivers(driverMap);
-                setTenants(tenantsRes.data.data);
 
-                // ... rest of logic
+                // Safe tenant array access
+                const rawTenants = tenantsRes.data?.data || tenantsRes.data?.tenants || [];
+                setTenants(rawTenants);
 
-                // Process bookings (only those with coords)
-                const validBookings = bookingsRes.data.data.filter(
+                // Process bookings
+                const rawBookings = bookingsRes.data?.data || bookingsRes.data?.bookings || [];
+                const validBookings = rawBookings.filter(
                     b => b.pickup_lat && b.pickup_lng
                 );
                 setActiveBookings(validBookings);
 
                 // Center map if we have data
                 if (validBookings.length > 0) {
-                    setMapCenter([validBookings[0].pickup_lat, validBookings[0].pickup_lng]);
+                    setMapCenter([parseFloat(validBookings[0].pickup_lat), parseFloat(validBookings[0].pickup_lng)]);
                 } else if (Object.values(driverMap).length > 0) {
                     const first = Object.values(driverMap)[0];
                     setMapCenter([first.lat, first.lng]);
                 }
 
             } catch (error) {
-                console.error('Failed to fetch initial map data', error);
+                if (error.response?.status === 401) {
+                    toast.error('Session expired. Please log in again to see drivers.');
+                } else {
+                    console.error('Failed to fetch initial map data', error);
+                }
             }
         };
 
         fetchInitialData();
-    }, []);
+    }, [filters.tenantId]);
 
     // Socket Listeners
     useEffect(() => {
         if (!socket) return;
 
         const handleLocationUpdate = (data) => {
+            if (!data.driverId || isNaN(parseFloat(data.lat)) || isNaN(parseFloat(data.lng))) return;
             setDrivers(prev => ({
                 ...prev,
-                [data.driverId]: {
-                    ...prev[data.driverId],
-                    lat: data.lat,
-                    lng: data.lng,
-                    heading: data.heading,
-                    updatedAt: data.timestamp
+                [String(data.driverId)]: {
+                    // Start with defaults and existing state
+                    id: String(data.driverId),
+                    name: 'Driver',
+                    vehicle: 'Unknown',
+                    plate: '',
+                    status: 'available',
+                    ...prev[String(data.driverId)],
+                    // Override with new real-time data from socket
+                    lat: parseFloat(data.lat),
+                    lng: parseFloat(data.lng),
+                    heading: data.heading || 0,
+                    updatedAt: data.timestamp,
+                    ...(data.name && { name: data.name }),
+                    ...(data.vehicle && { vehicle: data.vehicle }),
+                    ...(data.plate && { plate: data.plate }),
+                    ...(data.tenantId && { tenantId: data.tenantId })
                 }
             }));
         };
@@ -164,7 +186,7 @@ export default function LiveMap() {
             // Refresh bookings on status change
             api.get('/bookings', {
                 params: {
-                    status: 'assigned,arrived,started,waiting_started',
+                    status: 'assigned,arrived,started,waiting_started,received',
                     limit: 50
                 }
             }).then(res => {
@@ -190,8 +212,10 @@ export default function LiveMap() {
             if (!filters.showAvailable && d.status === 'available') return false;
             if (!filters.showBusy && d.status !== 'available') return false;
 
-            // Vehicle Type Filter
-            if (filters.vehicleType && filters.vehicleType !== 'all' && d.vehicle.toLowerCase() !== filters.vehicleType.toLowerCase()) return false;
+            // Vehicle Type Filter (Safe check)
+            if (filters.vehicleType && filters.vehicleType !== 'all') {
+                if (!d.vehicle || d.vehicle.toLowerCase() !== filters.vehicleType.toLowerCase()) return false;
+            }
 
             // Tenant Filter
             if (filters.tenantId && filters.tenantId !== 'all' && String(d.tenantId) !== String(filters.tenantId)) return false;
@@ -205,14 +229,15 @@ export default function LiveMap() {
         if (!selectedDriver) return null;
         // Find booking where driver is assigned
         // In real app, driver object might have current_booking_id
-        return activeBookings.find(b => b.driver_id === selectedDriver.id && ['assigned', 'arrived', 'started', 'waiting_started'].includes(b.status));
+        return activeBookings.find(b => b.driver_id === selectedDriver.id && ['assigned', 'arrived', 'started', 'waiting_started', 'received'].includes(b.status));
     }, [selectedDriver, activeBookings]);
 
     // Enriched Drivers (for UI/Map) - Derived from FILTERED drivers
     const enrichedDrivers = useMemo(() => {
         return filteredDrivers.map(d => {
-            // Stable random based on ID to keep status consistent across renders unless real status changes
-            const seed = d.id.charCodeAt(0) + d.id.charCodeAt(d.id.length - 1);
+            // Convert ID to string to prevent charCodeAt crashes on integers
+            const idStr = String(d.id);
+            const seed = idStr.charCodeAt(0) + idStr.charCodeAt(idStr.length - 1);
 
             let detailedStatus = 'Unavailable';
             if (d.status === 'available') {
@@ -229,7 +254,7 @@ export default function LiveMap() {
     }, [filteredDrivers]);
 
     return (
-        <div className="h-[calc(100vh-100px)] rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-slate-100 flex shadow-inner">
+        <div className="h-full flex overflow-hidden bg-gray-50 dark:bg-ink-black-950 transition-colors duration-300">
 
             {/* Map Area */}
             <div className="flex-1 relative h-full">
@@ -253,7 +278,7 @@ export default function LiveMap() {
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                         url={mapMode === 'satellite'
                             ? "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-                            : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                            : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         }
                     />
 
@@ -294,79 +319,84 @@ export default function LiveMap() {
                         </>
                     )}
 
-                    {/* Render Drivers */}
-                    {enrichedDrivers.map(driver => (
-                        <Marker
-                            key={driver.id}
-                            position={[driver.lat, driver.lng]}
-                            icon={selectedDriver?.id === driver.id ? activeDriverIcon : driverIcon}
-                            eventHandlers={{
-                                click: () => setSelectedDriver(driver),
-                            }}
-                        >
-                            <Popup className="custom-popup">
-                                <div className="p-3 min-w-[200px]">
-                                    <div className="flex justify-between items-start mb-2">
-                                        <h3 className="font-bold text-slate-900">{driver.name}</h3>
-                                        <span className={`text-xs px-2 py-0.5 rounded-full ${driver.status === 'available' ? 'bg-green-100 text-green-700' :
-                                            driver.status === 'busy' ? 'bg-orange-100 text-orange-700' : 'bg-slate-100'
-                                            }`}>
-                                            {driver.detailedStatus}
-                                        </span>
+                    {/* Render Drivers — only those with valid coords */}
+                    {enrichedDrivers
+                        .filter(driver => !isNaN(driver.lat) && !isNaN(driver.lng) && driver.lat && driver.lng)
+                        .map(driver => (
+                            <Marker
+                                key={driver.id}
+                                position={[driver.lat, driver.lng]}
+                                icon={selectedDriver?.id === driver.id ? activeDriverIcon : driverIcon}
+                                eventHandlers={{
+                                    click: () => setSelectedDriver(driver),
+                                }}
+                            >
+                                <Popup className="custom-popup">
+                                    <div className="p-3 min-w-[200px] bg-white dark:bg-ink-black-900 border border-gray-200 dark:border-white/10 rounded-lg shadow-xl shadow-ink-black-950/20 dark:shadow-none transition-colors">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <h3 className="font-bold text-ink-black-950 dark:text-white transition-colors">{driver.name}</h3>
+                                            <span className={`text-[10px] uppercase font-black tracking-widest px-2 py-0.5 rounded-full border transition-colors ${driver.status === 'available' 
+                                                ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20' :
+                                                driver.status === 'busy' 
+                                                ? 'bg-gold-500/10 text-gold-600 dark:text-gold-400 border-gold-500/20' 
+                                                : 'bg-white/5 text-gray-500 dark:text-gray-400 border-white/10'
+                                                }`}>
+                                                {driver.detailedStatus}
+                                            </span>
+                                        </div>
+                                        <div className="text-sm text-gray-500 dark:text-gray-400 space-y-1 transition-colors">
+                                            <p className="flex items-center gap-2">
+                                                <Navigation className="w-3 h-3 text-gold-500" />
+                                                {driver.vehicle} • {driver.plate}
+                                            </p>
+                                            <p className="text-[10px] text-gray-400 dark:text-gray-500 uppercase font-bold tracking-widest transition-colors">
+                                                Updated: {new Date(driver.updatedAt).toLocaleTimeString()}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div className="text-sm text-slate-600 space-y-1">
-                                        <p className="flex items-center gap-2">
-                                            <Navigation className="w-3 h-3" />
-                                            {driver.vehicle} • {driver.plate}
-                                        </p>
-                                        <p className="text-xs text-slate-400">
-                                            Updated: {new Date(driver.updatedAt).toLocaleTimeString()}
-                                        </p>
-                                    </div>
-                                </div>
-                            </Popup>
-                        </Marker>
-                    ))}
+                                </Popup>
+                            </Marker>
+                        ))}
                 </MapContainer>
 
                 {/* Selected Booking Info (Floating Card) */}
                 {selectedDriver && selectedBooking && (
-                    <div className="absolute top-4 right-4 z-[400] bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm p-4 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 w-80">
-                        <h4 className="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase mb-2 flex items-center gap-1.5">
+                    <div className="absolute top-4 right-4 z-[400] bg-white/95 dark:bg-ink-black-900/80 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-gray-200 dark:border-white/10 w-84 transition-all">
+                        <h4 className="text-[10px] font-black text-gold-600 dark:text-gold-400 uppercase tracking-widest mb-3 flex items-center gap-2 transition-colors">
                             <Clock className="w-3.5 h-3.5" />
-                            Current Job
+                            Active Mission
                         </h4>
-                        <div className="space-y-2 text-sm">
-                            <div className="flex items-start gap-2">
-                                <MapPin className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                        <div className="space-y-3">
+                            <div className="flex items-start gap-3">
+                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
                                 <div>
-                                    <p className="text-xs text-slate-500">Pickup</p>
-                                    <p className="font-medium text-slate-900 dark:text-white line-clamp-1">{selectedBooking.pickup_address}</p>
+                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-0.5">Pickup</p>
+                                    <p className="text-sm font-bold text-ink-black-950 dark:text-white line-clamp-1">{selectedBooking.pickup_address}</p>
                                 </div>
                             </div>
-                            <div className="flex items-start gap-2">
-                                <MapPin className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
+                            <div className="flex items-start gap-3">
+                                <div className="w-1.5 h-1.5 rounded-full bg-rose-500 mt-1.5 shrink-0 shadow-[0_0_8px_rgba(244,63,94,0.5)]" />
                                 <div>
-                                    <p className="text-xs text-slate-500">Dropoff</p>
-                                    <p className="font-medium text-slate-900 dark:text-white line-clamp-1">{selectedBooking.dropoff_address || 'Not specified'}</p>
+                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-0.5">Dropoff</p>
+                                    <p className="text-sm font-bold text-ink-black-950 dark:text-white line-clamp-1">{selectedBooking.dropoff_address || 'Not specified'}</p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2 pt-1 border-t border-sky-200 dark:border-sky-800 mt-2">
-                                <span className="px-2 py-0.5 bg-white dark:bg-slate-800 rounded text-xs font-bold shadow-sm">
+                            <div className="flex items-center gap-2 pt-3 border-t border-white/5 mt-2">
+                                <span className="px-2 py-0.5 bg-gold-500 text-ink-black-950 rounded text-[10px] font-black uppercase tracking-tight">
                                     {selectedBooking.status}
                                 </span>
-                                <span className="text-xs text-slate-500 ml-auto">id: {selectedBooking.booking_reference}</span>
+                                <span className="text-[10px] text-gray-500 font-mono ml-auto">REF: {selectedBooking.booking_reference}</span>
                             </div>
                         </div>
                     </div>
                 )}
 
                 {/* Draggable Pickup Marker Control (Demo) */}
-                <div className="absolute bottom-6 left-6 z-[400] bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm p-4 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 animate-in slide-in-from-bottom-4">
-                    <p className="text-xs font-bold text-slate-500 uppercase mb-2">Dispatcher Tools</p>
-                    <button className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all">
+                <div className="absolute bottom-6 left-6 z-[400] bg-white/95 dark:bg-ink-black-900/80 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-gray-200 dark:border-white/10 animate-in slide-in-from-bottom-4 transition-all">
+                    <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3 transition-colors">Commander Tools</p>
+                    <button className="flex items-center gap-2 bg-gold-500 hover:bg-gold-400 text-ink-black-950 px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-gold-500/10 active:scale-95">
                         <MapPin className="w-4 h-4" />
-                        Set Pickup Location
+                        Set Pickup Node
                     </button>
                 </div>
             </div>

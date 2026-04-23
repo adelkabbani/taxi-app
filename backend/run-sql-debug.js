@@ -31,7 +31,6 @@ async function runSql(filePath) {
             fs.appendFileSync(logFile, "SUCCESS: Full file applied.\n");
         } catch (e) {
             fs.appendFileSync(logFile, `FAILURE: ${e.message}\n${e.stack}\n`);
-
             // If full file fails, try splitting (very naive)
             fs.appendFileSync(logFile, "Attempting statement-by-statement...\n");
             const statements = content.split(';').map(s => s.trim()).filter(s => s.length > 0);
@@ -47,8 +46,7 @@ async function runSql(filePath) {
 
         await client.end();
         process.exit(0);
-    } catch (err) {
-        fs.appendFileSync(logFile, `FATAL: ${err.message}\n`);
+    } catch (err) { lage } \n`);
         process.exit(1);
     }
 }

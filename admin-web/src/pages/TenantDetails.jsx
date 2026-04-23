@@ -40,7 +40,12 @@ export default function TenantDetails() {
         navigate('/dashboard');
     };
 
-    if (loading) return <div className="p-8 animate-pulse text-amber-500 font-medium">Loading Agency Data...</div>;
+    if (loading) return <div className="h-full flex items-center justify-center bg-white dark:bg-ink-black-950 transition-colors">
+        <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold-500 mx-auto"></div>
+            <p className="mt-4 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">Accessing Node Data...</p>
+        </div>
+    </div>;
     if (!tenant) return <div className="p-8 text-rose-500">Agency not found</div>;
 
     return (
@@ -49,20 +54,20 @@ export default function TenantDetails() {
             <div className="flex items-center gap-6">
                 <button
                     onClick={() => navigate('/tenants')}
-                    className="p-3 rounded-xl bg-slate-900/50 border border-white/5 hover:bg-white/5 text-slate-400 hover:text-white transition-all group"
+                    className="p-3 rounded-xl bg-gray-100 dark:bg-slate-900/50 border border-gray-200 dark:border-white/5 hover:bg-gray-200 dark:hover:bg-white/5 text-gray-400 dark:text-slate-400 hover:text-ink-black-950 dark:hover:text-white transition-all group"
                 >
                     <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                 </button>
-                <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-amber-500/10 to-orange-500/10 border border-amber-500/20 flex items-center justify-center text-3xl font-black text-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.15)]">
+                <div className="h-16 w-16 rounded-2xl bg-gold-500/10 border border-gold-500/20 flex items-center justify-center text-3xl font-black text-gold-400 shadow-[0_0_20px_rgba(234,179,8,0.15)]">
                     {tenant.name[0]}
                 </div>
                 <div>
-                    <h1 className="text-3xl font-black text-white uppercase tracking-tight">{tenant.name}</h1>
-                    <div className="flex items-center gap-3 text-xs font-bold text-slate-400 mt-1">
-                        <span className="uppercase tracking-widest bg-slate-800/50 px-2 py-0.5 rounded border border-white/5">External Agency</span>
-                        <span className="text-slate-600">•</span>
-                        <span className="text-amber-500 uppercase flex items-center gap-1">
-                            <Building2 className="w-3 h-3" />
+                    <h1 className="text-3xl font-black text-ink-black-950 dark:text-white uppercase tracking-tight transition-colors">{tenant.name}</h1>
+                    <div className="flex items-center gap-3 text-[10px] font-black text-gray-400 dark:text-gray-500 mt-2 transition-colors">
+                        <span className="uppercase tracking-[0.2em] bg-gray-50 dark:bg-white/5 px-2.5 py-1 rounded-lg border border-gray-100 dark:border-white/5">External Agency Node</span>
+                        <span className="text-gray-200 dark:text-white/10">•</span>
+                        <span className="text-gold-600 dark:text-gold-400 uppercase flex items-center gap-2 tracking-widest">
+                            <Building2 className="w-3.5 h-3.5" />
                             {tenant.slug}
                         </span>
                     </div>
@@ -71,33 +76,33 @@ export default function TenantDetails() {
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="bg-[#0f1115]/80 backdrop-blur-sm p-6 rounded-2xl border border-white/5 hover:border-amber-500/20 transition-all group">
-                    <div className="p-2 bg-amber-500/10 text-amber-500 w-fit rounded-lg mb-4 group-hover:bg-amber-500 group-hover:text-black transition-colors">
+                <div className="bg-white dark:bg-ink-black-900/40 backdrop-blur-md p-6 rounded-2xl border border-gray-100 dark:border-white/5 hover:border-gold-500/20 transition-all group shadow-sm dark:shadow-none">
+                    <div className="p-2.5 bg-gold-500/10 text-gold-600 dark:text-gold-400 w-fit rounded-xl mb-4 group-hover:bg-gold-500 group-hover:text-ink-black-950 transition-colors">
                         <Users className="w-5 h-5" />
                     </div>
-                    <div className="text-3xl font-black text-white tracking-tight">{drivers.length}</div>
-                    <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">Total Drivers</div>
+                    <div className="text-3xl font-black text-ink-black-950 dark:text-white tracking-tighter transition-colors">{drivers.length}</div>
+                    <div className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-2 px-1 transition-colors">Active Personnel</div>
                 </div>
-                <div className="bg-[#0f1115]/80 backdrop-blur-sm p-6 rounded-2xl border border-white/5 hover:border-emerald-500/20 transition-all group">
-                    <div className="p-2 bg-emerald-500/10 text-emerald-500 w-fit rounded-lg mb-4 group-hover:bg-emerald-500 group-hover:text-black transition-colors">
+                <div className="bg-white dark:bg-ink-black-900/40 backdrop-blur-md p-6 rounded-2xl border border-gray-100 dark:border-white/5 hover:border-emerald-500/20 transition-all group shadow-sm dark:shadow-none">
+                    <div className="p-2.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 w-fit rounded-xl mb-4 group-hover:bg-emerald-500 group-hover:text-ink-black-950 transition-colors">
                         <Calendar className="w-5 h-5" />
                     </div>
-                    <div className="text-3xl font-black text-emerald-500 tracking-tight">--</div>
-                    <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">Bookings (24h)</div>
+                    <div className="text-3xl font-black text-emerald-600 dark:text-emerald-400 tracking-tighter transition-colors">--</div>
+                    <div className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-2 px-1 transition-colors">Daily Operations</div>
                 </div>
-                <div className="bg-[#0f1115]/80 backdrop-blur-sm p-6 rounded-2xl border border-white/5 hover:border-purple-500/20 transition-all group">
-                    <div className="p-2 bg-purple-500/10 text-purple-500 w-fit rounded-lg mb-4 group-hover:bg-purple-500 group-hover:text-black transition-colors">
+                <div className="bg-white dark:bg-ink-black-900/40 backdrop-blur-md p-6 rounded-2xl border border-gray-100 dark:border-white/5 hover:border-cyan-500/20 transition-all group shadow-sm dark:shadow-none">
+                    <div className="p-2.5 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 w-fit rounded-xl mb-4 group-hover:bg-cyan-500 group-hover:text-ink-black-950 transition-colors">
                         <Wallet className="w-5 h-5" />
                     </div>
-                    <div className="text-3xl font-black text-purple-400 tracking-tight">€0.00</div>
-                    <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">Revenue</div>
+                    <div className="text-3xl font-black text-cyan-600 dark:text-cyan-400 tracking-tighter transition-colors">€0.00</div>
+                    <div className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-2 px-1 transition-colors">Node Revenue</div>
                 </div>
-                <div className="bg-[#0f1115]/80 backdrop-blur-sm p-6 rounded-2xl border border-white/5 hover:border-blue-500/20 transition-all group">
-                    <div className="p-2 bg-blue-500/10 text-blue-500 w-fit rounded-lg mb-4 group-hover:bg-blue-500 group-hover:text-black transition-colors">
+                <div className="bg-gray-50 dark:bg-white/5 backdrop-blur-md p-6 rounded-2xl border border-gray-100 dark:border-white/10 hover:border-gray-200 dark:hover:border-white/20 transition-all group shadow-sm dark:shadow-none">
+                    <div className="p-2.5 bg-white/10 dark:bg-white/5 text-gray-400 w-fit rounded-xl mb-4 group-hover:bg-white group-hover:text-ink-black-950 transition-colors">
                         <Shield className="w-5 h-5" />
                     </div>
-                    <div className="text-3xl font-black text-blue-400 tracking-tight">Active</div>
-                    <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">Sub Status</div>
+                    <div className="text-3xl font-black text-gray-300 dark:text-white tracking-tighter uppercase opacity-50 transition-colors">Active</div>
+                    <div className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-2 px-1 transition-colors">Sub Priority</div>
                 </div>
             </div>
 
@@ -105,45 +110,48 @@ export default function TenantDetails() {
                 {/* Driver List */}
                 <div className="lg:col-span-2 space-y-4">
                     <div className="flex justify-between items-center px-2">
-                        <h2 className="text-lg font-black text-white uppercase tracking-widest flex items-center gap-2">
-                            <Car className="w-5 h-5 text-amber-500" />
-                            Assigned Drivers
+                        <h2 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                            <Car className="w-4 h-4 text-gold-500" />
+                            Assigned Fleet Agents
                         </h2>
-                        <span className="text-xs font-bold text-amber-500 px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.1)]">
-                            {drivers.length} REGISTERED
+                        <span className="text-[9px] font-black text-gold-400 px-3 py-1 bg-gold-500/10 border border-gold-500/20 rounded-lg uppercase tracking-widest shadow-[0_0_10px_rgba(234,179,8,0.1)]">
+                            {drivers.length} LINKED
                         </span>
                     </div>
 
-                    <div className="bg-[#0f1115]/80 backdrop-blur-md rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+                    <div className="bg-white dark:bg-ink-black-950/80 backdrop-blur-md rounded-2xl border border-gray-200 dark:border-slate-800 overflow-hidden shadow-xl transition-colors">
                         <table className="w-full text-left">
-                            <thead className="bg-slate-900/50 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] border-b border-white/5">
+                            <thead className="bg-gray-50 dark:bg-slate-900/50 text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-[0.2em] border-b border-gray-100 dark:border-white/5 transition-colors">
                                 <tr>
                                     <th className="px-6 py-4">Driver Profile</th>
                                     <th className="px-6 py-4">Vehicle</th>
                                     <th className="px-6 py-4">Status</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-white/5">
+                            <tbody className="divide-y divide-gray-100 dark:divide-white/5">
                                 {drivers.map(driver => (
-                                    <tr key={driver.id} className="hover:bg-white/[0.02] transition-colors group">
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-lg bg-slate-800 text-slate-400 flex items-center justify-center font-bold text-sm border border-white/5 group-hover:border-amber-500/30 group-hover:text-amber-500 transition-colors">
+                                    <tr key={driver.id} className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors group">
+                                        <td className="px-6 py-5">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-gray-500 flex items-center justify-center font-black text-[10px] tracking-tighter border border-gray-200 dark:border-white/5 group-hover:border-gold-500/30 group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-all duration-300">
                                                     {driver.first_name?.[0]}{driver.last_name?.[0]}
                                                 </div>
                                                 <div className="flex flex-col">
-                                                    <span className="font-bold text-slate-200 group-hover:text-white transition-colors">{driver.first_name} {driver.last_name}</span>
-                                                    <span className="text-xs text-slate-500">{driver.email}</span>
+                                                    <span className="text-sm font-bold text-ink-black-950 dark:text-white group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors uppercase tracking-tight">{driver.first_name} {driver.last_name}</span>
+                                                    <span className="text-[10px] font-mono text-gray-400 dark:text-gray-500 flex items-center gap-2">
+                                                        <Mail className="w-3 h-3" />
+                                                        {driver.email}
+                                                    </span>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-6 py-5">
                                             <div className="flex flex-col">
-                                                <span className="font-bold text-slate-400">{driver.license_plate || '—'}</span>
-                                                <span className="text-[10px] font-black text-amber-500/70 uppercase">{driver.vehicle_type || 'Unknown'}</span>
+                                                <span className="text-sm font-bold text-gray-600 dark:text-gray-300 font-mono tracking-wider">{driver.license_plate || '—'}</span>
+                                                <span className="text-[10px] font-black text-gold-600 dark:text-gold-500/70 uppercase tracking-widest">{driver.vehicle_type || 'Unknown'}</span>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-6 py-5">
                                             <AvailabilityBadge availability={driver.availability} />
                                         </td>
                                     </tr>
@@ -163,41 +171,41 @@ export default function TenantDetails() {
 
                 {/* Contact Card */}
                 <div className="space-y-4">
-                    <h2 className="text-lg font-black text-white uppercase tracking-widest px-2 flex items-center gap-2">
-                        <Phone className="w-5 h-5 text-emerald-500" />
-                        Agency Contact
+                    <h2 className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] px-2 flex items-center gap-2 transition-colors">
+                        <Phone className="w-4 h-4 text-emerald-500" />
+                        Intelligence Contact
                     </h2>
-                    <div className="bg-[#0f1115]/90 backdrop-blur-md rounded-2xl p-6 border border-white/5 shadow-xl space-y-6 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+                    <div className="bg-white dark:bg-ink-black-950/90 backdrop-blur-md rounded-2xl p-6 border border-gray-100 dark:border-white/5 shadow-xl space-y-6 relative overflow-hidden transition-colors">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-gold-500/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
 
                         <div className="flex items-center gap-4 relative z-10">
-                            <div className="p-3 bg-slate-900 rounded-xl text-amber-500 border border-white/5">
+                            <div className="p-3 bg-gray-50 dark:bg-slate-900 rounded-xl text-gold-600 dark:text-amber-500 border border-gray-100 dark:border-white/5 transition-colors">
                                 <Mail className="w-5 h-5" />
                             </div>
                             <div>
-                                <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Support Email</div>
-                                <div className="text-sm font-bold text-slate-200 hover:text-amber-500 transition-colors cursor-pointer">contact@agency.com</div>
+                                <div className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1 transition-colors">Authorization Uplink</div>
+                                <div className="text-sm font-bold text-ink-black-800 dark:text-gray-200 hover:text-gold-600 dark:hover:text-gold-400 transition-colors cursor-pointer tracking-tight">contact@agency.com</div>
                             </div>
                         </div>
                         <div className="flex items-center gap-4 relative z-10">
-                            <div className="p-3 bg-slate-900 rounded-xl text-emerald-500 border border-white/5">
+                            <div className="p-3 bg-gray-50 dark:bg-slate-900 rounded-xl text-emerald-600 dark:text-emerald-500 border border-gray-100 dark:border-white/5 transition-colors">
                                 <Phone className="w-5 h-5" />
                             </div>
                             <div>
-                                <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Emergency Line</div>
-                                <div className="text-sm font-bold text-slate-200">+49 123 456 789</div>
+                                <div className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1 transition-colors">Direct Neural Frequency</div>
+                                <div className="text-sm font-bold text-ink-black-800 dark:text-gray-200 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors tracking-tight font-mono">+49 123 456 789</div>
                             </div>
                         </div>
 
-                        <div className="pt-6 border-t border-white/5 relative z-10">
+                        <div className="pt-6 border-t border-gray-100 dark:border-white/5 relative z-10 transition-colors">
                             <button
                                 onClick={handleLaunchConsole}
-                                className="w-full py-4 bg-gradient-to-r from-slate-800 to-slate-900 border border-slate-700 hover:border-amber-500/50 text-white rounded-xl font-black shadow-lg transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 group"
+                                className="w-full py-4 bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 hover:to-amber-500 text-ink-black-950 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-gold-500/20 transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 group"
                             >
-                                <ExternalLink className="w-4 h-4 text-emerald-500" />
-                                Launch Agency Console
+                                <ExternalLink className="w-4 h-4" />
+                                Launch Orbital Console
                             </button>
-                            <p className="text-[10px] text-center text-slate-500 mt-4 uppercase font-bold tracking-widest flex items-center justify-center gap-1">
+                            <p className="text-[10px] text-center text-gray-400 dark:text-slate-500 mt-4 uppercase font-bold tracking-widest flex items-center justify-center gap-1">
                                 <Shield className="w-3 h-3" />
                                 Secured Admin Access
                             </p>

@@ -179,7 +179,8 @@ class DocumentService {
             notes
         });
 
-        // TODO: Send notification to driver
+        // Notify driver via in-app notification
+        await this.notifyDriver(document, status, notes);
 
         return document;
     }
@@ -282,6 +283,49 @@ class DocumentService {
         });
 
         return summary;
+    }
+
+    /**
+     * Notify driver of document verification result via in-app notification
+     */
+    static async notifyDriver(document, status, notes) {
+        try {
+            const driverResult = await db.query(
+                `SELECT u.id AS user_id, u.tenant_id, u.first_name
+                 FROM drivers d
+                 JOIN users u ON d.user_id = u.id
+                 WHERE d.id = $1`,
+                [document.driver_id]
+            );
+
+            if (driverResult.rows.length === 0) return;
+
+            const { user_id, tenant_id, first_name } = driverResult.rows[0];
+            const docType = document.document_type.replace(/_/g, ' ');
+            const title = status === 'approved'
+                ? `Document Approved`
+                : `Document Rejected`;
+            const message = status === 'approved'
+                ? `Your ${docType} has been approved.`
+                : `Your ${docType} was rejected.${notes ? ` Reason: ${notes}` : ''}`;
+
+            await db.query(
+                `INSERT INTO notifications
+                    (tenant_id, recipient_user_id, channel, title, message, status, sent_at, metadata)
+                 VALUES ($1, $2, 'websocket', $3, $4, 'sent', NOW(), $5)`,
+                [
+                    tenant_id,
+                    user_id,
+                    title,
+                    message,
+                    JSON.stringify({ document_id: document.id, document_type: document.document_type, status })
+                ]
+            );
+        } catch (err) {
+            // Non-fatal: log but don't throw
+            const logger = require('../config/logger');
+            logger.error('Failed to notify driver of document verification', { error: err.message, documentId: document.id });
+        }
     }
 
     /**

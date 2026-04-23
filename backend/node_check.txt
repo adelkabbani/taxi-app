@@ -1,1 +1,0 @@
-Node file system write successful
